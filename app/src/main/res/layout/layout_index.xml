@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data></data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".IndexActivity"
+        android:screenOrientation="landscape"
+        android:fitsSystemWindows="true"
+        tools:ignore="MissingClass"
+        android:background="@drawable/pc_login_bg">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/Index_top"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.25"
+                tools:ignore="MissingConstraints"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintWidth_percent="0.25"
+                    android:src="@drawable/logo"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+                <com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView
+                    android:id="@+id/tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintWidth_percent="0.35"
+                    android:textSize="20sp"
+                    android:text="Hello World!"
+                    android:textColor="@color/white"
+                    app:space="20dp"
+                    app:speed="0.5"
+                    app:layout_constraintLeft_toRightOf="@id/logo"
+                    app:layout_constraintRight_toLeftOf="@+id/Index_time"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:ignore="MissingConstraints" />
+
+                <TextView
+                    android:id="@+id/Index_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2023/4/20 周五 15:46"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/Index_time"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/Index_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2023/4/20 周五 15:46"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/Index_sky"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2023/4/20 周五 15:46"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/Index_time"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/Index_main"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.65"
+                app:layout_constraintTop_toBottomOf="@id/Index_top"
+                android:background="@color/black">
+
+                <ImageView
+                    android:id="@+id/bigger_btn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layout_constraintWidth_percent="0.5"
+                    android:src="@color/white"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="2.5dp"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/btn_small1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_percent="0.25"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintLeft_toRightOf="@id/bigger_btn"
+                    android:src="@color/white"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="2.5dp"
+                    android:paddingBottom="2.5dp"
+                    android:paddingRight="2.5dp"
+                    tools:ignore="MissingConstraints" />
+                <ImageView
+                    android:id="@+id/btn_small2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_percent="0.25"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintLeft_toRightOf="@id/btn_small1"
+                    android:src="@color/white"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="2.5dp"
+                    android:paddingBottom="2.5dp"
+                    android:paddingRight="5dp"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/btn_small3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_percent="0.25"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintLeft_toRightOf="@id/bigger_btn"
+                    app:layout_constraintTop_toBottomOf="@id/btn_small1"
+                    android:src="@color/white"
+                    android:paddingTop="2.5dp"
+                    android:paddingLeft="2.5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="2.5dp"
+                    tools:ignore="MissingConstraints" />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintWidth_percent="0.25"
+                    app:layout_constraintHeight_percent="0.5"
+                    app:layout_constraintLeft_toRightOf="@id/btn_small3"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_small2"
+                    android:src="@color/white"
+                    android:paddingTop="2.5dp"
+                    android:paddingLeft="2.5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingRight="5dp"
+                    tools:ignore="MissingConstraints" />
+
+
+
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
