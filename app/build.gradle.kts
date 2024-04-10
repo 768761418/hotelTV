@@ -43,4 +43,19 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation ("com.dreamgyf.android.ui.widget:MarqueeTextView:1.1")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
+
+    implementation ("com.squareup.retrofit2:retrofit:2.3.0")
+//导入retrofit
+    implementation ("com.google.code.gson:gson:2.6.2")
+//Gson 库
+//下面两个是RxJava 和 RxAndroid
+    implementation ("io.reactivex.rxjava2:rxandroid:2.0.2")
+    implementation ("io.reactivex.rxjava2:rxjava:2.x.y")
+    implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
+//转换器，请求结果转换成Model
+    implementation ("com.squareup.retrofit2:adapter-rxjava2:2.3.0")
+//配合Rxjava 使用
+    implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")
+
 }
