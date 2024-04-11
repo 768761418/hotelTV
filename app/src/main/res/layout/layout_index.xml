@@ -27,7 +27,7 @@
             app:layout_constraintRight_toRightOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/Index_top"
+                android:id="@+id/index_top"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintHeight_percent="0.25"
@@ -36,74 +36,163 @@
 
 
                 <ImageView
-                    android:id="@+id/logo"
-                    android:layout_width="0dp"
+                    android:id="@+id/index_logo"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintWidth_percent="0.25"
                     android:src="@drawable/logo"
                     app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    />
 
 
                 <com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView
-                    android:id="@+id/tv"
+                    android:id="@+id/index_tv_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintWidth_percent="0.35"
                     android:textSize="20sp"
-                    android:text="Hello World!"
+                    android:text="请输入正确的服务器或检查您的网络状态"
                     android:textColor="@color/white"
                     app:space="20dp"
                     app:speed="0.5"
-                    app:layout_constraintLeft_toRightOf="@id/logo"
-                    app:layout_constraintRight_toLeftOf="@+id/Index_time"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/index_logo"
                     tools:ignore="MissingConstraints" />
 
-                <TextView
-                    android:id="@+id/Index_date"
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2023/4/20 周五 15:46"
-                    android:textSize="12sp"
-                    android:textColor="@color/white"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_percent="0.8"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/Index_time"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-                <TextView
-                    android:id="@+id/Index_time"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/index_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="12sp"
+                        android:textColor="@color/white" />
+                    <TextView
+                        android:id="@+id/index_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        />
+                    <TextView
+                        android:id="@+id/index_sky"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:textSize="12sp"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/index_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2023/4/20 周五 15:46"
-                    android:textSize="12sp"
-                    android:textColor="@color/white"
-                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_percent="0.8"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-                <TextView
-                    android:id="@+id/Index_sky"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:text="房间号码:"
+                            android:textColor="@color/white"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:text="WiFi名称:"
+                            android:textColor="@color/white"
+                            android:layout_weight="1"
+                            />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:text="WiFi密码:"
+                            android:textColor="@color/white"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:text="前台号码:"
+                            android:textColor="@color/white"
+                            android:layout_weight="1"/>
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2023/4/20 周五 15:46"
-                    android:textSize="12sp"
-                    android:textColor="@color/white"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/Index_time"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    android:layout_height="0dp"
+                    app:layout_constraintHeight_percent="0.8"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/index_title"
+                    android:orientation="vertical">
 
 
+                    <TextView
+                        android:id="@+id/index_room_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/index_wifi_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/index_wifi_password"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/index_desk_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:layout_weight="1"/>
 
+                </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/Index_main"
+                android:id="@+id/index_main"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 app:layout_constraintHeight_percent="0.65"
-                app:layout_constraintTop_toBottomOf="@id/Index_top"
+                app:layout_constraintTop_toBottomOf="@id/index_top"
                 android:background="@color/black">
 
                 <VideoView

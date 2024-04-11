@@ -16,12 +16,20 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.qb.hotelTV.Adaptor.ApkAdaptor;
+import com.qb.hotelTV.Http.BackstageHttp;
+import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
+
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingDeque;
 
 public class IndexActivity extends BaseActivity {
     private Handler handler = new Handler();
@@ -29,14 +37,17 @@ public class IndexActivity extends BaseActivity {
     private String TAG = IndexActivity.class.getSimpleName();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+
     double latitude,longitude;
 
-    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,WIFI=0;
+    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0;
 
-    private String geo,weather;
+    private String geo,weather,strRoomName,strWifiName,strWifiPassword,strDeskNumber;
+    ArrayList<ApkModel> apkList = new ArrayList<>();
     ProgressDialog progressDialog;
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
+    private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
 
     @Override
@@ -56,9 +67,10 @@ public class IndexActivity extends BaseActivity {
             // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
             String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
             String roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
+            String tenant  = sharedPreferences.getString(KEY_TENANT,"");
             // 使用服务器地址和房间号
             // ...
-            initUI(serverAddress,roomNumber);
+            initUI(serverAddress,roomNumber,tenant);
         }
 
 
@@ -92,32 +104,39 @@ public class IndexActivity extends BaseActivity {
 
 
 
-    private void initUI(String serverAddress,String roomNumber){
+    private void initUI(String serverAddress,String roomNumber,String tenant){
 
 //        获取时间
         startUpdateTask();
 
-        showProgressDialog();
+
 
 //        获取经纬度
         getLocation();
         // 将经纬度保留两位小数并合成字符串
         String locationString = String.format("%.2f,%.2f",  longitude, latitude);
 //        请求多个接口获取数据
-        getDataFromHttp(locationString);
+        getDataFromHttp(serverAddress,roomNumber,locationString);
 
+        showProgressDialog();
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(GEO == 1 && WEATHER == 1){
+                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1){
                     dismissProgressDialog();
                     timer.cancel();
 //                    在主线程修改组件
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            layoutIndexBinding.IndexSky.setText(geo + "  " + weather);
+                            layoutIndexBinding.indexSky.setText(geo + "  " + weather);
+                            layoutIndexBinding.indexRoomName.setText(strRoomName);
+                            layoutIndexBinding.indexWifiName.setText(strWifiName);
+                            layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
+                            layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
+                            ApkAdaptor apkAdaptor = new ApkAdaptor(IndexActivity.this,apkList);
+                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
                         }
                     });
                 }
@@ -141,8 +160,8 @@ public class IndexActivity extends BaseActivity {
                 String datePart = parts[0];
                 String timePart = parts[1];
                 // 更新 TextView 的文本内容为当前日期和时间的各部分
-                layoutIndexBinding.IndexDate.setText(datePart);
-                layoutIndexBinding.IndexTime.setText(timePart);
+                layoutIndexBinding.indexDate.setText(datePart);
+                layoutIndexBinding.indexTime.setText(timePart);
 
                 // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
                 handler.postDelayed(this, 1000);
@@ -183,7 +202,7 @@ public class IndexActivity extends BaseActivity {
     }
 
 
-    private void getDataFromHttp(String locationString){
+    private void getDataFromHttp(String serverAddress,String roomNumber,String locationString){
 //        请求地址
         if (GEO == 0){
             LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
@@ -191,14 +210,12 @@ public class IndexActivity extends BaseActivity {
                 public void onResponse(String responseData) {
                     geo = responseData;
                     GEO = 1;
-                    Log.d(TAG, "++"+responseData);
                 }
 
                 @Override
                 public void onFailure(String failName) {
                     geo = "";
                     GEO = 1;
-                    Log.d(TAG, "++"+failName);
                 }
             });
         }
@@ -227,14 +244,46 @@ public class IndexActivity extends BaseActivity {
 
         }
 
-//        请求wifi等信息
-        if (WIFI == 0){
+//        请求房间信息
+        if (ROOM_MESSAGE == 0){
+            BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, new BackstageHttp.RoomMessageCallback() {
+                @Override
+                public void onRoomMessageResponse(int id, String roomName, String wifiPassword, String frontDeskPhone) {
+                    Log.d(TAG, "BackstageHttp" + id + "/" + roomName + "/" + wifiPassword + "/" + frontDeskPhone);
+                    strRoomName = roomName;
+                    strWifiName = roomNumber + "_" +roomName;
+                    strWifiPassword = wifiPassword;
+                    strDeskNumber = frontDeskPhone;
+                    ROOM_MESSAGE =1;
+                }
 
+                @Override
+                public void onRoomMessageFailure(int code, String msg) {
+                    if(code == -1){
+                        Log.d(TAG, "onRoomMessageFailure: " + msg);
+                        ROOM_MESSAGE = 1 ;
+                    }
+                }
+
+
+            });
         }
 
 //        请求apk列表
         if (APK == 0){
+            BackstageHttp.getInstance().getApk(serverAddress, new BackstageHttp.ApkCallback() {
+                @Override
+                public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
+                    apkList = apkModelArrayList;
+                    APK = 1;
+                }
 
+                @Override
+                public void onApkFailure(int code, String msg) {
+                    Log.d(TAG, "onRoomMessageFailure: ");
+                    APK = 1;
+                }
+            });
         }
 
 
@@ -261,17 +310,20 @@ public class IndexActivity extends BaseActivity {
     private void showInputDialog() {
         // 创建输入对话框
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请输入服务器地址和房间号");
+        builder.setTitle("请配置服务器信息");
 
         // 设置输入框
         final EditText serverAddressInput = new EditText(this);
         final EditText roomNumberInput = new EditText(this);
+        final EditText tenantInput = new EditText(this);
         serverAddressInput.setHint("服务器地址");
         roomNumberInput.setHint("房间号");
+        tenantInput.setHint("分组");
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.addView(serverAddressInput);
         layout.addView(roomNumberInput);
+        layout.addView(tenantInput);
         builder.setView(layout);
 
         // 设置确定按钮
@@ -280,8 +332,10 @@ public class IndexActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
                 String serverAddress = serverAddressInput.getText().toString();
                 String roomNumber = roomNumberInput.getText().toString();
+                String tenant = tenantInput.getText().toString();
                 // 保存服务器地址和房间号到 SharedPreferences
-                saveServerAddressAndRoomNumber(serverAddress, roomNumber);
+                saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
+                initUI(serverAddress,roomNumber,tenant);
             }
         });
 
@@ -289,10 +343,11 @@ public class IndexActivity extends BaseActivity {
         builder.show();
     }
 
-    private void saveServerAddressAndRoomNumber(String serverAddress, String roomNumber) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+    private void saveServerAddressAndRoomNumber(String serverAddress, String roomNumber,String tenant) {
+        editor = sharedPreferences.edit();
         editor.putString(KEY_SERVER_ADDRESS, serverAddress);
         editor.putString(KEY_ROOM_NUMBER, roomNumber);
+        editor.putString(KEY_TENANT,tenant);
         editor.putBoolean("isFirstRun", false); // 标记不是第一次运行
         editor.apply();
     }
