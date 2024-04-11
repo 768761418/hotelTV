@@ -7,7 +7,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -17,12 +19,15 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Adaptor.ApkAdaptor;
 import com.qb.hotelTV.Adaptor.TvChannelAdaptor;
+import com.qb.hotelTV.Adaptor.common.CommonAdapter;
+import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.VideoModel;
@@ -33,6 +38,7 @@ import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.module.TvChooseModule;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingDeque;
@@ -66,7 +72,6 @@ public class IndexActivity extends BaseActivity {
 //        请求权限
         PermissionUtils permissionUtils = new PermissionUtils();
         permissionUtils.checkPermission(this);
-
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
         if (isFirstRun) {
@@ -144,7 +149,7 @@ public class IndexActivity extends BaseActivity {
 
 //        获取时间
         startUpdateTask();
-
+        initAdapter();
 
 
 //        获取经纬度
@@ -182,9 +187,7 @@ public class IndexActivity extends BaseActivity {
                             layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
 //                            apk的列表
-                            ApkAdaptor apkAdaptor = new ApkAdaptor(IndexActivity.this,apkList);
                             layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
-
                             layoutIndexBinding.indexTvText.setText(strTvText);
 //                            layoutIndexBinding.indexTvText.setTextColor(Color.parseColor(strTvTextColor));
                         }
@@ -227,8 +230,34 @@ public class IndexActivity extends BaseActivity {
 
 
 
+    CommonAdapter<ApkModel> apkAdaptor;
+    private void initAdapter(){
+        apkAdaptor = new CommonAdapter<ApkModel>(IndexActivity.this,apkList,R.layout.item_apk) {
+            @Override
+            public void bindData(CommonViewHolder holder, ApkModel data, int position) {
+                holder.setText(R.id.apk_name,apkList.get(position).getName());
+                Glide.with(IndexActivity.this)
+                        .load(apkList.get(position).getLogoUrl())
+                        .error(R.color.white)
+                        .into((ImageView) holder.getView(R.id.apk_logo));
+                int bgColor = Color.parseColor(apkList.get(position).getBackgroundColor());
+                holder.getView(R.id.apk_item_view).setBackgroundColor(bgColor);
+                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        //判断packagenames是否存在
+                        gotoOtherApp(data.getSchemeUrl());
 
+                    }
 
+                    @Override
+                    public void onItemLongClick(int viewId, int position) {
+
+                    }
+                });
+            }
+        };
+    }
 
 //    获取坐标
     private void getLocation(){
@@ -238,7 +267,11 @@ public class IndexActivity extends BaseActivity {
         try {
             // 获取最近一次的位置信息
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
+            if(lastKnownLocation==null){
+                latitude = 0;
+                longitude = 0;
+                return;
+            }
             do{
                 latitude = lastKnownLocation.getLatitude();
                 longitude = lastKnownLocation.getLongitude();
@@ -250,7 +283,15 @@ public class IndexActivity extends BaseActivity {
             Log.e(TAG, "Location permission denied: " + e.getMessage());
         }
     }
-
+    private void gotoOtherApp(String packageName){
+        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+        if (launchIntent != null) {
+            startActivity(launchIntent);
+        } else {
+            // 应用未安装或包名无效
+            Toast.makeText(this, "应用未安装", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void getDataFromHttp(String serverAddress,String roomNumber,String locationString,String tenant){
 
@@ -356,7 +397,8 @@ public class IndexActivity extends BaseActivity {
             BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
                 @Override
                 public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
-                    apkList = apkModelArrayList;
+                    apkList.addAll(apkModelArrayList);
+                    apkAdaptor.notifyDataSetChanged();
                     APK = 1;
                 }
 
