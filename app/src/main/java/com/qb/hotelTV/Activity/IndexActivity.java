@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Adaptor.ApkAdaptor;
@@ -58,12 +60,16 @@ public class IndexActivity extends BaseActivity {
             strWifiName,strWifiPassword,strDeskNumber,
             strHotelName,strHotelLogo,strHotelBg,
             strTvText,strTvTextColor,serverAddress,tenant;
+
     ArrayList<ApkModel> apkList = new ArrayList<>();
+    ArrayList<VideoModel> videoModels  = new ArrayList<>();
     ProgressDialog progressDialog;
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
+    TvChooseModule tvChooseModule = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,20 +129,37 @@ public class IndexActivity extends BaseActivity {
         layoutIndexBinding.indexVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
                     @Override
-                    public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
-                        TvChannelAdaptor tvChannelAdaptor = new TvChannelAdaptor(IndexActivity.this,videoModels);
-                        TvChooseModule tvChooseModule = new TvChooseModule(IndexActivity.this,tvChannelAdaptor);
-                        tvChooseModule.show();
+                    public void onTvChannelResponse(ArrayList<VideoModel> list) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                        TvChannelAdaptor tvChannelAdaptor = new TvChannelAdaptor(IndexActivity.this, list, new TvChooseModule.SwitchListener() {
+                                    @Override
+                                    public void onSwitch(String url) {
+                                        layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
+                                        layoutIndexBinding.indexVideo.start();
+                                        if(tvChooseModule!=null){
+                                            tvChooseModule.dismiss();
+                                        }
+
+
+                                    }
+                                });
+                                tvChooseModule = new TvChooseModule(IndexActivity.this, tvChannelAdaptor);
+                                tvChooseModule.show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onTvChannelFailure(int code, String msg) {
-
                     }
-                });
 
+
+                });
 
 
             }
@@ -231,6 +254,7 @@ public class IndexActivity extends BaseActivity {
 
 
     CommonAdapter<ApkModel> apkAdaptor;
+    CommonAdapter<VideoModel> videoModelCommonAdapter;
     private void initAdapter(){
         apkAdaptor = new CommonAdapter<ApkModel>(IndexActivity.this,apkList,R.layout.item_apk) {
             @Override
@@ -248,6 +272,24 @@ public class IndexActivity extends BaseActivity {
                         //判断packagenames是否存在
                         gotoOtherApp(data.getSchemeUrl());
 
+                    }
+
+                    @Override
+                    public void onItemLongClick(int viewId, int position) {
+
+                    }
+                });
+            }
+        };
+
+        videoModelCommonAdapter = new CommonAdapter<VideoModel>(this,videoModels,R.layout.item_tv) {
+            @Override
+            public void bindData(CommonViewHolder holder, VideoModel data, int position) {
+                holder.setText(R.id.tv_name,data.getStreamName());
+                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        //TODO
                     }
 
                     @Override

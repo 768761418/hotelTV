@@ -262,7 +262,7 @@ public class BackstageHttp {
 
     public void getTvChannel(String serverAddress,String tenant,TvChannelCallback callback){
 //       设置路径
-        String url = "http://"+ serverAddress + ApiSetting.URL_GET_TV_TEXT;
+        String url = "http://"+ serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -282,21 +282,22 @@ public class BackstageHttp {
                 Log.e(TAG, "onRoomMessageFailure" + url,e);
                 String msg = "请输入正确的服务器";
                 int code = -1;
+                Log.d(TAG, "999999"+msg);
                 callback.onTvChannelFailure(code,msg);
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "onBindViewHolder: "+responseData);
                     BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
                     int code = tvChannel.getCode();
-
                     if (code != 0) {
                         callback.onTvChannelResponse(null);
                         return;
                     }
-
                     ArrayList<VideoModel> videoModels = tvChannel.getData().getList();
+                    Log.d(TAG, "onBindViewHolder: " + tvChannel.getData().getList().get(0).getStreamName());
                     callback.onTvChannelResponse(videoModels );
                 }
             }

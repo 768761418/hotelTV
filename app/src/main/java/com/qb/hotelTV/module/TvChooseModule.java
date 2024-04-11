@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,11 +18,16 @@ import com.qb.hotelTV.R;
 public class TvChooseModule extends Dialog {
     RecyclerView recyclerView;
     TvChannelAdaptor tvChannelAdaptor;
+    private String TAG = TvChooseModule.class.getSimpleName();
     public TvChooseModule(@NonNull Context context, TvChannelAdaptor tvChannelAdaptor) {
         super(context);
         this.tvChannelAdaptor = tvChannelAdaptor;
     }
+    SwitchListener switchListener ;
+    public void setListenr(SwitchListener switchListener){
+        this.switchListener = switchListener;
 
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +36,7 @@ public class TvChooseModule extends Dialog {
     }
 
     private void initUi(){
+        Log.d(TAG, "initUi: " + tvChannelAdaptor);
         recyclerView = findViewById(R.id.tv_choose_recycler);
         recyclerView.setAdapter(tvChannelAdaptor);
         // 设置对话框的动画效果
@@ -47,5 +54,8 @@ public class TvChooseModule extends Dialog {
         window.getDecorView().setBackgroundColor(Color.WHITE);
         window.setAttributes(layoutParams);
 
+    }
+    public interface SwitchListener{
+        void onSwitch(String url);
     }
 }
