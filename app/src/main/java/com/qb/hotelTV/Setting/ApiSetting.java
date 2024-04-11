@@ -24,5 +24,9 @@ public class ApiSetting {
     public static String URL_GET_APK = "/admin-api/hotel/apk-config/page";
     public static String URL_GET_VIDEO ="/admin-api/hotel/playback/page";
 
+    public static String URL_GET_HOTEL_MESSAGE = "/admin-api/hotel/info/get";
 
+    public static String URL_GET_TV_TEXT = "/admin-api/system/notice/page";
+
+    public static String URL_GET_TV_CHANNEL = "/admin-api/hotel/playback/page";
 }

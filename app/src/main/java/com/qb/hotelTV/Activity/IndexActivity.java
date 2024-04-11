@@ -9,22 +9,28 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Adaptor.ApkAdaptor;
+import com.qb.hotelTV.Adaptor.TvChannelAdaptor;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.ApkModel;
+import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
+import com.qb.hotelTV.module.TvChooseModule;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -40,9 +46,12 @@ public class IndexActivity extends BaseActivity {
 
     double latitude,longitude;
 
-    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0;
+    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0;
 
-    private String geo,weather,strRoomName,strWifiName,strWifiPassword,strDeskNumber;
+    private String geo,weather,strRoomName,
+            strWifiName,strWifiPassword,strDeskNumber,
+            strHotelName,strHotelLogo,strHotelBg,
+            strTvText,strTvTextColor,serverAddress,tenant;
     ArrayList<ApkModel> apkList = new ArrayList<>();
     ProgressDialog progressDialog;
     private static final String KEY_SERVER_ADDRESS = "server_address";
@@ -65,13 +74,15 @@ public class IndexActivity extends BaseActivity {
             showInputDialog();
         } else {
             // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
-            String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
+            serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
             String roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
-            String tenant  = sharedPreferences.getString(KEY_TENANT,"");
+            tenant  = sharedPreferences.getString(KEY_TENANT,"");
             // 使用服务器地址和房间号
             // ...
-            initUI(serverAddress,roomNumber,tenant);
+            initUI(roomNumber);
         }
+
+        chooseTv();
 
 
     }
@@ -103,8 +114,33 @@ public class IndexActivity extends BaseActivity {
 
 
 
+    private void chooseTv(){
+        layoutIndexBinding.indexVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
+                    @Override
+                    public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
+                        TvChannelAdaptor tvChannelAdaptor = new TvChannelAdaptor(IndexActivity.this,videoModels);
+                        TvChooseModule tvChooseModule = new TvChooseModule(IndexActivity.this,tvChannelAdaptor);
+                        tvChooseModule.show();
+                    }
 
-    private void initUI(String serverAddress,String roomNumber,String tenant){
+                    @Override
+                    public void onTvChannelFailure(int code, String msg) {
+
+                    }
+                });
+
+
+
+            }
+        });
+
+    }
+
+
+    private void initUI(String roomNumber){
 
 //        获取时间
         startUpdateTask();
@@ -116,27 +152,41 @@ public class IndexActivity extends BaseActivity {
         // 将经纬度保留两位小数并合成字符串
         String locationString = String.format("%.2f,%.2f",  longitude, latitude);
 //        请求多个接口获取数据
-        getDataFromHttp(serverAddress,roomNumber,locationString);
+        getDataFromHttp(serverAddress,roomNumber,locationString,tenant);
 
         showProgressDialog();
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1){
+                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1 && TEXT==1){
                     dismissProgressDialog();
                     timer.cancel();
 //                    在主线程修改组件
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            layoutIndexBinding.indexName.setText(strHotelName);
+                            Glide.with(IndexActivity.this)
+                                    .load(strHotelLogo)
+                                    .error(R.drawable.img)
+                                    .into(layoutIndexBinding.indexLogo);
+                            Glide.with(IndexActivity.this)
+                                    .load(strHotelBg)
+                                    .error(R.drawable.img)
+                                    .into(layoutIndexBinding.indexBackground);
+
                             layoutIndexBinding.indexSky.setText(geo + "  " + weather);
                             layoutIndexBinding.indexRoomName.setText(strRoomName);
                             layoutIndexBinding.indexWifiName.setText(strWifiName);
                             layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
+//                            apk的列表
                             ApkAdaptor apkAdaptor = new ApkAdaptor(IndexActivity.this,apkList);
                             layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
+
+                            layoutIndexBinding.indexTvText.setText(strTvText);
+//                            layoutIndexBinding.indexTvText.setTextColor(Color.parseColor(strTvTextColor));
                         }
                     });
                 }
@@ -202,7 +252,26 @@ public class IndexActivity extends BaseActivity {
     }
 
 
-    private void getDataFromHttp(String serverAddress,String roomNumber,String locationString){
+    private void getDataFromHttp(String serverAddress,String roomNumber,String locationString,String tenant){
+
+        if (HOTEL_MESSAGE == 0){
+            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
+                @Override
+                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground) {
+                    strHotelName = hotelName;
+                    strHotelLogo = hotelLogo;
+                    strHotelBg = hotelBackground;
+                    HOTEL_MESSAGE = 1;
+                }
+
+                @Override
+                public void onHotelMessageFailure(int code, String msg) {
+                    HOTEL_MESSAGE = 1;
+                }
+            });
+        }
+
+
 //        请求地址
         if (GEO == 0){
             LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
@@ -241,12 +310,25 @@ public class IndexActivity extends BaseActivity {
 
 //        请求滚动栏
         if (TEXT == 0){
+            BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
+                @Override
+                public void onTvTextResponse(String tvText, String tvTextColor) {
+                    strTvText = tvText;
+                    strTvTextColor = tvTextColor;
+                    Log.d(TAG, "111000" +strTvText + tvTextColor);
+                    TEXT = 1;
+                }
 
+                @Override
+                public void onTvTextFailure(int code, String msg) {
+                    TEXT = 1;
+                }
+            });
         }
 
 //        请求房间信息
         if (ROOM_MESSAGE == 0){
-            BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, new BackstageHttp.RoomMessageCallback() {
+            BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant,new BackstageHttp.RoomMessageCallback() {
                 @Override
                 public void onRoomMessageResponse(int id, String roomName, String wifiPassword, String frontDeskPhone) {
                     Log.d(TAG, "BackstageHttp" + id + "/" + roomName + "/" + wifiPassword + "/" + frontDeskPhone);
@@ -271,7 +353,7 @@ public class IndexActivity extends BaseActivity {
 
 //        请求apk列表
         if (APK == 0){
-            BackstageHttp.getInstance().getApk(serverAddress, new BackstageHttp.ApkCallback() {
+            BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
                 @Override
                 public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
                     apkList = apkModelArrayList;
@@ -330,12 +412,12 @@ public class IndexActivity extends BaseActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String serverAddress = serverAddressInput.getText().toString();
+                serverAddress = serverAddressInput.getText().toString();
                 String roomNumber = roomNumberInput.getText().toString();
-                String tenant = tenantInput.getText().toString();
+                tenant = tenantInput.getText().toString();
                 // 保存服务器地址和房间号到 SharedPreferences
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
-                initUI(serverAddress,roomNumber,tenant);
+                initUI(roomNumber);
             }
         });
 

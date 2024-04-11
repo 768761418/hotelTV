@@ -5,12 +5,14 @@ public class VideoModel {
     private String streamUrl;
     private String streamName;
     private String description;
+    private long createTime;
 
-    public VideoModel(Integer id, String streamUrl, String streamName, String description) {
+    public VideoModel(Integer id, String streamUrl, String streamName, String description, long createTime) {
         this.id = id;
         this.streamUrl = streamUrl;
         this.streamName = streamName;
         this.description = description;
+        this.createTime = createTime;
     }
 
     public Integer getId() {
@@ -43,5 +45,13 @@ public class VideoModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 }

@@ -5,13 +5,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data></data>
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/index_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".Activity.IndexActivity"
         android:screenOrientation="landscape"
         android:fitsSystemWindows="true"
         tools:ignore="MissingClass"
-        android:background="@drawable/pc_login_bg">
+        >
+        <ImageView
+            android:id="@+id/index_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/pc_login_bg"/>
 
 
 
@@ -34,16 +41,31 @@
                 tools:ignore="MissingConstraints"
                 app:layout_constraintTop_toTopOf="parent">
 
-
-                <ImageView
-                    android:id="@+id/index_logo"
+                <LinearLayout
+                    android:id="@+id/header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/logo"
+                    android:gravity="center"
+                    android:orientation="horizontal"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    />
+                    app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:id="@+id/index_logo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/logo"
+                        />
+                    <TextView
+                        android:id="@+id/index_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:text="111"
+                        android:textColor="@color/white"/>
+                </LinearLayout>
+
 
 
                 <com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView
@@ -58,7 +80,7 @@
                     app:speed="0.5"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/index_logo"
+                    app:layout_constraintTop_toBottomOf="@+id/header"
                     tools:ignore="MissingConstraints" />
 
 

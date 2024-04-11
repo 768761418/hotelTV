@@ -5,26 +5,20 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/apk_item_view"
+        android:id="@+id/tv_item_view"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@drawable/apk_item"
         tools:ignore="MissingConstraints"
         >
 
-        <ImageView
-            android:id="@+id/apk_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="40dp"
-            android:src="@color/white"
-            android:layout_gravity="center"/>
         <TextView
-            android:id="@+id/apk_name"
+            android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="40dp"
             android:text="111"
             android:layout_gravity="center"/>
 
