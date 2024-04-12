@@ -140,6 +140,7 @@ public class IndexActivity extends BaseActivity {
                                     @Override
                                     public void onSwitch(String url) {
                                         layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
+                                        layoutIndexBinding.indexVideoText.setVisibility(View.GONE);
                                         layoutIndexBinding.indexVideo.start();
                                         if(tvChooseModule!=null){
                                             tvChooseModule.dismiss();
@@ -211,7 +212,13 @@ public class IndexActivity extends BaseActivity {
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
 //                            apk的列表
                             layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
-                            layoutIndexBinding.indexTvText.setText(strTvText);
+                            if (strTvText == null){
+
+                               Toast.makeText(IndexActivity.this, "请检查您的网络与服务器是否异常", Toast.LENGTH_SHORT).show();
+                            }else {
+                                layoutIndexBinding.indexTvText.setText(strTvText);
+                            }
+
 //                            layoutIndexBinding.indexTvText.setTextColor(Color.parseColor(strTvTextColor));
                         }
                     });
