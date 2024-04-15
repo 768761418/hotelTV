@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
@@ -217,7 +218,7 @@ public class IndexActivity extends BaseActivity {
                             layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
 //                            apk的列表
-                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
+//                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
                             layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
                             if (strTvText == null || strTvText.equals("")){
                                 Log.d(TAG, "aarun1: ");
@@ -282,31 +283,31 @@ public class IndexActivity extends BaseActivity {
     CommonAdapter<ApkModel> apkAdaptor;
     CommonAdapter<VideoModel> videoModelAdapter;
     private void initAdapter(){
-        apkAdaptor = new CommonAdapter<ApkModel>(IndexActivity.this,apkList,R.layout.item_apk) {
-            @Override
-            public void bindData(CommonViewHolder holder, ApkModel data, int position) {
-                holder.setText(R.id.apk_name,apkList.get(position).getName());
-                Glide.with(IndexActivity.this)
-                        .load(apkList.get(position).getLogoUrl())
-                        .error(R.color.white)
-                        .into((ImageView) holder.getView(R.id.apk_logo));
-                int bgColor = Color.parseColor(apkList.get(position).getBackgroundColor());
-                holder.getView(R.id.apk_item_view).setBackgroundColor(bgColor);
-                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        //判断packagenames是否存在
-                        gotoOtherApp(data.getSchemeUrl());
-
-                    }
-
-                    @Override
-                    public void onItemLongClick(int viewId, int position) {
-
-                    }
-                });
-            }
-        };
+//        apkAdaptor = new CommonAdapter<ApkModel>(IndexActivity.this,apkList,R.layout.item_apk) {
+//            @Override
+//            public void bindData(CommonViewHolder holder, ApkModel data, int position) {
+//                holder.setText(R.id.apk_name,apkList.get(position).getName());
+//                Glide.with(IndexActivity.this)
+//                        .load(apkList.get(position).getLogoUrl())
+//                        .error(R.color.white)
+//                        .into((ImageView) holder.getView(R.id.apk_logo));
+//                int bgColor = Color.parseColor(apkList.get(position).getBackgroundColor());
+//                holder.getView(R.id.apk_item_view).setBackgroundColor(bgColor);
+//                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//                        //判断packagenames是否存在
+//                        gotoOtherApp(data.getSchemeUrl());
+//
+//                    }
+//
+//                    @Override
+//                    public void onItemLongClick(int viewId, int position) {
+//
+//                    }
+//                });
+//            }
+//        };
 
         videoModelAdapter = new CommonAdapter<VideoModel>(this,videoList,R.layout.item_tv) {
             @Override
@@ -365,6 +366,7 @@ public class IndexActivity extends BaseActivity {
 
 //    外部启动apk
     private void gotoOtherApp(String packageName){
+        Log.d(TAG, "gotoOtherApp: "+packageName);
         Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
         if (launchIntent != null) {
             startActivity(launchIntent);
@@ -494,8 +496,36 @@ public class IndexActivity extends BaseActivity {
                 @Override
                 public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
                     try {
+                        apkList.clear();
                         apkList.addAll(apkModelArrayList);
-                        apkAdaptor.notifyDataSetChanged();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int cur_line = 0;
+                                for (int i = 0; i < apkList.size(); i++) {
+                                    cur_line = i/2;
+                                    Log.d(TAG, "onApkResponse: " + apkList.get(i).getName());
+                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
+                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
+                                    Glide.with(IndexActivity.this)
+                                            .load(apkList.get(i).getLogoUrl())
+                                            .error(R.color.white)
+                                            .into((ImageView) item.findViewById(R.id.apk_logo));
+                                    ((TextView)item.findViewById(R.id.apk_name)).setText(apkList.get(i).getName());
+                                    int finalI = i;
+                                    item.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            gotoOtherApp(apkList.get(finalI).getSchemeUrl());
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
+
+
+//                        apkAdaptor.notifyDataSetChanged();
                     }catch (Exception e){
                         Log.e(TAG, "数据写入出错了 ",e);
                     }

@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/apk_item_view"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
         tools:ignore="MissingConstraints"
+        android:gravity="center"
         >
 
         <ImageView
             android:id="@+id/apk_logo"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@color/white"
             android:layout_gravity="center"/>
         <TextView
@@ -24,8 +26,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/apk_item_text"
             android:textSize="15sp"
-            android:layout_marginLeft="10dp"
-            android:text="111"
+            android:text="---"
             android:layout_gravity="center"/>
 
     </LinearLayout>
