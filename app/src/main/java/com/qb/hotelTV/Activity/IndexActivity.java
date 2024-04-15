@@ -30,13 +30,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.maning.updatelibrary.InstallUtils;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
+import com.qb.hotelTV.Const;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
+import com.qb.hotelTV.Setting.DownloadSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import java.util.ArrayList;
@@ -190,7 +193,7 @@ public class IndexActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (strHotelName == null || strHotelName.equals("")){
-                                layoutIndexBinding.indexName.setText("请检查您的网络或服务器配置");
+                                layoutIndexBinding.indexName.setText(Const.MSG_NETWORK_ERR);
                             }else {
                                 layoutIndexBinding.indexName.setText(strHotelName);
                             }
@@ -222,7 +225,7 @@ public class IndexActivity extends BaseActivity {
                             layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
                             if (strTvText == null || strTvText.equals("")){
                                 Log.d(TAG, "aarun1: ");
-                                Toast.makeText(IndexActivity.this, "请检查您的网络连接或服务器配置", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
                             }else {
                                 Log.d(TAG, "aarun: "+strTvText);
                                 layoutIndexBinding.indexTvText.setText(strTvText);
@@ -243,7 +246,7 @@ public class IndexActivity extends BaseActivity {
                 Drawable drawable = ContextCompat.getDrawable(IndexActivity.this, R.drawable.tv_err);
                 layoutIndexBinding.indexVideo.setBackground(drawable);
                 layoutIndexBinding.indexVideoErr.setVisibility(View.VISIBLE);
-                Toast.makeText(IndexActivity.this, "该频道无法播放，请联系后台管理人员", Toast.LENGTH_SHORT).show();
+                Toast.makeText(IndexActivity.this, Const.MSG_TV_ERR, Toast.LENGTH_SHORT).show();
                 return true; // 返回 true 表示已经处理了错误
             }
         });
@@ -365,14 +368,21 @@ public class IndexActivity extends BaseActivity {
     }
 
 //    外部启动apk
-    private void gotoOtherApp(String packageName){
+    private void gotoOtherApp(String packageName,String apkUrl){
         Log.d(TAG, "gotoOtherApp: "+packageName);
         Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
         if (launchIntent != null) {
             startActivity(launchIntent);
         } else {
             // 应用未安装或包名无效
-            Toast.makeText(this, "应用未安装", Toast.LENGTH_SHORT).show();
+
+            if(apkUrl.equals("")){
+                Toast.makeText(this, Const.MSG_APK_NOT_EXIST + ",请联系管理员添加apk文件", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, Const.MSG_APK_NOT_EXIST, Toast.LENGTH_SHORT).show();
+                installApp( apkUrl);
+            }
+
         }
     }
 
@@ -466,8 +476,8 @@ public class IndexActivity extends BaseActivity {
                 public void onRoomMessageResponse(int id, String roomName, String wifiPassword, String frontDeskPhone) {
                     Log.d(TAG, "BackstageHttp" + id + "/" + roomName + "/" + wifiPassword + "/" + frontDeskPhone);
                     if (roomName.equals("")){
-                        strRoomName = "该房间不存在";
-                        strWifiName = "该房间不存在";
+                        strRoomName = Const.MSG_ROOM_NOT_EXIST;
+                        strWifiName = Const.MSG_ROOM_NOT_EXIST;
                     }else {
                         strRoomName = roomName;
                         strWifiName = roomNumber + "_" +roomName;
@@ -516,7 +526,12 @@ public class IndexActivity extends BaseActivity {
                                     item.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            gotoOtherApp(apkList.get(finalI).getSchemeUrl());
+                                            if (apkList.get(finalI).getApkUrl() == null || apkList.get(finalI).getApkUrl().equals("")){
+                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),"");
+                                            }else {
+                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),apkList.get(finalI).getApkUrl());
+                                            }
+
                                         }
                                     });
                                 }
@@ -555,8 +570,6 @@ public class IndexActivity extends BaseActivity {
                                 layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
                                 layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
                                 layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
-
-
                                 layoutIndexBinding.indexVideo.start();
                             }
                         });
@@ -639,5 +652,105 @@ public class IndexActivity extends BaseActivity {
         editor.putString(KEY_TENANT,tenant);
         editor.putBoolean("isFirstRun", false); // 标记不是第一次运行
         editor.apply();
+    }
+
+
+    private void installApp(String apkUrl){
+        InstallUtils.checkInstallPermission(IndexActivity.this, new InstallUtils.InstallPermissionCallBack() {
+            @Override
+            public void onGranted() {
+                downloadApp(apkUrl);
+            }
+
+            @Override
+            public void onDenied() {
+                //弹出弹框提醒用户
+                AlertDialog alertDialog = new AlertDialog.Builder(IndexActivity.this)
+                        .setTitle("温馨提示")
+                        .setMessage("必须授权才能安装APK，请设置允许安装")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //打开设置页面
+                                InstallUtils.openInstallPermissionSetting(IndexActivity.this, new InstallUtils.InstallPermissionCallBack() {
+                                    @Override
+                                    public void onGranted() {
+                                        //去下载Apk
+                                        downloadApp(apkUrl);
+                                    }
+
+                                    @Override
+                                    public void onDenied() {
+                                        //还是不允许咋搞？
+                                        Toast.makeText(IndexActivity.this, "必须授权才能安装APK，请设置允许安装！", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .create();
+                alertDialog.show();
+            }
+        });
+    }
+
+    private void downloadApp(String apkUrl){
+        showProgressDialog();
+//2.下载APK
+        InstallUtils.with(this)
+                //必须-下载地址
+                .setApkUrl(apkUrl)
+                //非必须-下载保存的文件的完整路径+/name.apk，使用自定义路径需要获取读写权限
+                .setApkPath(DownloadSetting.APK_PATH + "xxx.apk")
+                //非必须-下载回调
+                .setCallBack(new InstallUtils.DownloadCallBack() {
+                    @Override
+                    public void onStart() {
+                        //下载开始
+                    }
+
+                    @Override
+                    public void onComplete(String path) {
+                        dismissProgressDialog();
+                        //下载完成
+                        //安装APK
+                        /**
+                         * 安装APK工具类
+                         * @param activity       上下文
+                         * @param filePath      文件路径
+                         * @param callBack      安装界面成功调起的回调
+                         */
+                        InstallUtils.installAPK(IndexActivity.this, path, new InstallUtils.InstallCallBack() {
+                            @Override
+                            public void onSuccess() {
+                                //onSuccess：表示系统的安装界面被打开
+                                //防止用户取消安装，在这里可以关闭当前应用，以免出现安装被取消
+                                Toast.makeText(IndexActivity.this, "正在安装程序", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFail(Exception e) {
+                                Toast.makeText(IndexActivity.this, "安装失败:" + e.toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onLoading(long total, long current) {
+                        //下载中
+                    }
+
+                    @Override
+                    public void onFail(Exception e) {
+                        //下载失败
+                    }
+
+                    @Override
+                    public void cancle() {
+                        //下载取消
+                    }
+                })
+                //开始下载
+                .startDownload();
     }
 }

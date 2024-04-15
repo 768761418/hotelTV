@@ -6,6 +6,7 @@ public class ApkModel {
     private  String logoUrl;
     private  String backgroundColor;
     private  String schemeUrl;
+    private  String apkUrl;
 
     public ApkModel(int id, String name, String logoUrl, String backgroundColor, String schemeUrl) {
         this.id = id;
@@ -53,5 +54,13 @@ public class ApkModel {
 
     public void setSchemeUrl(String schemeUrl) {
         this.schemeUrl = schemeUrl;
+    }
+
+    public String getApkUrl() {
+        return apkUrl;
+    }
+
+    public void setApkUrl(String apkUrl) {
+        this.apkUrl = apkUrl;
     }
 }

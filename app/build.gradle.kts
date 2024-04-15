@@ -74,4 +74,5 @@ dependencies {
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.github.JessYanCoding:AndroidAutoSize:v1.2.1")
+    implementation ("com.github.maning0303:MNUpdateAPK:V2.0.5")
 }
