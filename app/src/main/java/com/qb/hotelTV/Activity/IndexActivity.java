@@ -1,33 +1,34 @@
 package com.qb.hotelTV.Activity;
-
 import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.VideoView;
-
 import com.bumptech.glide.Glide;
-import com.qb.hotelTV.Adaptor.ApkAdaptor;
-import com.qb.hotelTV.Adaptor.TvChannelAdaptor;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
 import com.qb.hotelTV.Http.BackstageHttp;
@@ -37,38 +38,43 @@ import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
-import com.qb.hotelTV.module.TvChooseModule;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.BlockingDeque;
+
 
 public class IndexActivity extends BaseActivity {
     private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
-    private String TAG = IndexActivity.class.getSimpleName();
+    private final String  TAG = IndexActivity.class.getSimpleName();
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+//    经纬度
+    String locationString;
 
-    double latitude,longitude;
-
-    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0;
+//    接口是否运行状态码
+    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0,TV_CHANNEL =0;
+//    视频是否全屏
+    private boolean VIDEO_STATUS = true;
 
     private String geo,weather,strRoomName,
             strWifiName,strWifiPassword,strDeskNumber,
             strHotelName,strHotelLogo,strHotelBg,
-            strTvText,strTvTextColor,serverAddress,tenant;
+            strTvText,strTvTextColor;
 
+//    从SharedPreferences中获取的数据
+    private String serverAddress,tenant,roomNumber;
+
+//    用来存放apk的列表
     ArrayList<ApkModel> apkList = new ArrayList<>();
-    ArrayList<VideoModel> videoModels  = new ArrayList<>();
+    ArrayList<VideoModel> videoList = new ArrayList<>();
     ProgressDialog progressDialog;
+
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
-    TvChooseModule tvChooseModule = null;
+
 
 
     @Override
@@ -86,15 +92,14 @@ public class IndexActivity extends BaseActivity {
         } else {
             // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
             serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
-            String roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
+            roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
             tenant  = sharedPreferences.getString(KEY_TENANT,"");
             // 使用服务器地址和房间号
             // ...
-            initUI(roomNumber);
+            initUI();
         }
 
-        chooseTv();
-
+        btnChangeVideoStatus();
 
     }
 
@@ -125,99 +130,103 @@ public class IndexActivity extends BaseActivity {
 
 
 
-    private void chooseTv(){
+    private void btnChangeVideoStatus(){
         layoutIndexBinding.indexVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                ViewGroup.LayoutParams params = layoutIndexBinding.indexVideo.getLayoutParams();
+                ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
+                if (VIDEO_STATUS){
+                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                    params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                    errMessage.width = dpToPx(800);
+                    layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
+                    VIDEO_STATUS = false;
+                }else {
+//                    params.width = 320;
+//                    params.height = 240;
+                    params.width = dpToPx(426); // 将 dp 转换为像素
+                    params.height = dpToPx(240); // 将 dp 转换为像素
+                    errMessage.width = dpToPx(180);
+                    layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                    VIDEO_STATUS = true;
 
-                BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
-                    @Override
-                    public void onTvChannelResponse(ArrayList<VideoModel> list) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                        TvChannelAdaptor tvChannelAdaptor = new TvChannelAdaptor(IndexActivity.this, list, new TvChooseModule.SwitchListener() {
-                                    @Override
-                                    public void onSwitch(String url) {
-                                        layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
-                                        layoutIndexBinding.indexVideoText.setVisibility(View.GONE);
-                                        layoutIndexBinding.indexVideo.start();
-                                        if(tvChooseModule!=null){
-                                            tvChooseModule.dismiss();
-                                        }
-
-
-                                    }
-                                });
-                                tvChooseModule = new TvChooseModule(IndexActivity.this, tvChannelAdaptor);
-                                tvChooseModule.show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onTvChannelFailure(int code, String msg) {
-                    }
-
-
-                });
-
-
+                }
+                // 应用修改后的参数到 View 上
+                layoutIndexBinding.indexVideo.setLayoutParams(params);
+                layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
             }
         });
-
     }
 
+    // 将 dp 单位转换为像素
+    private int dpToPx(int dp) {
+        float density = getResources().getDisplayMetrics().density;
+        return (int) (dp * density + 0.5f);
+    }
 
-    private void initUI(String roomNumber){
-
+    private void initUI(){
 //        获取时间
         startUpdateTask();
         initAdapter();
-
-
 //        获取经纬度
         getLocation();
-        // 将经纬度保留两位小数并合成字符串
-        String locationString = String.format("%.2f,%.2f",  longitude, latitude);
+
 //        请求多个接口获取数据
-        getDataFromHttp(serverAddress,roomNumber,locationString,tenant);
+        getGeoAndWeather(locationString);
+        getDataFromHttp();
 
         showProgressDialog();
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1 && TEXT==1){
+                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1 && TEXT==1 && TV_CHANNEL == 1 ){
                     dismissProgressDialog();
                     timer.cancel();
 //                    在主线程修改组件
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            layoutIndexBinding.indexName.setText(strHotelName);
-                            Glide.with(IndexActivity.this)
-                                    .load(strHotelLogo)
-                                    .error(R.drawable.img)
-                                    .into(layoutIndexBinding.indexLogo);
-                            Glide.with(IndexActivity.this)
-                                    .load(strHotelBg)
-                                    .error(R.drawable.img)
-                                    .into(layoutIndexBinding.indexBackground);
+                            if (strHotelName == null || strHotelName.equals("")){
+                                layoutIndexBinding.indexName.setText("请检查您的网络或服务器配置");
+                            }else {
+                                layoutIndexBinding.indexName.setText(strHotelName);
+                            }
+
+                            if (strHotelLogo != null){
+                                Glide.with(IndexActivity.this)
+                                        .load(strHotelLogo)
+                                        .error(R.drawable.img)
+                                        .into(layoutIndexBinding.indexLogo);
+                            }
+                            if (strHotelBg != null){
+                                Glide.with(IndexActivity.this)
+                                        .load(strHotelBg)
+                                        .error(R.drawable.app_bg)
+                                        .into(layoutIndexBinding.indexBackground);
+
+                            }
+
 
                             layoutIndexBinding.indexSky.setText(geo + "  " + weather);
+
                             layoutIndexBinding.indexRoomName.setText(strRoomName);
+
                             layoutIndexBinding.indexWifiName.setText(strWifiName);
                             layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
 //                            apk的列表
                             layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
-                            if (strTvText == null){
-
-                               Toast.makeText(IndexActivity.this, "请检查您的网络与服务器是否异常", Toast.LENGTH_SHORT).show();
+                            layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
+                            if (strTvText == null || strTvText.equals("")){
+                                Log.d(TAG, "aarun1: ");
+                                Toast.makeText(IndexActivity.this, "请检查您的网络连接或服务器配置", Toast.LENGTH_SHORT).show();
                             }else {
+                                Log.d(TAG, "aarun: "+strTvText);
                                 layoutIndexBinding.indexTvText.setText(strTvText);
                             }
+                            Log.d(TAG, "finish11");
 
 //                            layoutIndexBinding.indexTvText.setTextColor(Color.parseColor(strTvTextColor));
                         }
@@ -226,6 +235,17 @@ public class IndexActivity extends BaseActivity {
             }
         };
         timer.schedule(timerTask,0,1000);
+        layoutIndexBinding.indexVideo.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+//                layoutIndexBinding.indexVideo.setBackgroundColor(Color.BLACK);
+                Drawable drawable = ContextCompat.getDrawable(IndexActivity.this, R.drawable.tv_err);
+                layoutIndexBinding.indexVideo.setBackground(drawable);
+                layoutIndexBinding.indexVideoErr.setVisibility(View.VISIBLE);
+                Toast.makeText(IndexActivity.this, "该频道无法播放，请联系后台管理人员", Toast.LENGTH_SHORT).show();
+                return true; // 返回 true 表示已经处理了错误
+            }
+        });
 
     }
 
@@ -237,7 +257,6 @@ public class IndexActivity extends BaseActivity {
             public void run() {
                 // 获取当前日期和时间
                 String currentDateTimeString = getCurrentDateTime();
-
                 // 分割日期和时间
                 String[] parts = currentDateTimeString.split(" ");
                 String datePart = parts[0];
@@ -261,7 +280,7 @@ public class IndexActivity extends BaseActivity {
 
 
     CommonAdapter<ApkModel> apkAdaptor;
-    CommonAdapter<VideoModel> videoModelCommonAdapter;
+    CommonAdapter<VideoModel> videoModelAdapter;
     private void initAdapter(){
         apkAdaptor = new CommonAdapter<ApkModel>(IndexActivity.this,apkList,R.layout.item_apk) {
             @Override
@@ -289,7 +308,7 @@ public class IndexActivity extends BaseActivity {
             }
         };
 
-        videoModelCommonAdapter = new CommonAdapter<VideoModel>(this,videoModels,R.layout.item_tv) {
+        videoModelAdapter = new CommonAdapter<VideoModel>(this,videoList,R.layout.item_tv) {
             @Override
             public void bindData(CommonViewHolder holder, VideoModel data, int position) {
                 holder.setText(R.id.tv_name,data.getStreamName());
@@ -297,6 +316,13 @@ public class IndexActivity extends BaseActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         //TODO
+                        String url = data.getStreamUrl();
+                        Log.d(TAG, "viedo" + url);
+                        layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
+                        layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
+                        layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
+                        layoutIndexBinding.indexVideo.start();
+
                     }
 
                     @Override
@@ -317,13 +343,17 @@ public class IndexActivity extends BaseActivity {
             // 获取最近一次的位置信息
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if(lastKnownLocation==null){
-                latitude = 0;
-                longitude = 0;
+                double latitude = 0;
+                double longitude = 0;
+                // 将经纬度保留两位小数并合成字符串
+                locationString = String.format("%.2f,%.2f",  longitude, latitude);
                 return;
             }
             do{
-                latitude = lastKnownLocation.getLatitude();
-                longitude = lastKnownLocation.getLongitude();
+                double latitude = lastKnownLocation.getLatitude();
+                double longitude = lastKnownLocation.getLongitude();
+                // 将经纬度保留两位小数并合成字符串
+                locationString = String.format("%.2f,%.2f",  longitude, latitude);
                 Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
                 // 在此处处理获取到的经纬度信息
             } while(lastKnownLocation == null);
@@ -332,6 +362,8 @@ public class IndexActivity extends BaseActivity {
             Log.e(TAG, "Location permission denied: " + e.getMessage());
         }
     }
+
+//    外部启动apk
     private void gotoOtherApp(String packageName){
         Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
         if (launchIntent != null) {
@@ -342,26 +374,11 @@ public class IndexActivity extends BaseActivity {
         }
     }
 
-    private void getDataFromHttp(String serverAddress,String roomNumber,String locationString,String tenant){
-
-        if (HOTEL_MESSAGE == 0){
-            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
-                @Override
-                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground) {
-                    strHotelName = hotelName;
-                    strHotelLogo = hotelLogo;
-                    strHotelBg = hotelBackground;
-                    HOTEL_MESSAGE = 1;
-                }
-
-                @Override
-                public void onHotelMessageFailure(int code, String msg) {
-                    HOTEL_MESSAGE = 1;
-                }
-            });
-        }
 
 
+
+
+    private  void getGeoAndWeather(String locationString){
 //        请求地址
         if (GEO == 0){
             LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
@@ -397,7 +414,29 @@ public class IndexActivity extends BaseActivity {
                 }
             });
         }
+    }
 
+//    从接口获取数据
+    private void getDataFromHttp(){
+        if (HOTEL_MESSAGE == 0){
+            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
+                @Override
+                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground) {
+                    strHotelName = hotelName;
+                    strHotelLogo = hotelLogo;
+                    strHotelBg = hotelBackground;
+                    HOTEL_MESSAGE = 1;
+                }
+
+                @Override
+                public void onHotelMessageFailure(int code, String msg) {
+                    strHotelName = "";
+
+                    strHotelBg = "";
+                    HOTEL_MESSAGE = 1;
+                }
+            });
+        }
 //        请求滚动栏
         if (TEXT == 0){
             BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
@@ -405,12 +444,14 @@ public class IndexActivity extends BaseActivity {
                 public void onTvTextResponse(String tvText, String tvTextColor) {
                     strTvText = tvText;
                     strTvTextColor = tvTextColor;
-                    Log.d(TAG, "111000" +strTvText + tvTextColor);
+
                     TEXT = 1;
                 }
 
                 @Override
                 public void onTvTextFailure(int code, String msg) {
+                    strTvText = "";
+                    strTvTextColor = "";
                     TEXT = 1;
                 }
             });
@@ -422,22 +463,28 @@ public class IndexActivity extends BaseActivity {
                 @Override
                 public void onRoomMessageResponse(int id, String roomName, String wifiPassword, String frontDeskPhone) {
                     Log.d(TAG, "BackstageHttp" + id + "/" + roomName + "/" + wifiPassword + "/" + frontDeskPhone);
-                    strRoomName = roomName;
-                    strWifiName = roomNumber + "_" +roomName;
+                    if (roomName.equals("")){
+                        strRoomName = "该房间不存在";
+                        strWifiName = "该房间不存在";
+                    }else {
+                        strRoomName = roomName;
+                        strWifiName = roomNumber + "_" +roomName;
+                    }
+
                     strWifiPassword = wifiPassword;
                     strDeskNumber = frontDeskPhone;
                     ROOM_MESSAGE =1;
                 }
-
                 @Override
                 public void onRoomMessageFailure(int code, String msg) {
                     if(code == -1){
-                        Log.d(TAG, "onRoomMessageFailure: " + msg);
+                        strRoomName = "";
+                        strWifiName = roomNumber + "_" ;
+                        strWifiPassword = "";
+                        strDeskNumber = "";
                         ROOM_MESSAGE = 1 ;
                     }
                 }
-
-
             });
         }
 
@@ -446,8 +493,13 @@ public class IndexActivity extends BaseActivity {
             BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
                 @Override
                 public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
-                    apkList.addAll(apkModelArrayList);
-                    apkAdaptor.notifyDataSetChanged();
+                    try {
+                        apkList.addAll(apkModelArrayList);
+                        apkAdaptor.notifyDataSetChanged();
+                    }catch (Exception e){
+                        Log.e(TAG, "数据写入出错了 ",e);
+                    }
+
                     APK = 1;
                 }
 
@@ -458,6 +510,40 @@ public class IndexActivity extends BaseActivity {
                 }
             });
         }
+
+        if (TV_CHANNEL == 0){
+            BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
+                @Override
+                public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
+                    try {
+                        videoList.addAll(videoModels);
+                        videoModelAdapter.notifyDataSetChanged();
+                        String url = videoList.get(0).getStreamUrl();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
+                                layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
+                                layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
+
+
+                                layoutIndexBinding.indexVideo.start();
+                            }
+                        });
+                        TV_CHANNEL =1 ;
+                    }catch (Exception e){
+                        Log.e(TAG, "数据写入出错了 ", e);
+                        TV_CHANNEL =1 ;
+                    }
+                }
+
+                @Override
+                public void onTvChannelFailure(int code, String msg) {
+                    TV_CHANNEL =1 ;
+                }
+            });
+        }
+        Log.d(TAG, "finish");
 
 
     }
@@ -504,11 +590,11 @@ public class IndexActivity extends BaseActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 serverAddress = serverAddressInput.getText().toString();
-                String roomNumber = roomNumberInput.getText().toString();
+                roomNumber = roomNumberInput.getText().toString();
                 tenant = tenantInput.getText().toString();
                 // 保存服务器地址和房间号到 SharedPreferences
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
-                initUI(roomNumber);
+                initUI();
             }
         });
 

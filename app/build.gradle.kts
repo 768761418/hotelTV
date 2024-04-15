@@ -1,3 +1,5 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 plugins {
     id("com.android.application")
 }
@@ -14,6 +16,18 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    android.applicationVariants.all {
+        outputs.all {
+            if (this is com.android.build.gradle.internal.api.ApkVariantOutputImpl) {
+                val config = project.android.defaultConfig
+                val versionName = config.versionName
+                val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+                val createTime =LocalDateTime.now().format(formatter)
+                this.outputFileName = "hotelTv-V${versionName}-$createTime.apk"
+            }
+        }
     }
 
     buildTypes {
@@ -59,4 +73,5 @@ dependencies {
     implementation ("com.squareup.okhttp3:logging-interceptor:3.4.1")
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.github.JessYanCoding:AndroidAutoSize:v1.2.1")
 }

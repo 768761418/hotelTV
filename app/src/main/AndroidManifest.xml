@@ -15,6 +15,8 @@
     <!-- 用于访问GPS定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -26,7 +28,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.HotelTV"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        >
+        <meta-data
+            android:name="design_width_in_dp"
+            android:value="960"/>
+        <meta-data
+            android:name="design_height_in_dp"
+            android:value="540"/>
         <activity
             android:name=".Activity.IndexActivity"
             android:exported="true"

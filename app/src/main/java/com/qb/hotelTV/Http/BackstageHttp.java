@@ -93,18 +93,19 @@ public class BackstageHttp {
                         String responseData = response.body().string();
                         BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
                         Integer code = roomMessage.getCode();
-
-                        if (code != 0) {
-                            callback.onRoomMessageResponse(0,"","","");
-                            return;
+                        Log.d(TAG, "roomMessage：" + code);
+                        if (code != 0 || roomMessage.getData() == null) {
+                            callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
+                        }else{
+                            // 从 JsonObject 中提取所需的字段
+                            Integer id = roomMessage.getData().getId();
+                            String roomName = roomMessage.getData().getRoomName();
+                            String wifiPassword = roomMessage.getData().getWifiPassword();
+                            String frontDeskPhone = roomMessage.getData().getFrontDeskPhone();
+                            callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
                         }
 
-                        // 从 JsonObject 中提取所需的字段
-                        Integer id = roomMessage.getData().getId();
-                        String roomName = roomMessage.getData().getRoomName();
-                        String wifiPassword = roomMessage.getData().getWifiPassword();
-                        String frontDeskPhone = roomMessage.getData().getFrontDeskPhone();
-                        callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
+
 
                     }
                 }
@@ -279,17 +280,14 @@ public class BackstageHttp {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "onRoomMessageFailure" + url,e);
                 String msg = "请输入正确的服务器";
                 int code = -1;
-                Log.d(TAG, "999999"+msg);
                 callback.onTvChannelFailure(code,msg);
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "onBindViewHolder: "+responseData);
                     BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
                     int code = tvChannel.getCode();
                     if (code != 0) {
@@ -297,7 +295,6 @@ public class BackstageHttp {
                         return;
                     }
                     ArrayList<VideoModel> videoModels = tvChannel.getData().getList();
-                    Log.d(TAG, "onBindViewHolder: " + tvChannel.getData().getList().get(0).getStreamName());
                     callback.onTvChannelResponse(videoModels );
                 }
             }

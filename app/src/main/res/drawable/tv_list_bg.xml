@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 定义渐变色 -->
     <gradient
         android:startColor="#112d4e"
         android:endColor="#14114F"
         android:type="linear"
         android:angle="270"
         />
-    <padding
-        android:bottom="2dp"
-        android:left="2dp"
-        android:right="2dp"
-        android:top="2dp" />
-    <corners android:radius="10dp"/>
+
+
+    <!-- 可选：定义圆角 -->
+    <corners
+    android:topRightRadius="10dp"
+    android:bottomRightRadius="10dp" />
 </shape>

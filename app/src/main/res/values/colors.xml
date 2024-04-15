@@ -5,4 +5,10 @@
     
     <color name="blackFF">#99000000</color>
     <color name="apk_bg">#b9ffba</color>
+    <color name="apk_item_text">#ffdde1</color>
+
+    <color name="tv_item_bg">#3f72af</color>
+    <color name="tv_item_text">#dbe2ef</color>
+
+    <color name="tv_error">#7f7f7f</color>
 </resources>

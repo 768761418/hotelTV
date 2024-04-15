@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
+<!--    &lt;!&ndash; 定义渐变色 &ndash;&gt;-->
+<!--    <gradient-->
+<!--        android:startColor="#303841"-->
+<!--        android:endColor="#3a4750"-->
+<!--        android:type="linear"-->
+<!--        android:angle="0"-->
+<!--    />-->
     <gradient
         android:startColor="#112d4e"
         android:endColor="#14114F"
@@ -12,5 +19,8 @@
         android:left="2dp"
         android:right="2dp"
         android:top="2dp" />
-    <corners android:radius="10dp"/>
+
+
+    <!-- 可选：定义圆角 -->
+    <corners android:radius="10dp" />
 </shape>

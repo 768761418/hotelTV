@@ -17,7 +17,6 @@ public class ApiSetting {
     public static String PAGE_SIZE = "100";
 
 
-
 //    获取信息的接口
     public static String URL_GET_ROOM_MESSAGE = "/admin-api/hotel/room/getNumber";
 //    获取apk和播放列表的接口  {"pageNo": 1,  "pageSize": 100}
