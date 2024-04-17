@@ -3,7 +3,14 @@
     <style name="Base.Theme.HotelTV" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="Theme.HotelTV" parent="Base.Theme.HotelTV" />
+
+    <style name="inputBtn">
+        <item name="android:textColor">@color/tv_item_text</item>
+        <item name="background">@drawable/input_btn</item>
+    </style>
 </resources>

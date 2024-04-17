@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -35,6 +36,7 @@ import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
 import com.qb.hotelTV.Const;
 import com.qb.hotelTV.Http.BackstageHttp;
+import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
@@ -55,6 +57,7 @@ public class IndexActivity extends BaseActivity {
     SharedPreferences.Editor editor;
 //    经纬度
     String locationString;
+    int current_channel;
 
 //    接口是否运行状态码
     private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0,TV_CHANNEL =0;
@@ -73,12 +76,48 @@ public class IndexActivity extends BaseActivity {
     ArrayList<ApkModel> apkList = new ArrayList<>();
     ArrayList<VideoModel> videoList = new ArrayList<>();
     ProgressDialog progressDialog;
+    private boolean currentKeyCodeIsEnter = false;
+
+//    焦点选中动画
+    FocusScaleListener focusScaleListener = new FocusScaleListener();
 
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+        Log.d(TAG, "Key code: " + keyCode);
+        Log.d(TAG, "dispatchKeyEvent: " + currentKeyCodeIsEnter);
+        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE) {
+            Log.d(TAG, "dispatchKeyEvent1: " + currentKeyCodeIsEnter);
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (!currentKeyCodeIsEnter){
+                    Log.d(TAG, "dispatchKeyEvent2: " + currentKeyCodeIsEnter);
+                    currentKeyCodeIsEnter = true;
+                    btnChangeVideoStatus();
+                }
+            }
+            return true;
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "an1" +keyCode);
+        Toast.makeText(IndexActivity.this, "okokokok1", Toast.LENGTH_SHORT).show();
+        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER||keyCode == KeyEvent.KEYCODE_SPACE){
+            currentKeyCodeIsEnter = true;
+            Toast.makeText(IndexActivity.this, "okokokok", Toast.LENGTH_SHORT).show();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
 
     @Override
@@ -104,7 +143,8 @@ public class IndexActivity extends BaseActivity {
         }
 
         btnChangeVideoStatus();
-
+//        组件动画
+        focusChange();
     }
 
 
@@ -141,19 +181,35 @@ public class IndexActivity extends BaseActivity {
                 ViewGroup.LayoutParams params = layoutIndexBinding.indexVideo.getLayoutParams();
                 ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
                 if (VIDEO_STATUS){
+                    layoutIndexBinding.indexApkList.setVisibility(View.GONE);
+                    layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
+//                    设置焦点避免乱跑
+                    layoutIndexBinding.indexVideo.setNextFocusRightId(View.NO_ID);
+
                     params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                     params.height = ViewGroup.LayoutParams.MATCH_PARENT;
                     errMessage.width = dpToPx(800);
                     layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
                     VIDEO_STATUS = false;
                 }else {
+
 //                    params.width = 320;
 //                    params.height = 240;
-                    params.width = dpToPx(426); // 将 dp 转换为像素
-                    params.height = dpToPx(240); // 将 dp 转换为像素
-                    errMessage.width = dpToPx(180);
-                    layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                    VIDEO_STATUS = true;
+                    if (currentKeyCodeIsEnter){
+                        Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
+                        currentKeyCodeIsEnter =false;
+                    }else {
+                        layoutIndexBinding.indexApkList.setVisibility(View.VISIBLE);
+                        layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
+//                    将焦点恢复
+                        layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
+                        params.width = dpToPx(480); // 将 dp 转换为像素
+                        params.height = dpToPx(270); // 将 dp 转换为像素
+                        errMessage.width = dpToPx(180);
+                        layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                        VIDEO_STATUS = true;
+                    }
+
 
                 }
                 // 应用修改后的参数到 View 上
@@ -224,15 +280,10 @@ public class IndexActivity extends BaseActivity {
 //                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
                             layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
                             if (strTvText == null || strTvText.equals("")){
-                                Log.d(TAG, "aarun1: ");
                                 Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
                             }else {
-                                Log.d(TAG, "aarun: "+strTvText);
                                 layoutIndexBinding.indexTvText.setText(strTvText);
                             }
-                            Log.d(TAG, "finish11");
-
-//                            layoutIndexBinding.indexTvText.setTextColor(Color.parseColor(strTvTextColor));
                         }
                     });
                 }
@@ -242,7 +293,7 @@ public class IndexActivity extends BaseActivity {
         layoutIndexBinding.indexVideo.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-//                layoutIndexBinding.indexVideo.setBackgroundColor(Color.BLACK);
+                hideVideoLoading();
                 Drawable drawable = ContextCompat.getDrawable(IndexActivity.this, R.drawable.tv_err);
                 layoutIndexBinding.indexVideo.setBackground(drawable);
                 layoutIndexBinding.indexVideoErr.setVisibility(View.VISIBLE);
@@ -251,6 +302,23 @@ public class IndexActivity extends BaseActivity {
             }
         });
 
+        // 设置视频加载监听器
+        layoutIndexBinding.indexVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                // 视频已准备好，移除加载等待
+                hideVideoLoading();
+            }
+        });
+
+        layoutIndexBinding.indexVideo.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
+                // 视频已准备好，移除加载等待
+                hideVideoLoading();
+                return true;
+            }
+        });
     }
 
 
@@ -316,17 +384,24 @@ public class IndexActivity extends BaseActivity {
             @Override
             public void bindData(CommonViewHolder holder, VideoModel data, int position) {
                 holder.setText(R.id.tv_name,data.getStreamName());
+                holder.itemView.setOnFocusChangeListener(focusScaleListener);
+
                 holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         //TODO
                         String url = data.getStreamUrl();
-                        Log.d(TAG, "viedo" + url);
-                        layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
-                        layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
-                        layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
-                        layoutIndexBinding.indexVideo.start();
-
+                        if (current_channel != data.getId()){
+                            current_channel = data.getId();
+                            Log.d(TAG, "viedo" + url);
+                            layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
+                            layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
+                            showVideoLoading();
+                            // 停止当前视频播放并释放资源
+                            layoutIndexBinding.indexVideo.stopPlayback();
+                            layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
+                            layoutIndexBinding.indexVideo.start();
+                        }
                     }
 
                     @Override
@@ -336,6 +411,17 @@ public class IndexActivity extends BaseActivity {
                 });
             }
         };
+    }
+
+
+    private void showVideoLoading(){
+        layoutIndexBinding.indexVideoLoading.setVisibility(View.VISIBLE);
+        layoutIndexBinding.indexVideo.setEnabled(false);
+
+    }
+    private void hideVideoLoading(){
+        layoutIndexBinding.indexVideoLoading.setVisibility(View.GONE);
+        layoutIndexBinding.indexVideo.setEnabled(true);
     }
 
 //    获取坐标
@@ -386,7 +472,16 @@ public class IndexActivity extends BaseActivity {
         }
     }
 
+//    焦点切换动画
+    private void focusChange(){
+        layoutIndexBinding.indexVideo.requestFocus();
+        layoutIndexBinding.indexVideo.setOnFocusChangeListener(focusScaleListener);
+        layoutIndexBinding.apk1.setOnFocusChangeListener(focusScaleListener);
+        layoutIndexBinding.apk2.setOnFocusChangeListener(focusScaleListener);
+        layoutIndexBinding.apk3.setOnFocusChangeListener(focusScaleListener);
+        layoutIndexBinding.apk4.setOnFocusChangeListener(focusScaleListener);
 
+    }
 
 
 
@@ -564,6 +659,7 @@ public class IndexActivity extends BaseActivity {
                         videoList.addAll(videoModels);
                         videoModelAdapter.notifyDataSetChanged();
                         String url = videoList.get(0).getStreamUrl();
+                        current_channel = videoList.get(0).getId();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -610,39 +706,31 @@ public class IndexActivity extends BaseActivity {
 
 //    输入框
     private void showInputDialog() {
-        // 创建输入对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("请配置服务器信息");
-
-        // 设置输入框
-        final EditText serverAddressInput = new EditText(this);
-        final EditText roomNumberInput = new EditText(this);
-        final EditText tenantInput = new EditText(this);
-        serverAddressInput.setHint("服务器地址");
-        roomNumberInput.setHint("房间号");
-        tenantInput.setHint("分组");
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.addView(serverAddressInput);
-        layout.addView(roomNumberInput);
-        layout.addView(tenantInput);
-        builder.setView(layout);
-
-        // 设置确定按钮
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
+        layoutIndexBinding.indexVideo.setEnabled(false);
+        layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                serverAddress = serverAddressInput.getText().toString();
-                roomNumber = roomNumberInput.getText().toString();
-                tenant = tenantInput.getText().toString();
+            public void onClick(View view) {
+                // 在点击事件中获取按下的按钮的 keycode
+                int keyCode = KeyEvent.KEYCODE_UNKNOWN; // 初始化为未知的 keycode
+                KeyEvent keyEvent = (KeyEvent) view.getTag(); // 从 view 的 tag 中获取 KeyEvent 对象
+                if (keyEvent != null) {
+                    keyCode = keyEvent.getKeyCode(); // 获取按下的按钮的 keycode
+                    Toast.makeText(IndexActivity.this, "!!!:" + keyCode, Toast.LENGTH_SHORT).show();
+
+                }
+                serverAddress = layoutIndexBinding.inputServerAddress.getText().toString();
+                roomNumber = layoutIndexBinding.inputRoomNumber.getText().toString();
+                tenant = layoutIndexBinding.inputTenant.getText().toString();
                 // 保存服务器地址和房间号到 SharedPreferences
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
                 initUI();
+                layoutIndexBinding.indexInput.setVisibility(View.GONE);
+                layoutIndexBinding.indexVideo.setEnabled(true);
             }
         });
 
-        // 显示对话框
-        builder.show();
+
     }
 
     private void saveServerAddressAndRoomNumber(String serverAddress, String roomNumber,String tenant) {

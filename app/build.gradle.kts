@@ -13,7 +13,7 @@ android {
         minSdk = 24
         targetSdk = 33
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -75,4 +75,5 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     implementation ("com.github.JessYanCoding:AndroidAutoSize:v1.2.1")
     implementation ("com.github.maning0303:MNUpdateAPK:V2.0.5")
+    implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.1")
 }

@@ -11,4 +11,9 @@
     <color name="tv_item_text">#dbe2ef</color>
 
     <color name="tv_error">#7f7f7f</color>
+
+    <color name="transparent_color">#C83c3f41</color>
+
+    <color name="input_button">#C9B287</color>
+
 </resources>

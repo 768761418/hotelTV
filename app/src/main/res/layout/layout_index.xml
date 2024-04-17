@@ -24,7 +24,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_top"
-            android:layout_width="840dp"
+            android:layout_width="900dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             app:layout_constraintHeight_percent="0.25"
@@ -36,30 +36,31 @@
             <LinearLayout
                 android:id="@+id/header"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
                     android:id="@+id/index_logo"
-                    android:layout_width="80dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:src="@drawable/img"
-                    android:padding="5dp"/>
+                    android:padding="10dp"
+                    android:layout_weight="5"/>
 
                 <TextView
                     android:id="@+id/index_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="111"
+                    android:text="test"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:textStyle="bold"
-                    android:layout_marginLeft="20dp"/>
+                    android:layout_weight="1"
+                    />
             </LinearLayout>
 
 
@@ -72,7 +73,8 @@
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/header"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
 
                 app:space="20dp"
                 app:speed="0.5"
@@ -84,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_percent="0.8"
                 app:layout_constraintRight_toRightOf="parent"
@@ -94,10 +96,10 @@
                     android:id="@+id/index_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="default"
+                    android:text="day"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginRight="5dp"/>
 
                 <TextView
                     android:id="@+id/index_time"
@@ -105,8 +107,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_weight="1"
-                    android:text="default"
+                    android:layout_marginRight="5dp"
+                    android:text="time"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
 
@@ -114,118 +116,22 @@
                     android:id="@+id/index_sky"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="default"
+                    android:text="weather"
                     android:textColor="@color/white"
                     android:textSize="16sp" />
             </LinearLayout>
 
 
-            <LinearLayout
-                android:id="@+id/index_title"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.8"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="房间号码:"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="WiFi名称:"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="WiFi密码:"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="前台号码:"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
 
 
-            <LinearLayout
-                android:id="@+id/linearLayout2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHeight_percent="0.8"
-                app:layout_constraintLeft_toRightOf="@id/index_title"
-                app:layout_constraintTop_toTopOf="parent">
-
-
-                <TextView
-                    android:id="@+id/index_room_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="default"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/index_wifi_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="default"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/index_wifi_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="default"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/index_desk_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="默认"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <!--                apk列表-->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/index_apk_list"
             android:layout_width="280dp"
-            android:layout_height="240dp"
+            android:layout_height="270dp"
             android:background="@drawable/apk_list_bg"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="@+id/index_top"
@@ -245,13 +151,15 @@
                     android:layout_weight="1"
                     android:layout_height="0dp">
                     <LinearLayout
+                        android:id="@+id/apk1"
                         android:gravity="center"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="match_parent">
-                        <include layout="@layout/item_apk"></include>
+                        <include layout="@layout/item_apk" ></include>
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/apk2"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
@@ -268,6 +176,7 @@
                     android:layout_weight="1"
                     android:layout_height="0dp">
                     <LinearLayout
+                        android:id="@+id/apk3"
                         android:gravity="center"
 
                         android:layout_weight="1"
@@ -277,6 +186,7 @@
 
                     </LinearLayout>
                     <LinearLayout
+                        android:id="@+id/apk4"
                         android:gravity="center"
                         android:layout_weight="1"
                         android:layout_width="0dp"
@@ -305,10 +215,134 @@
 
 
 
+
+
+
+
+
+        <LinearLayout
+            android:id="@+id/index_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="房间号码:"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/index_room_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="default"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_marginRight="7dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WiFi名称:"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/index_wifi_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="7dp"
+                android:text="default"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="WiFi密码:"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/index_wifi_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="7dp"
+                android:text="default"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="前台号码:"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/index_desk_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="default"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+
+        <VideoView
+            android:id="@+id/index_video"
+            android:layout_width="480dp"
+            android:layout_height="270dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/index_top"
+            app:layout_constraintTop_toBottomOf="@id/index_top"
+            app:layout_constraintVertical_bias="0.504"
+            android:nextFocusDown="@null"
+            android:nextFocusLeft="@null"
+            android:nextFocusUp="@null"
+            android:nextFocusRight="@id/index_video_channel"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/index_video_err"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="该频道无法播放，请联系后台管理人员"
+            app:layout_constraintTop_toTopOf="@id/index_video"
+            app:layout_constraintBottom_toBottomOf="@id/index_video"
+            app:layout_constraintLeft_toLeftOf="@id/index_video"
+            app:layout_constraintRight_toRightOf="@id/index_video"
+            android:textColor="@color/tv_item_text"
+            android:visibility="gone"
+            />
+
+
+
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/index_video_loading"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/loading"
+            app:layout_constraintTop_toTopOf="@id/index_video"
+            app:layout_constraintBottom_toBottomOf="@id/index_video"
+            app:layout_constraintLeft_toLeftOf="@id/index_video"
+            app:layout_constraintRight_toRightOf="@id/index_video"
+            android:visibility="gone"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_video_channel_layout"
             android:layout_width="100dp"
-            android:layout_height="240dp"
+            android:layout_height="270dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/index_video"
             app:layout_constraintTop_toBottomOf="@id/index_top"
@@ -327,48 +361,90 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="10dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/index_video_channel"
-            android:layout_width="85dp"
-            android:layout_height="190dp"
-            app:layout_constraintTop_toBottomOf="@+id/index_video_channel_title"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:layout_marginTop="5dp"
-            tools:ignore="MissingConstraints" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/index_video_channel"
+                android:layout_width="85dp"
+                android:layout_height="190dp"
+                app:layout_constraintTop_toBottomOf="@+id/index_video_channel_title"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginTop="5dp"
+                tools:ignore="MissingConstraints"
+                android:descendantFocusability="afterDescendants"
+                android:nextFocusLeft="@id/index_video"
+                android:nextFocusRight="@id/apk1"
+                android:focusable="true"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+<!--        配置信息框-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/index_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_color"
+            android:visibility="gone">
+            <LinearLayout
+                android:layout_width="480dp"
+                android:layout_height="270dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:background="@drawable/input_dialog">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="请配置服务器信息"
+                    android:textSize="20sp"
+                    android:layout_weight="2"
+                    android:textStyle="bold"
+                    />
+                <EditText
+                    android:id="@+id/input_server_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="服务器地址"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/input_room_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="房间号"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"/>
+                <EditText
+                    android:id="@+id/input_tenant"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="分组"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"/>
+                <android.widget.Button
+                    android:id="@+id/input_submit"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:hint="确定"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/input_btn"
+                    android:textColor="@color/tv_item_text"
+                    android:padding="5dp"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-        <VideoView
-            android:id="@+id/index_video"
-            android:layout_width="426dp"
-            android:layout_height="240dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/index_top"
-            app:layout_constraintTop_toBottomOf="@id/index_top"
-            tools:ignore="MissingConstraints" />
-        <TextView
-            android:id="@+id/index_video_err"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="该频道无法播放，请联系后台管理人员"
-            app:layout_constraintTop_toTopOf="@id/index_video"
-            app:layout_constraintBottom_toBottomOf="@id/index_video"
-            app:layout_constraintLeft_toLeftOf="@id/index_video"
-            app:layout_constraintRight_toRightOf="@id/index_video"
-            android:textColor="@color/tv_item_text"
-            android:visibility="gone"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
 </layout>
