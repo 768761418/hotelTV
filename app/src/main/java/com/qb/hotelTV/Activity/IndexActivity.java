@@ -62,7 +62,8 @@ public class IndexActivity extends BaseActivity {
 //    接口是否运行状态码
     private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0,TV_CHANNEL =0;
 //    视频是否全屏
-    private boolean VIDEO_STATUS = true;
+    private boolean VIDEO_STATUS = false;
+    private boolean FULL_SCREEN_SIDEBAR = false;
 
     private String geo,weather,strRoomName,
             strWifiName,strWifiPassword,strDeskNumber,
@@ -85,39 +86,61 @@ public class IndexActivity extends BaseActivity {
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
+    private boolean event_first = true;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        Log.d(TAG, "Key code: " + keyCode);
-        Log.d(TAG, "dispatchKeyEvent: " + currentKeyCodeIsEnter);
-        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE) {
-            Log.d(TAG, "dispatchKeyEvent1: " + currentKeyCodeIsEnter);
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                if (!currentKeyCodeIsEnter){
-                    Log.d(TAG, "dispatchKeyEvent2: " + currentKeyCodeIsEnter);
-                    currentKeyCodeIsEnter = true;
-                    btnChangeVideoStatus();
-                }
-            }
-            return true;
-        }
+//        int keyCode = event.getKeyCode();
+//        View focusView = getCurrentFocus();
+//        //TODO 这里每一个时间都会触发两次，先处理下
+//        Log.d(TAG, "Key code: " + keyCode);
+//        Log.d(TAG, "dispatchKeyEvent: " + currentKeyCodeIsEnter);
+//        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE) {
+//            if(focusView.getId() == R.id.index_video && event_first){
+//                event_first = !event_first;
+//                Log.d(TAG, "dispatchKeyEvent: index_video");
+//                if(VIDEO_STATUS){
+//                    Toast.makeText(this,"栏目出现",Toast.LENGTH_SHORT).show();
+//                }else{
+//                    setVideoMode();
+//                }
+//
+//                return false;
+//            }
+////            Log.d(TAG, "dispatchKeyEvent1: " + currentKeyCodeIsEnter);
+////            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+////                if (!currentKeyCodeIsEnter){
+////                    Log.d(TAG, "dispatchKeyEvent2: " + currentKeyCodeIsEnter);
+////                    currentKeyCodeIsEnter = true;
+//////                    btnChangeVideoStatus();
+////                }
+////            }
+////
+////            return true;
+//        }else if(keyCode == KeyEvent.KEYCODE_BACK){
+//            if(VIDEO_STATUS&& focusView.getId()==R.id.index_video){
+//                Toast.makeText(this,"关闭侧边栏，关闭全屏",Toast.LENGTH_SHORT).show();
+//                //TODO 关闭侧边栏
+//                //TODO 关闭全屏
+//                setVideoMode();
+//            }
+//        }
 
         return super.dispatchKeyEvent(event);
     }
 
 
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(TAG, "an1" +keyCode);
-        Toast.makeText(IndexActivity.this, "okokokok1", Toast.LENGTH_SHORT).show();
-        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER||keyCode == KeyEvent.KEYCODE_SPACE){
-            currentKeyCodeIsEnter = true;
-            Toast.makeText(IndexActivity.this, "okokokok", Toast.LENGTH_SHORT).show();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        Log.d(TAG, "an1" +keyCode);
+//        Toast.makeText(IndexActivity.this, "okokokok1", Toast.LENGTH_SHORT).show();
+//        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER||keyCode == KeyEvent.KEYCODE_SPACE){
+//            currentKeyCodeIsEnter = true;
+//            Toast.makeText(IndexActivity.this, "okokokok", Toast.LENGTH_SHORT).show();
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
 
     @Override
@@ -172,53 +195,78 @@ public class IndexActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    private void setVideoMode(){
+        ViewGroup.LayoutParams params = layoutIndexBinding.indexVideo.getLayoutParams();
+        ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
+        if (VIDEO_STATUS){
 
-
-    private void btnChangeVideoStatus(){
-        layoutIndexBinding.indexVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ViewGroup.LayoutParams params = layoutIndexBinding.indexVideo.getLayoutParams();
-                ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
-                if (VIDEO_STATUS){
-                    layoutIndexBinding.indexApkList.setVisibility(View.GONE);
-                    layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
+                layoutIndexBinding.indexApkList.setVisibility(View.VISIBLE);
+                layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
+//                    将焦点恢复
+                layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
+                params.width = dpToPx(480); // 将 dp 转换为像素
+                params.height = dpToPx(270); // 将 dp 转换为像素
+                errMessage.width = dpToPx(180);
+                layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+//            }
+            VIDEO_STATUS = false;
+        }else {
+            layoutIndexBinding.indexApkList.setVisibility(View.GONE);
+            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
 //                    设置焦点避免乱跑
-                    layoutIndexBinding.indexVideo.setNextFocusRightId(View.NO_ID);
+            layoutIndexBinding.indexVideo.setNextFocusRightId(View.NO_ID);
 
-                    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                    params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                    errMessage.width = dpToPx(800);
-                    layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
-                    VIDEO_STATUS = false;
-                }else {
-
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            errMessage.width = dpToPx(800);
+            layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
 //                    params.width = 320;
 //                    params.height = 240;
-                    if (currentKeyCodeIsEnter){
-                        Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
-                        currentKeyCodeIsEnter =false;
-                    }else {
-                        layoutIndexBinding.indexApkList.setVisibility(View.VISIBLE);
-                        layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
-//                    将焦点恢复
-                        layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
-                        params.width = dpToPx(480); // 将 dp 转换为像素
-                        params.height = dpToPx(270); // 将 dp 转换为像素
-                        errMessage.width = dpToPx(180);
-                        layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-                        VIDEO_STATUS = true;
-                    }
+            VIDEO_STATUS = true;
 
 
-                }
-                // 应用修改后的参数到 View 上
-                layoutIndexBinding.indexVideo.setLayoutParams(params);
-                layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
-            }
-        });
+
+        }
+        // 应用修改后的参数到 View 上
+        layoutIndexBinding.indexVideo.setLayoutParams(params);
+        layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
     }
 
+    private void btnChangeVideoStatus() {
+        layoutIndexBinding.indexVideo.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.d(TAG, "onKey: "+keyCode+"|"+event.getAction());
+                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+                    if(event.getAction()==KeyEvent.ACTION_DOWN){
+                        if(VIDEO_STATUS){
+                            FULL_SCREEN_SIDEBAR = true;
+                            Toast.makeText(IndexActivity.this,"栏目出现",Toast.LENGTH_SHORT).show();
+                        }else
+                            setVideoMode();
+                    }
+                }else if(keyCode == KeyEvent.KEYCODE_BACK){
+                    if(event.getAction()==KeyEvent.ACTION_DOWN){
+                        if(FULL_SCREEN_SIDEBAR){
+                            Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+                            FULL_SCREEN_SIDEBAR = false;
+                            return true;
+                        }
+                        if(VIDEO_STATUS){
+                            Toast.makeText(IndexActivity.this,"关闭全屏",Toast.LENGTH_SHORT).show();
+                            //TODO 关闭侧边栏
+                            //TODO 关闭全屏
+                            setVideoMode();
+                            return true;
+                        }
+                    }
+
+                }
+                return false;
+            }
+        });
+
+    }
     // 将 dp 单位转换为像素
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;

@@ -5,6 +5,9 @@
     <!-- 外部存储读写权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_APP_OPS_MODES"></uses-permission>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- 联网权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- 访问网络状态 -->
@@ -16,6 +19,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!--8.0安装需要的权限-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
 
 
     <application
@@ -43,16 +48,19 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
         <receiver
             android:name=".receiver.TvBootReceiver"
             android:enabled="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
             android:exported="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED"></action>
                 <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </receiver>
     </application>
