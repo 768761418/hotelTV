@@ -76,4 +76,5 @@ dependencies {
     implementation ("com.github.JessYanCoding:AndroidAutoSize:v1.2.1")
     implementation ("com.github.maning0303:MNUpdateAPK:V2.0.5")
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.1")
+    implementation ("androidx.leanback:leanback:1.0.0")
 }
