@@ -1,6 +1,7 @@
 package com.qb.hotelTV.Activity;
 import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
@@ -90,7 +91,17 @@ public class IndexActivity extends BaseActivity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-//        int keyCode = event.getKeyCode();
+        int keyCode = event.getKeyCode();
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(FULL_SCREEN_SIDEBAR){
+//                Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+                setChannelLayoutParams(false);
+                FULL_SCREEN_SIDEBAR = false;
+                layoutIndexBinding.indexVideo.requestFocus();
+                return true;
+            }
+        }
+//
 //        View focusView = getCurrentFocus();
 //        //TODO 这里每一个时间都会触发两次，先处理下
 //        Log.d(TAG, "Key code: " + keyCode);
@@ -129,18 +140,6 @@ public class IndexActivity extends BaseActivity {
         return super.dispatchKeyEvent(event);
     }
 
-
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        Log.d(TAG, "an1" +keyCode);
-//        Toast.makeText(IndexActivity.this, "okokokok1", Toast.LENGTH_SHORT).show();
-//        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER||keyCode == KeyEvent.KEYCODE_SPACE){
-//            currentKeyCodeIsEnter = true;
-//            Toast.makeText(IndexActivity.this, "okokokok", Toast.LENGTH_SHORT).show();
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
 
 
     @Override
@@ -242,6 +241,8 @@ public class IndexActivity extends BaseActivity {
                         if(VIDEO_STATUS){
                             FULL_SCREEN_SIDEBAR = true;
                             Toast.makeText(IndexActivity.this,"栏目出现",Toast.LENGTH_SHORT).show();
+                            setChannelLayoutParams(true);
+                            layoutIndexBinding.indexVideoChannel.requestFocus();
                         }else
                             setVideoMode();
                     }
@@ -249,6 +250,7 @@ public class IndexActivity extends BaseActivity {
                     if(event.getAction()==KeyEvent.ACTION_DOWN){
                         if(FULL_SCREEN_SIDEBAR){
                             Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+                            setChannelLayoutParams(false);
                             FULL_SCREEN_SIDEBAR = false;
                             return true;
                         }
@@ -266,12 +268,76 @@ public class IndexActivity extends BaseActivity {
             }
         });
 
+        layoutIndexBinding.indexVideoChannel.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                    if(FULL_SCREEN_SIDEBAR){
+                        Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+                        setChannelLayoutParams(false);
+                        FULL_SCREEN_SIDEBAR = false;
+                        layoutIndexBinding.indexVideo.requestFocus();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        layoutIndexBinding.indexVideoChannel.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                    if(FULL_SCREEN_SIDEBAR){
+                        Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+                        setChannelLayoutParams(false);
+                        FULL_SCREEN_SIDEBAR = false;
+                        layoutIndexBinding.indexVideo.requestFocus();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
     }
     // 将 dp 单位转换为像素
     private int dpToPx(int dp) {
         float density = getResources().getDisplayMetrics().density;
         return (int) (dp * density + 0.5f);
     }
+
+
+    private void setChannelLayoutParams(boolean isFirstScenario) {
+        ViewGroup.LayoutParams params = layoutIndexBinding.indexVideoChannelLayout.getLayoutParams();
+        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) layoutIndexBinding.indexVideoChannelLayout.getLayoutParams();
+        if (isFirstScenario) {
+            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
+            params.width = dpToPx(300);
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            // 设置左边对齐父布局
+            layoutParams.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
+            // 清除其他约束
+            layoutParams.leftToRight = ConstraintLayout.LayoutParams.UNSET;
+            layoutParams.topToBottom = ConstraintLayout.LayoutParams.UNSET;
+            layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
+        } else {
+            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
+            params.width =dpToPx(100);
+            params.height=dpToPx(270);
+            // 设置其他约束
+            layoutParams.leftToRight = R.id.index_video;
+            layoutParams.topToBottom = R.id.index_top;
+            layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
+            // 清除其他约束
+            layoutParams.leftToLeft = ConstraintLayout.LayoutParams.UNSET;
+        }
+
+        layoutIndexBinding.indexVideoChannelLayout.setLayoutParams(layoutParams);
+        layoutIndexBinding.indexVideoChannelLayout.setLayoutParams(params);
+
+    }
+
 
     private void initUI(){
 //        获取时间

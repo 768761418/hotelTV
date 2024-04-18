@@ -11,6 +11,7 @@
         android:layout_height="25dp"
         android:background="@drawable/tv_item"
         tools:ignore="MissingConstraints"
+
         >
 
         <TextView
