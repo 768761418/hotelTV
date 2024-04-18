@@ -414,20 +414,30 @@
                     android:layout_height="wrap_content"
                     android:hint="服务器地址"
                     android:layout_marginTop="10dp"
+                    android:focusable="true"
+                    android:nextFocusRight="@null"
+                    android:nextFocusLeft="@null"
+                    android:nextFocusUp="@null"
                     android:layout_weight="1"/>
                 <EditText
                     android:id="@+id/input_room_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="房间号"
+                    android:focusable="true"
                     android:layout_marginTop="10dp"
+                    android:nextFocusRight="@null"
+                    android:nextFocusLeft="@null"
                     android:layout_weight="1"/>
                 <EditText
                     android:id="@+id/input_tenant"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="分组"
+                    android:focusable="true"
                     android:layout_marginTop="10dp"
+                    android:nextFocusRight="@null"
+                    android:nextFocusLeft="@null"
                     android:layout_weight="1"/>
                 <android.widget.Button
                     android:id="@+id/input_submit"
@@ -440,6 +450,10 @@
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/input_btn"
                     android:textColor="@color/tv_item_text"
+                    android:focusable="true"
+                    android:nextFocusRight="@null"
+                    android:nextFocusLeft="@null"
+                    android:nextFocusDown="@null"
                     android:padding="5dp"/>
 
             </LinearLayout>

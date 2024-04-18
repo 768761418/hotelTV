@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
-
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -13,7 +11,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -36,6 +33,7 @@ import com.maning.updatelibrary.InstallUtils;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
 import com.qb.hotelTV.Const;
+import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.ApkModel;
@@ -145,6 +143,8 @@ public class IndexActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
 //        请求权限
         PermissionUtils permissionUtils = new PermissionUtils();
@@ -167,6 +167,7 @@ public class IndexActivity extends BaseActivity {
         btnChangeVideoStatus();
 //        组件动画
         focusChange();
+
     }
 
 
@@ -822,6 +823,7 @@ public class IndexActivity extends BaseActivity {
     private void showInputDialog() {
         layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
         layoutIndexBinding.indexVideo.setEnabled(false);
+        layoutIndexBinding.inputServerAddress.requestFocus();
         layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
