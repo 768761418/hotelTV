@@ -1010,7 +1010,7 @@ public class IndexActivity extends BaseActivity {
 //            Log.d(TAG, "isShowingHeaders: " + pageAndListRowFragment.isShowingHeaders());
             if(pageAndListRowFragment.isShowingHeaders()){
                 if(timePeriodSecond > mHoldStillTime){
-//                Toast.makeText(MainActivity.this, "10s未操作", Toast.LENGTH_SHORT).show();
+                Toast.makeText(IndexActivity.this, "10s未操作", Toast.LENGTH_SHORT).show();
 //                模拟点击当前焦点的位置
                     pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_CENTER));
                     pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_CENTER));
@@ -1080,22 +1080,32 @@ public class IndexActivity extends BaseActivity {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_UP:
                     pageAndListRowFragment.toggleChannel(false);
+                    layoutIndexBinding.mainBrowseFragment.requestFocus();
                     Log.d(TAG, "onKeyDown: 上");
                     return true;
                 case KeyEvent.KEYCODE_DPAD_DOWN:
                     pageAndListRowFragment.toggleChannel(true);
+                    layoutIndexBinding.mainBrowseFragment.requestFocus();
                     Log.d(TAG, "onKeyDown: 下");
+                    return  true;
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    changeFocus();
+                    Log.d(TAG, "onKeyDown: you");
                     return true;
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+//                pageAndListRowFragment.toggleHeader();
+                    Log.d(TAG, "onKeyDown: 左");
+                    return true;
+//                    return true;
 //                case KeyEvent.KEYCODE_ENTER:
 //                    setVideoMode();
 //                    return true;
 
         }
+
+
 //
-////            case KeyEvent.KEYCODE_DPAD_LEFT:
-//////                pageAndListRowFragment.toggleHeader();
-////                Log.d(TAG, "onKeyDown: 左");
-////                break;
+
 
 ////            case KeyEvent.KEYCODE_DPAD_CENTER:
 //////                pageAndListRowFragment.toggleHeader();
@@ -1110,6 +1120,11 @@ public class IndexActivity extends BaseActivity {
         }
 //        return true;
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    private void changeFocus(){
+        layoutIndexBinding.apk1.requestFocus();
     }
 
     @SuppressLint("RestrictedApi")

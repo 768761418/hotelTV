@@ -312,6 +312,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         } else {
             setSelectedPosition((getSelectedPosition() - 1 + getAdapter().size()) % getAdapter().size());
         }
+        getView().requestFocus();
     }
 
 }
