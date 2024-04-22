@@ -24,7 +24,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_top"
-            android:layout_width="900dp"
+            android:layout_width="820dp"
             android:layout_height="100dp"
             android:layout_marginTop="20dp"
             app:layout_constraintHeight_percent="0.25"
@@ -134,8 +134,8 @@
             android:background="@drawable/apk_list_bg"
             app:layout_constraintRight_toRightOf="@+id/index_top"
             app:layout_constraintTop_toBottomOf="@id/index_top"
-            android:layout_marginLeft="40dp"
-            tools:ignore="MissingConstraints">
+            tools:ignore="MissingConstraints"
+            android:layout_marginTop="20dp">
             <LinearLayout
                 android:id="@+id/apk_layout"
                 android:weightSum="2"
@@ -220,7 +220,7 @@
 
         <LinearLayout
             android:id="@+id/index_title"
-            android:layout_width="match_parent"
+            android:layout_width="820dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
@@ -327,6 +327,21 @@
             android:nextFocusUp="@null"
             android:nextFocusDown="@null"
             app:layout_constraintLeft_toLeftOf="@id/index_top"
+            app:layout_constraintTop_toBottomOf="@id/index_top"
+            android:visibility="gone"/>
+        <ImageView
+            android:id="@+id/tv_image"
+            android:layout_width="0dp"
+            android:layout_height="287dp"
+            android:nextFocusRight="@id/apk1"
+            android:nextFocusUp="@null"
+            android:nextFocusDown="@null"
+            android:src="@drawable/tv_bg"
+            android:layout_marginTop="20dp"
+            android:adjustViewBounds="true"
+            android:layout_marginRight="20dp"
+            app:layout_constraintLeft_toLeftOf="@id/index_top"
+            app:layout_constraintRight_toLeftOf="@id/index_apk_list"
             app:layout_constraintTop_toBottomOf="@id/index_top"/>
 
 

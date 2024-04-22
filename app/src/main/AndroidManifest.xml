@@ -66,6 +66,9 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".huibuTv.MainActivity"
+            android:exported="false"/>
         <receiver
             android:name=".receiver.TvBootReceiver"
             android:enabled="true"

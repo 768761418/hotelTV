@@ -148,8 +148,10 @@ public class MainActivity extends FragmentActivity {
                 Log.d(TAG, "onKeyDown: 确定");
                 break;
             case KeyEvent.KEYCODE_BACK:
+                this.finish();
                 Log.d(TAG, "onKeyDown: 返回");
-                break;
+                return  true;
+
             case KeyEvent.KEYCODE_MENU:
                 Log.d(TAG, "onKeyDown: 菜单");
                 break;
