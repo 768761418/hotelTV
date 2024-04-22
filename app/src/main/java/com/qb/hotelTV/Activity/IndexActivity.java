@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -43,7 +46,10 @@ import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Setting.DownloadSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
+import com.qb.hotelTV.huibuTv.PageAndListRowFragment;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -86,20 +92,34 @@ public class IndexActivity extends BaseActivity {
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
     private boolean event_first = true;
+    /* 上一次User有动作的Time Stamp */
+    private Date lastUpdateTime;
+    /* 计算User有几秒没有动作的 */
+    private long timePeriod;
+    /* 静止超过N秒将自动进入屏保 */
+    private float mHoldStillTime = 10;
+    /*标识当前是否进入了屏保*/
+    private boolean isAuthorized = false;
+    /*时间间隔*/
+    private long intervalAuthorized = 100;
+    private long intervalKeypadSaver = 1000;
+    private Handler mHandler01 = new Handler();
+    private Handler mHandler02 = new Handler();
+    PageAndListRowFragment pageAndListRowFragment;
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(FULL_SCREEN_SIDEBAR){
-//                Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
-                setChannelLayoutParams(false);
-                FULL_SCREEN_SIDEBAR = false;
-                layoutIndexBinding.indexVideo.requestFocus();
-                return true;
-            }
-        }
-//
+//    @Override
+//    public boolean dispatchKeyEvent(KeyEvent event) {
+//        int keyCode = event.getKeyCode();
+//        if(keyCode == KeyEvent.KEYCODE_BACK){
+//            if(FULL_SCREEN_SIDEBAR){
+////                Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
+//                setChannelLayoutParams(false);
+//                FULL_SCREEN_SIDEBAR = false;
+//                layoutIndexBinding.indexVideo.requestFocus();
+//                return true;
+//            }
+//        }
+////
 //        View focusView = getCurrentFocus();
 //        //TODO 这里每一个时间都会触发两次，先处理下
 //        Log.d(TAG, "Key code: " + keyCode);
@@ -135,16 +155,26 @@ public class IndexActivity extends BaseActivity {
 //            }
 //        }
 
-        return super.dispatchKeyEvent(event);
-    }
+//        return super.dispatchKeyEvent(event);
+//    }
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
+                    .commitNow();
+        }
+        /* 初始取得User可触碰屏幕的时间 */
+        lastUpdateTime = new Date(System.currentTimeMillis());
+        mHandler02.postDelayed(mTask02, intervalAuthorized);
+        pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
+
+
+
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
 //        请求权限
         PermissionUtils permissionUtils = new PermissionUtils();
@@ -164,10 +194,13 @@ public class IndexActivity extends BaseActivity {
             initUI();
         }
 
-        btnChangeVideoStatus();
+
+
+//        btnChangeVideoStatus();
 //        组件动画
         focusChange();
-
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
     }
 
 
@@ -195,19 +228,19 @@ public class IndexActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    private void setVideoMode(){
-        ViewGroup.LayoutParams params = layoutIndexBinding.indexVideo.getLayoutParams();
-        ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
-        if (VIDEO_STATUS){
 
+    private void setVideoMode(){
+        ViewGroup.LayoutParams params = layoutIndexBinding.mainBrowseFragment.getLayoutParams();
+//        ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
+        if (VIDEO_STATUS){
                 layoutIndexBinding.indexApkList.setVisibility(View.VISIBLE);
-                layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
+//                layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
 //                    将焦点恢复
-                layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
-                params.width = dpToPx(480); // 将 dp 转换为像素
-                params.height = dpToPx(270); // 将 dp 转换为像素
-                errMessage.width = dpToPx(180);
-                layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+//                layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
+                params.width = dpToPx(510); // 将 dp 转换为像素
+                params.height = dpToPx(287); // 将 dp 转换为像素
+//                errMessage.width = dpToPx(180);
+//                layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
 //            }
             VIDEO_STATUS = false;
         }else {
@@ -218,18 +251,15 @@ public class IndexActivity extends BaseActivity {
 
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            errMessage.width = dpToPx(800);
-            layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
+//            errMessage.width = dpToPx(800);
+//            layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
 //                    params.width = 320;
 //                    params.height = 240;
             VIDEO_STATUS = true;
-
-
-
         }
         // 应用修改后的参数到 View 上
         layoutIndexBinding.indexVideo.setLayoutParams(params);
-        layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
+//        layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
     }
 
     private void btnChangeVideoStatus() {
@@ -589,7 +619,10 @@ public class IndexActivity extends BaseActivity {
 
 //    焦点切换动画
     private void focusChange(){
-        layoutIndexBinding.indexVideo.requestFocus();
+//        layoutIndexBinding.indexVideo.requestFocus();
+
+        layoutIndexBinding.mainBrowseFragment.requestFocus();
+        layoutIndexBinding.mainBrowseFragment.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.indexVideo.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk1.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk2.setOnFocusChangeListener(focusScaleListener);
@@ -600,6 +633,7 @@ public class IndexActivity extends BaseActivity {
 
 
 
+//    请求天气和温度
     private  void getGeoAndWeather(String locationString){
 //        请求地址
         if (GEO == 0){
@@ -823,7 +857,6 @@ public class IndexActivity extends BaseActivity {
     private void showInputDialog() {
         layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
         layoutIndexBinding.indexVideo.setEnabled(false);
-        layoutIndexBinding.inputServerAddress.requestFocus();
         layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -957,4 +990,157 @@ public class IndexActivity extends BaseActivity {
                 //开始下载
                 .startDownload();
     }
+
+
+    /**
+     * 计时线程
+     */
+    private Runnable mTask01 = new Runnable() {
+
+        @Override
+        public void run() {
+            Date timeNow = new Date(System.currentTimeMillis());
+            /* 计算User静止不动作的时间间距 */
+            /**当前的系统时间 - 上次触摸屏幕的时间 = 静止不动的时间**/
+            timePeriod = (long) timeNow.getTime() - (long) lastUpdateTime.getTime();
+            /*将静止时间毫秒换算成秒*/
+            float timePeriodSecond = ((float) timePeriod / 1000);
+
+//            Log.d(TAG, "timePeriodSecond: " + timePeriodSecond);
+//            Log.d(TAG, "isShowingHeaders: " + pageAndListRowFragment.isShowingHeaders());
+            if(pageAndListRowFragment.isShowingHeaders()){
+                if(timePeriodSecond > mHoldStillTime){
+//                Toast.makeText(MainActivity.this, "10s未操作", Toast.LENGTH_SHORT).show();
+//                模拟点击当前焦点的位置
+                    pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_CENTER));
+                    pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_CENTER));
+//                打印pageAndListRowFragment.isShowingHeaders();
+                    updateUserActionTime();
+                }
+            }else{
+                updateUserActionTime();
+            }
+
+            /*反复调用自己进行检查*/
+            mHandler01.postDelayed(mTask01, intervalKeypadSaver);
+        }
+    };
+    /**
+     * 持续屏保显示线程
+     */
+    private Runnable mTask02 = new Runnable() {
+
+        @Override
+        public void run() {
+//
+            if(isAuthorized){
+                //        开始计时
+                updateUserActionTime();
+                mHandler01.postDelayed(mTask01, intervalKeypadSaver);
+            }
+            else {
+//                获取pageAndListRowFragment实例
+                PageAndListRowFragment pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
+                if(pageAndListRowFragment != null){
+                    isAuthorized = pageAndListRowFragment.isAuthorized();
+                }
+                /*反复调用自己进行检查*/
+                mHandler02.postDelayed(mTask02, intervalAuthorized);
+            }
+        }
+    };
+
+
+    /*用户有操作的时候不断重置静止时间和上次操作的时间*/
+    public void updateUserActionTime() {
+        Date timeNow = new Date(System.currentTimeMillis());
+        lastUpdateTime.setTime(timeNow.getTime());
+    }
+
+
+////    获取activity返回的结果
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(resultCode == -1){
+////            Toast.makeText(this, "返回结果", Toast.LENGTH_SHORT).show();
+////            获取pageAndListRowFragment实例
+//            PageAndListRowFragment pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
+//            if(pageAndListRowFragment != null){
+//                pageAndListRowFragment.setSelectedPosition(MyApplication.getChannelIndex(), false);
+//                pageAndListRowFragment.showHeader();
+//            }
+//        }
+//    }
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (layoutIndexBinding.mainBrowseFragment.hasFocus()){
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                    pageAndListRowFragment.toggleChannel(false);
+                    Log.d(TAG, "onKeyDown: 上");
+                    return true;
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                    pageAndListRowFragment.toggleChannel(true);
+                    Log.d(TAG, "onKeyDown: 下");
+                    return true;
+                case KeyEvent.KEYCODE_ENTER:
+                    setVideoMode();
+                    return true;
+
+        }
+
+//            case KeyEvent.KEYCODE_DPAD_LEFT:
+////                pageAndListRowFragment.toggleHeader();
+//                Log.d(TAG, "onKeyDown: 左");
+//                break;
+//            case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                Log.d(TAG, "onKeyDown: 右");
+//                break;
+//            case KeyEvent.KEYCODE_DPAD_CENTER:
+////                pageAndListRowFragment.toggleHeader();
+//                Log.d(TAG, "onKeyDown: 确定");
+//                break;
+//            case KeyEvent.KEYCODE_BACK:
+//                Log.d(TAG, "onKeyDown: 返回");
+//                break;
+//            case KeyEvent.KEYCODE_MENU:
+//                Log.d(TAG, "onKeyDown: 菜单");
+//                break;
+        }
+//        return true;
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        updateUserActionTime();
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    protected void onResume() {
+        updateUserActionTime();
+        if(isAuthorized){
+            /*activity显示的时候启动线程*/
+            mHandler01.postAtTime(mTask01, intervalKeypadSaver);
+        }else
+            mHandler02.postAtTime(mTask02, intervalAuthorized);
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        /*activity不可见的时候取消线程*/
+        mHandler01.removeCallbacks(mTask01);
+        mHandler02.removeCallbacks(mTask02);
+        super.onPause();
+    }
+
+
 }
+
+

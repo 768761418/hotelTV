@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingLeanbackLauncher">
 
     <!-- 外部存储读写权限 -->
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_APP_OPS_MODES"></uses-permission>
+    <uses-permission android:name="android.permission.MANAGE_APP_OPS_MODES"
+        tools:ignore="ProtectedPermissions"></uses-permission>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"></uses-permission>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- 联网权限 -->
@@ -20,7 +29,8 @@
     <!--8.0安装需要的权限-->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions"></uses-permission>
 
 
     <application
@@ -41,6 +51,10 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="540"/>
+        <activity
+            android:name=".huibuTv.TVActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Leanback"/>
         <activity
             android:name=".Activity.IndexActivity"
             android:exported="true"

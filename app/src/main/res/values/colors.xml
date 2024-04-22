@@ -16,4 +16,6 @@
 
     <color name="input_button">#C9B287</color>
 
+    <color name="fastlane_background">#8888ED</color>
+
 </resources>

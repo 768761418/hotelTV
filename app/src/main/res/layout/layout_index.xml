@@ -25,7 +25,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_top"
             android:layout_width="900dp"
-            android:layout_height="0dp"
+            android:layout_height="100dp"
             android:layout_marginTop="20dp"
             app:layout_constraintHeight_percent="0.25"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -45,11 +45,11 @@
                 <ImageView
                     android:id="@+id/index_logo"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="65dp"
                     android:adjustViewBounds="true"
                     android:src="@drawable/img"
                     android:padding="10dp"
-                    android:layout_weight="5"/>
+                    />
 
                 <TextView
                     android:id="@+id/index_name"
@@ -57,9 +57,8 @@
                     android:layout_height="wrap_content"
                     android:text="test"
                     android:textColor="@color/white"
-                    android:textSize="15sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
-                    android:layout_weight="1"
                     />
             </LinearLayout>
 
@@ -130,13 +129,11 @@
         <!--                apk列表-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_apk_list"
-            android:layout_width="280dp"
-            android:layout_height="270dp"
+            android:layout_width="287dp"
+            android:layout_height="287dp"
             android:background="@drawable/apk_list_bg"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="@+id/index_top"
             app:layout_constraintTop_toBottomOf="@id/index_top"
-            app:layout_constraintWidth_percent="0.4"
             android:layout_marginLeft="40dp"
             tools:ignore="MissingConstraints">
             <LinearLayout
@@ -222,7 +219,7 @@
 
         <LinearLayout
             android:id="@+id/index_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal"
@@ -231,69 +228,104 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginBottom="10dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="房间号码:"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/index_room_name"
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="房间号码:"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/index_room_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="default"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:layout_marginRight="7dp"/>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="default"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:layout_marginRight="7dp"/>
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WiFi名称:"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/index_wifi_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="7dp"
+                    android:text="default"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="WiFi密码:"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/index_wifi_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="7dp"
+                    android:text="default"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="WiFi名称:"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/index_wifi_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="7dp"
-                android:text="default"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="前台号码:"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/index_desk_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="default"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="WiFi密码:"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/index_wifi_password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="7dp"
-                android:text="default"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+            </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="前台号码:"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/index_desk_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="default"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
         </LinearLayout>
+
+
+        <FrameLayout
+            android:layout_width="510dp"
+            android:layout_height="287dp"
+            android:id="@+id/main_browse_fragment"
+            tools:ignore="MissingConstraints"
+            android:nextFocusRight="@id/apk1"
+            app:layout_constraintLeft_toLeftOf="@id/index_top"
+            app:layout_constraintTop_toBottomOf="@id/index_top"/>
+
 
 
         <VideoView
@@ -310,7 +342,8 @@
             android:nextFocusLeft="@null"
             android:nextFocusUp="@null"
             android:nextFocusRight="@id/index_video_channel"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/index_video_err"
@@ -347,6 +380,7 @@
             app:layout_constraintLeft_toRightOf="@id/index_video"
             app:layout_constraintTop_toBottomOf="@id/index_top"
             android:background="@drawable/tv_list_bg"
+            android:visibility="gone"
             >
             <TextView
                 android:id="@+id/index_video_channel_title"

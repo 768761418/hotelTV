@@ -77,4 +77,19 @@ dependencies {
     implementation ("com.github.maning0303:MNUpdateAPK:V2.0.5")
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.1")
     implementation ("androidx.leanback:leanback:1.0.0")
+
+    implementation ("androidx.leanback:leanback:1.0.0")
+    implementation ("com.google.android.exoplayer:exoplayer:2.17.1")
+    implementation ("androidx.appcompat:appcompat:1.3.0")
+    implementation ("com.google.android.material:material:1.4.0")
+    implementation ("androidx.constraintlayout:constraintlayout:2.0.4")
+//    okhttp
+    implementation ("com.alibaba:fastjson:1.2.58")
+    implementation ("com.orhanobut:logger:2.2.0")
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+
+    implementation(fileTree("libs"))
+//    implementation(name:'webrtc', ext:'aar')
+    //或androidx支持库的multidex库
+    implementation ("androidx.multidex:multidex:2.0.1")
 }
