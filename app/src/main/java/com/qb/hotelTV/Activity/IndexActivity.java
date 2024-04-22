@@ -1086,29 +1086,27 @@ public class IndexActivity extends BaseActivity {
                     pageAndListRowFragment.toggleChannel(true);
                     Log.d(TAG, "onKeyDown: 下");
                     return true;
-                case KeyEvent.KEYCODE_ENTER:
-                    setVideoMode();
-                    return true;
+//                case KeyEvent.KEYCODE_ENTER:
+//                    setVideoMode();
+//                    return true;
 
         }
+//
+////            case KeyEvent.KEYCODE_DPAD_LEFT:
+//////                pageAndListRowFragment.toggleHeader();
+////                Log.d(TAG, "onKeyDown: 左");
+////                break;
 
-//            case KeyEvent.KEYCODE_DPAD_LEFT:
-////                pageAndListRowFragment.toggleHeader();
-//                Log.d(TAG, "onKeyDown: 左");
-//                break;
-//            case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                Log.d(TAG, "onKeyDown: 右");
-//                break;
-//            case KeyEvent.KEYCODE_DPAD_CENTER:
-////                pageAndListRowFragment.toggleHeader();
-//                Log.d(TAG, "onKeyDown: 确定");
-//                break;
-//            case KeyEvent.KEYCODE_BACK:
-//                Log.d(TAG, "onKeyDown: 返回");
-//                break;
-//            case KeyEvent.KEYCODE_MENU:
-//                Log.d(TAG, "onKeyDown: 菜单");
-//                break;
+////            case KeyEvent.KEYCODE_DPAD_CENTER:
+//////                pageAndListRowFragment.toggleHeader();
+////                Log.d(TAG, "onKeyDown: 确定");
+////                break;
+////            case KeyEvent.KEYCODE_BACK:
+////                Log.d(TAG, "onKeyDown: 返回");
+////                break;
+////            case KeyEvent.KEYCODE_MENU:
+////                Log.d(TAG, "onKeyDown: 菜单");
+////                break;
         }
 //        return true;
         return super.onKeyDown(keyCode, event);

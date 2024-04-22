@@ -7,12 +7,9 @@ public class VideoModel {
     private String description;
     private long createTime;
 
-    public VideoModel(Integer id, String streamUrl, String streamName, String description, long createTime) {
-        this.id = id;
-        this.streamUrl = streamUrl;
+    public VideoModel( String streamUrl, String streamName) {
         this.streamName = streamName;
-        this.description = description;
-        this.createTime = createTime;
+        this.streamUrl = streamUrl;
     }
 
     public Integer getId() {

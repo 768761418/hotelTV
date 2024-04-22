@@ -14,6 +14,7 @@ import com.cdnbye.sdk.P2pEngine;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
+import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 
 
@@ -22,12 +23,12 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
     private static final String TAG = "ExoPlayerFragment";
     private static final String KEY_CONTENT = "ExoPlayerFragment:Content";
 //    private Channel mContent = new Channel("CCTV-1", "http://183.63.15.42:9901/tsfile/live/0001_1.m3u8");
-    private Channel mContent = new Channel("CCTV-1", "http://play-flive.ifeng.com/live/06OLEEWQKN4.m3u8");
-
+//    private Channel mContent = new Channel("CCTV-1", "http://play-flive.ifeng.com/live/06OLEEWQKN4.m3u8");
+    private VideoModel mContent = new VideoModel("CCTV-1", "");
     private BrowseSupportFragment.MainFragmentAdapter mMainFragmentAdapter = new BrowseSupportFragment.MainFragmentAdapter(this);
     private ExoPlayer mExoPlayer;
     private int channelIndex = 0;
-    public static ExoPlayerFragment newInstance(Channel content,int channelIndex) {
+    public static ExoPlayerFragment newInstance(VideoModel content, int channelIndex) {
         ExoPlayerFragment fragment = new ExoPlayerFragment();
         fragment.mContent = content;
         fragment.channelIndex = channelIndex;
@@ -57,7 +58,7 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
         super.onViewCreated(view, savedInstanceState);
         TextView textView = view.findViewById(R.id.textView);
 //            设置为频道名称
-        textView.setText(mContent.getName());
+        textView.setText(mContent.getStreamName());
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,9 +84,9 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
         });
         StyledPlayerView playerView = view.findViewById(R.id.player_view);
         playerView.setPlayer(mExoPlayer);
-        Log.d(TAG, "onViewCreated: " + mContent.getUrl() + "///" + mContent.getName());
+        Log.d(TAG, "onViewCreated: " + mContent.getStreamUrl() + "///" + mContent.getStreamName());
 
-        playVideo(mContent.getUrl());
+        playVideo(mContent.getStreamUrl());
 
         getMainFragmentAdapter().getFragmentHost().notifyViewCreated(mMainFragmentAdapter);
 //        log

@@ -152,7 +152,8 @@
                         android:gravity="center"
                         android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:nextFocusUp="@null">
                         <include layout="@layout/item_apk" ></include>
                     </LinearLayout>
                     <LinearLayout
@@ -160,7 +161,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:gravity="center"
-
+                        android:nextFocusUp="@null"
                         android:layout_height="match_parent">
                         <include layout="@layout/item_apk"></include>
 

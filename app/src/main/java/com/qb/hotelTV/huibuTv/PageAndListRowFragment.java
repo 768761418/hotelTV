@@ -65,6 +65,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     private static final String PREFS_NAME = "HotelTV";
     SharedPreferences sharedPreferences;
     FocusScaleListener focusScaleListener = new FocusScaleListener();
+    static Context mContext;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         mBackgroundManager.attach(getActivity().getWindow());
         getMainFragmentRegistry().registerFragment(PageRow.class,
                 new PageRowFragmentFactory(mBackgroundManager));
+        mContext = getContext();
 //        getView().requestFocus();
 //        getView().setOnFocusChangeListener(focusScaleListener);
     }
@@ -186,8 +188,6 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 //                    ArrayList<Channel> channelsList = MyApplication.getChannelsList();
                     Context context = getContext();
                     ArrayList<VideoModel> channelsList = MyApplication.getVideoList(context);
-                    Log.d(TAG, "wwww1: " + channelsList.toString());
-                    Log.d("TAG", "createRows: "+channelsList.size());
                     for (int i = 0; i < channelsList.size(); i++) {
 //                        Channel channel = channelsList.get(i);
                         VideoModel channel = channelsList.get(i);
@@ -263,7 +263,9 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
             mBackgroundManager.setDrawable(null);
             if (row.getHeaderItem().getId() < MyApplication.getChannelsList().size()) {
 //                根据ID获取对象
-                Channel channel = MyApplication.getChannelsList().get((int) row.getHeaderItem().getId());
+//                Channel channel = MyApplication.getChannelsList().get((int) row.getHeaderItem().getId());
+                VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
+                Log.d(TAG, "createFragment: " + channel);
 //                return new WebViewFragment();
                 ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
                 return (androidx.fragment.app.Fragment) exoPlayerFragment;
