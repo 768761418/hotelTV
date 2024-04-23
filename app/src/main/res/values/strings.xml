@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">hotelTV</string>
+    <string name="app_name">HUIBUTV</string>
     <string name="hostAddress">113.106.109.130:23000</string>
     <!--    <string name="hostAddress">192.168.0.108</string>-->
     <string name="p2pToken">z2JgrCGVR</string>
+    <string name="default_server">tv.huibu8.net</string>
 </resources>

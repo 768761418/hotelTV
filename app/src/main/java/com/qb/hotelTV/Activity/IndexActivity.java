@@ -92,91 +92,16 @@ public class IndexActivity extends BaseActivity {
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "HotelTV";
-    private boolean event_first = true;
-    /* 上一次User有动作的Time Stamp */
-    private Date lastUpdateTime;
-    /* 计算User有几秒没有动作的 */
-    private long timePeriod;
-    /* 静止超过N秒将自动进入屏保 */
-    private float mHoldStillTime = 10;
-    /*标识当前是否进入了屏保*/
-    private boolean isAuthorized = false;
-    /*时间间隔*/
-    private long intervalAuthorized = 100;
-    private long intervalKeypadSaver = 1000;
-    private Handler mHandler01 = new Handler();
-    private Handler mHandler02 = new Handler();
-    PageAndListRowFragment pageAndListRowFragment;
-
-//    @Override
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        int keyCode = event.getKeyCode();
-//        if(keyCode == KeyEvent.KEYCODE_BACK){
-//            if(FULL_SCREEN_SIDEBAR){
-////                Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
-//                setChannelLayoutParams(false);
-//                FULL_SCREEN_SIDEBAR = false;
-//                layoutIndexBinding.indexVideo.requestFocus();
-//                return true;
-//            }
-//        }
-////
-//        View focusView = getCurrentFocus();
-//        //TODO 这里每一个时间都会触发两次，先处理下
-//        Log.d(TAG, "Key code: " + keyCode);
-//        Log.d(TAG, "dispatchKeyEvent: " + currentKeyCodeIsEnter);
-//        if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE) {
-//            if(focusView.getId() == R.id.index_video && event_first){
-//                event_first = !event_first;
-//                Log.d(TAG, "dispatchKeyEvent: index_video");
-//                if(VIDEO_STATUS){
-//                    Toast.makeText(this,"栏目出现",Toast.LENGTH_SHORT).show();
-//                }else{
-//                    setVideoMode();
-//                }
-//
-//                return false;
-//            }
-////            Log.d(TAG, "dispatchKeyEvent1: " + currentKeyCodeIsEnter);
-////            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-////                if (!currentKeyCodeIsEnter){
-////                    Log.d(TAG, "dispatchKeyEvent2: " + currentKeyCodeIsEnter);
-////                    currentKeyCodeIsEnter = true;
-//////                    btnChangeVideoStatus();
-////                }
-////            }
-////
-////            return true;
-//        }else if(keyCode == KeyEvent.KEYCODE_BACK){
-//            if(VIDEO_STATUS&& focusView.getId()==R.id.index_video){
-//                Toast.makeText(this,"关闭侧边栏，关闭全屏",Toast.LENGTH_SHORT).show();
-//                //TODO 关闭侧边栏
-//                //TODO 关闭全屏
-//                setVideoMode();
-//            }
-//        }
-
-//        return super.dispatchKeyEvent(event);
-//    }
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
-//                    .commitNow();
-//        }
-//        /* 初始取得User可触碰屏幕的时间 */
-//        lastUpdateTime = new Date(System.currentTimeMillis());
-//        mHandler02.postDelayed(mTask02, intervalAuthorized);
-//        pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
-
-
 
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
+//        闪退日志
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
 //        请求权限
         PermissionUtils permissionUtils = new PermissionUtils();
         permissionUtils.checkPermission(this);
@@ -194,14 +119,8 @@ public class IndexActivity extends BaseActivity {
             // ...
             initUI();
         }
-
-
-
-//        btnChangeVideoStatus();
 //        组件动画
         focusChange();
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
         openTv();
     }
 
@@ -385,6 +304,7 @@ public class IndexActivity extends BaseActivity {
     private void initUI(){
 //        获取时间
         startUpdateTask();
+        startUpdateTvTextTask();
         initAdapter();
 //        获取经纬度
         getLocation();
@@ -458,24 +378,6 @@ public class IndexActivity extends BaseActivity {
                 return true; // 返回 true 表示已经处理了错误
             }
         });
-
-        // 设置视频加载监听器
-        layoutIndexBinding.indexVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                // 视频已准备好，移除加载等待
-                hideVideoLoading();
-            }
-        });
-
-        layoutIndexBinding.indexVideo.setOnInfoListener(new MediaPlayer.OnInfoListener() {
-            @Override
-            public boolean onInfo(MediaPlayer mediaPlayer, int i, int i1) {
-                // 视频已准备好，移除加载等待
-                hideVideoLoading();
-                return true;
-            }
-        });
     }
 
 
@@ -503,7 +405,41 @@ public class IndexActivity extends BaseActivity {
         handler.post(updateTask);
     }
 
+    private void startUpdateTvTextTask(){
+        Runnable startUpdateTvTextTask = new Runnable() {
+            @Override
+            public void run() {
+                BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
+                    @Override
+                    public void onTvTextResponse(String tvText, String tvTextColor) {
+                        updateTvText(tvText);
+                    }
 
+                    @Override
+                    public void onTvTextFailure(int code, String msg) {
+                        updateTvText("");
+                    }
+                });
+
+                // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
+                handler.postDelayed(this, 10*1000);
+            }
+        };
+        handler.post(startUpdateTvTextTask);
+    }
+
+    private void updateTvText(final String tvText){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tvText == null || tvText.equals("")){
+                    Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
+                }else {
+                    layoutIndexBinding.indexTvText.setText(tvText);
+                }
+            }
+        });
+    }
 
 
 
@@ -869,7 +805,7 @@ public class IndexActivity extends BaseActivity {
 //    输入框
     private void showInputDialog() {
         layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
-        layoutIndexBinding.indexVideo.setEnabled(false);
+        layoutIndexBinding.tvImage.setEnabled(false);
         layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -888,7 +824,8 @@ public class IndexActivity extends BaseActivity {
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
                 initUI();
                 layoutIndexBinding.indexInput.setVisibility(View.GONE);
-                layoutIndexBinding.indexVideo.setEnabled(true);
+                layoutIndexBinding.tvImage.setEnabled(true);
+
             }
         });
 
