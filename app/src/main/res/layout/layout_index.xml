@@ -439,7 +439,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/transparent_color"
-
+            android:visibility="gone"
             >
             <LinearLayout
                 android:layout_width="480dp"
@@ -514,7 +514,6 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/input_btn"
-                    android:textColor="@color/tv_item_text"
                     android:focusable="true"
                     android:nextFocusRight="@null"
                     android:nextFocusLeft="@null"
