@@ -18,4 +18,8 @@
 
     <color name="fastlane_background">#8888ED</color>
 
+
+    <color name="setting_text">#636363</color>
+    <color name="setting_hint">#8A8A8A</color>
+
 </resources>
