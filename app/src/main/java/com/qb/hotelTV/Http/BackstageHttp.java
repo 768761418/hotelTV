@@ -248,10 +248,14 @@ public class BackstageHttp {
                         TvTextModel model = tvTextModelsArrayList.get(i);
                             String title = model.getTitle();
                             String content = model.getContent();
+                            int status = model.getStatus();
                             if (i == 0) {
                                 firstTextColor = model.getTextColor(); // 获取第一个数据的textColor
                             }
-                            stringBuilder.append(title).append(": ").append(content).append("\n");
+                            if (status == 0){
+                                stringBuilder.append(title).append(": ").append(content).append("\n");
+                            }
+
                     }
                     String tvTextStr = stringBuilder.toString();
 

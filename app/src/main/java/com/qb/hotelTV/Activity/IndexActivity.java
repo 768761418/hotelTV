@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -357,9 +358,12 @@ public class IndexActivity extends BaseActivity {
 //                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
                             layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
                             if (strTvText == null || strTvText.equals("")){
-                                Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
+                                layoutIndexBinding.indexTvText.setVisibility(View.GONE);
                             }else {
+                                layoutIndexBinding.indexTvText.setVisibility(View.VISIBLE);
                                 layoutIndexBinding.indexTvText.setText(strTvText);
+                                int color = Color.parseColor(strTvTextColor);
+                                layoutIndexBinding.indexTvText.setTextColor(color);
                             }
                         }
                     });
@@ -433,9 +437,12 @@ public class IndexActivity extends BaseActivity {
             @Override
             public void run() {
                 if (tvText == null || tvText.equals("")){
-                    Toast.makeText(IndexActivity.this, Const.MSG_NETWORK_ERR, Toast.LENGTH_SHORT).show();
+                    layoutIndexBinding.indexTvText.setVisibility(View.GONE);
                 }else {
+                    layoutIndexBinding.indexTvText.setVisibility(View.VISIBLE);
                     layoutIndexBinding.indexTvText.setText(tvText);
+                    int color = Color.parseColor(strTvTextColor);
+                    layoutIndexBinding.indexTvText.setTextColor(color);
                 }
             }
         });

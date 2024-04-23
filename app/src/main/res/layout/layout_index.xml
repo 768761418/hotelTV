@@ -69,13 +69,11 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:text="请输入正确的服务器或检查您的网络状态"
-                android:textColor="@color/white"
                 android:textSize="20sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-
                 app:space="20dp"
                 app:speed="0.5"
                 tools:ignore="MissingConstraints" />
