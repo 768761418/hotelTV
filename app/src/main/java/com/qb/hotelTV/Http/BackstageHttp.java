@@ -66,7 +66,7 @@ public class BackstageHttp {
 
     public void getRoomMessage(String serverAddress,String roomNumber,String tenant,RoomMessageCallback callback){
 //       设置路径
-            String url = "http://"+ serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
+            String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
 //        添加参数
             HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
             queryUrlBuilder.addQueryParameter("number", roomNumber);
@@ -115,7 +115,7 @@ public class BackstageHttp {
 
     public void getApk(String serverAddress,String tenant,ApkCallback callback){
 //       设置路径
-        String url = "http://"+ serverAddress + ApiSetting.URL_GET_APK;
+        String url = serverAddress + ApiSetting.URL_GET_APK;
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -158,7 +158,7 @@ public class BackstageHttp {
 
     public void getHotelMessage(String serverAddress,String tenant,HotelMessageCallback callback){
 //       设置路径
-        String url = "http://"+ serverAddress + ApiSetting.URL_GET_HOTEL_MESSAGE;
+        String url =serverAddress + ApiSetting.URL_GET_HOTEL_MESSAGE;
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
 
@@ -207,7 +207,7 @@ public class BackstageHttp {
 
     public void getTvText(String serverAddress,String tenant,TvTextCallback callback){
 //       设置路径
-        String url = "http://"+ serverAddress + ApiSetting.URL_GET_TV_TEXT;
+        String url =serverAddress + ApiSetting.URL_GET_TV_TEXT;
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -267,7 +267,8 @@ public class BackstageHttp {
 
     public void getTvChannel(String serverAddress,String tenant,TvChannelCallback callback){
 //       设置路径
-        String url = "http://"+ serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
+        String url =serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
+        Log.d(TAG, "getTvChannel: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);

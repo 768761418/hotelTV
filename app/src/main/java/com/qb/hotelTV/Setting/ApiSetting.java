@@ -16,16 +16,17 @@ public class ApiSetting {
     public static String PAGE_NO = "1";
     public static String PAGE_SIZE = "100";
 
+    public static String PREFIX = "/prod-api";
 
 //    获取信息的接口
-    public static String URL_GET_ROOM_MESSAGE = "/admin-api/hotel/room/getNumber";
+    public static String URL_GET_ROOM_MESSAGE = PREFIX + "/admin-api/hotel/room/getNumber";
 //    获取apk和播放列表的接口  {"pageNo": 1,  "pageSize": 100}
-    public static String URL_GET_APK = "/admin-api/hotel/apk-config/page";
-    public static String URL_GET_VIDEO ="/admin-api/hotel/playback/page";
+    public static String URL_GET_APK = PREFIX + "/admin-api/hotel/apk-config/page";
+    public static String URL_GET_VIDEO = PREFIX + "/admin-api/hotel/playback/page";
 
-    public static String URL_GET_HOTEL_MESSAGE = "/admin-api/hotel/info/get";
+    public static String URL_GET_HOTEL_MESSAGE =PREFIX +  "/admin-api/hotel/info/get";
 
-    public static String URL_GET_TV_TEXT = "/admin-api/system/notice/page";
+    public static String URL_GET_TV_TEXT = PREFIX + "/admin-api/system/notice/page";
 
-    public static String URL_GET_TV_CHANNEL = "/admin-api/hotel/playback/page";
+    public static String URL_GET_TV_CHANNEL = PREFIX + "/admin-api/hotel/playback/page";
 }
