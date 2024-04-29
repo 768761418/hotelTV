@@ -12,9 +12,8 @@ android {
         applicationId = "com.qb.hotelTV"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.1.6"
-
+        versionCode = 3
+        versionName = "1.1.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

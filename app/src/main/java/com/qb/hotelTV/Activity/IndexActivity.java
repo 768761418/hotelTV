@@ -426,7 +426,7 @@ public class IndexActivity extends BaseActivity {
                 });
 
                 // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
-                handler.postDelayed(this, 10*1000);
+                handler.postDelayed(this, 60*1000);
             }
         };
         handler.post(startUpdateTvTextTask);

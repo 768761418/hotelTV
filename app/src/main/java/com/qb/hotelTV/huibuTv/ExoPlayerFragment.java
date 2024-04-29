@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.app.BrowseSupportFragment;
@@ -52,34 +54,17 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.exo_player_fragment, container, false);
     }
-
+    TextView full_screen;
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView textView = view.findViewById(R.id.textView);
+        full_screen = view.findViewById(R.id.full_screen);
 //            设置为频道名称
-        textView.setText(mContent.getStreamName());
-        textView.setOnClickListener(new View.OnClickListener() {
+        full_screen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                MainActivity mainActivity = (MainActivity) getActivity();
-//                mainActivity.closeHeader();
-//                    跳转到TVActivity,带着频道名称和地址
-//                Intent intent = new Intent(getActivity(), TVActivity.class);
-//                intent.putExtra("channelName", mContent.getName());
-//                intent.putExtra("channelUrl", mContent.getUrl());
-//                startActivityForResult(intent,0);
-//                PageAndListRowFragment pageAndListRowFragment = (PageAndListRowFragment) getActivity().getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
-//                if(MyApplication.getHeaderStatus()){
-//                    Log.d(TAG, "onClick: 关闭header");
-////                隐藏PageAndListRowFragment的header row
-//                    pageAndListRowFragment.hideHeader();
-//                }else  {
-//                    Log.d(TAG, "onClick: 打开header");
-////                显示PageAndListRowFragment的header row
-//                    pageAndListRowFragment.showHeader();
-//                }
-                getActivity().onBackPressed();
+                full_screen.setVisibility(View.GONE);
+                Toast.makeText(getActivity(),"点击全屏",Toast.LENGTH_SHORT).show();
             }
         });
         StyledPlayerView playerView = view.findViewById(R.id.player_view);

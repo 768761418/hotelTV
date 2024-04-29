@@ -14,8 +14,6 @@
 
 package com.qb.hotelTV.huibuTv;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,10 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseFragment;
@@ -38,13 +33,9 @@ import androidx.leanback.widget.ListRowPresenter;
 import androidx.leanback.widget.PageRow;
 import androidx.leanback.widget.Row;
 
-
-import com.google.android.exoplayer2.upstream.HttpUtil;
-import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
-import com.qb.hotelTV.huibuTv.utils.AutoUpdate;
 import com.qb.hotelTV.huibuTv.utils.GetMAC;
 
 import java.util.ArrayList;
@@ -261,7 +252,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         public androidx.fragment.app.Fragment createFragment(Object rowObj) {
             Row row = (Row) rowObj;
             mBackgroundManager.setDrawable(null);
-            if (row.getHeaderItem().getId() < MyApplication.getChannelsList().size()) {
+            if (row.getHeaderItem().getId() < MyApplication.getVideoList(mContext).size()) {
 //                根据ID获取对象
 //                Channel channel = MyApplication.getChannelsList().get((int) row.getHeaderItem().getId());
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
@@ -278,18 +269,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     public void onResume() {
         super.onResume();
     }
-//    跳转到播放activity
-    public void startPlaybackActivity() {
-//        获取当前选择的header对应channel
-//        Channel channel = MyApplication.getChannelsList().get(getSelectedPosition());
-        Context context = getContext();
-        VideoModel channel  = MyApplication.getVideoList(context).get(getSelectedPosition());
-//      跳转到TVActivity,带着频道名称和地址
-        Intent intent = new Intent(getActivity(), TVActivity.class);
-        intent.putExtra("channelName", channel.getStreamName());
-        intent.putExtra("channelUrl", channel.getStreamUrl());
-        startActivityForResult(intent,0);
-    }
+
 
     public boolean isAuthorized() {
         return authorized;

@@ -66,12 +66,14 @@
 
             <com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView
                 android:id="@+id/index_tv_text"
-                android:layout_width="350dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="请输入正确的服务器或检查您的网络状态"
                 android:textSize="20sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                app:layout_constraintLeft_toRightOf="@+id/header"
+                app:layout_constraintRight_toLeftOf="@+id/linearLayout"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:space="20dp"
