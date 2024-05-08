@@ -91,19 +91,24 @@ public class BackstageHttp {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         String responseData = response.body().string();
-                        BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
-                        Integer code = roomMessage.getCode();
-                        Log.d(TAG, "roomMessage：" + code);
-                        if (code != 0 || roomMessage.getData() == null) {
+                        try {
+                            BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
+                            Integer code = roomMessage.getCode();
+                            Log.d(TAG, "roomMessage：" + code);
+                            if (code != 0 || roomMessage.getData() == null) {
+                                callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
+                            }else{
+                                // 从 JsonObject 中提取所需的字段
+                                Integer id = roomMessage.getData().getId();
+                                String roomName = roomMessage.getData().getRoomName();
+                                String wifiPassword = roomMessage.getData().getWifiPassword();
+                                String frontDeskPhone = roomMessage.getData().getFrontDeskPhone();
+                                callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
+                            }
+                        }catch (Exception e){
                             callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
-                        }else{
-                            // 从 JsonObject 中提取所需的字段
-                            Integer id = roomMessage.getData().getId();
-                            String roomName = roomMessage.getData().getRoomName();
-                            String wifiPassword = roomMessage.getData().getWifiPassword();
-                            String frontDeskPhone = roomMessage.getData().getFrontDeskPhone();
-                            callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
                         }
+
 
 
 
@@ -141,15 +146,21 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    BaseResponseModel<BaseListModel<ApkModel>> apk = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<ApkModel>>>(){}.getType());
-                    Integer code = apk.getCode();
+                    try {
+                        BaseResponseModel<BaseListModel<ApkModel>> apk = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<ApkModel>>>(){}.getType());
+                        Integer code = apk.getCode();
 
-                    if (code != 0) {
-                        callback.onApkResponse(null);
-                        return;
+                        if (code != 0) {
+                            callback.onApkResponse(null);
+                            return;
+                        }
+                        ArrayList<ApkModel> apkModelArrayList = apk.getData().getList();
+                        callback.onApkResponse(apkModelArrayList);
+                    }catch (Exception e){
+                        ArrayList<ApkModel> apkModelArrayList = new ArrayList<>();
+                        callback.onApkResponse(apkModelArrayList);
                     }
-                    ArrayList<ApkModel> apkModelArrayList = apk.getData().getList();
-                    callback.onApkResponse(apkModelArrayList);
+
                 }
             }
         });
@@ -182,22 +193,24 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<HotelMessageModel>>(){}.getType());
-                    Integer code = hotelMessage.getCode();
+                    try {
+                        BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
+                        }.getType());
+                        Integer code = hotelMessage.getCode();
 
-                    if (code != 0) {
-                        callback.onHotelMessageResponse("","","");
-                        return;
+                        if (code != 0) {
+                            callback.onHotelMessageResponse("", "", "");
+                            return;
+                        }
+
+                        String hotelName = hotelMessage.getData().getName();
+                        String hotelLogo = hotelMessage.getData().getIconUrl();
+                        String hotelBackground = hotelMessage.getData().getHomepageBackground();
+                        callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground);
+                    }catch (Exception e){
+                        callback.onHotelMessageResponse("", "", "");
                     }
 
-                    String hotelName = hotelMessage.getData().getName();
-                    String hotelLogo = hotelMessage.getData().getIconUrl();
-                    String hotelBackground = hotelMessage.getData().getHomepageBackground();
-
-
-
-
-                    callback.onHotelMessageResponse(hotelName,hotelLogo,hotelBackground);
                 }
             }
         });
@@ -293,14 +306,20 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
-                    int code = tvChannel.getCode();
-                    if (code != 0) {
-                        callback.onTvChannelResponse(null);
-                        return;
+                    try {
+                        BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
+                        int code = tvChannel.getCode();
+                        if (code != 0) {
+                            callback.onTvChannelResponse(null);
+                            return;
+                        }
+                        ArrayList<VideoModel> videoModels = tvChannel.getData().getList();
+                        callback.onTvChannelResponse(videoModels );
+                    }catch (Exception e){
+                        ArrayList<VideoModel> videoModels = new ArrayList<>();
+                        callback.onTvChannelResponse(videoModels );
                     }
-                    ArrayList<VideoModel> videoModels = tvChannel.getData().getList();
-                    callback.onTvChannelResponse(videoModels );
+
                 }
             }
         });

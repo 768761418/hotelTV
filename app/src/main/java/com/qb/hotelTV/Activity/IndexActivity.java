@@ -561,7 +561,6 @@ public class IndexActivity extends BaseActivity {
             startActivity(launchIntent);
         } else {
             // 应用未安装或包名无效
-
             if(apkUrl.equals("")){
                 Toast.makeText(this, Const.MSG_APK_NOT_EXIST + ",请联系管理员添加apk文件", Toast.LENGTH_SHORT).show();
             }else {

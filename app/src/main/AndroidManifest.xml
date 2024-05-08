@@ -51,10 +51,10 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="540"/>
-        <activity
-            android:name=".huibuTv.TVActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Leanback"/>
+<!--        <activity-->
+<!--            android:name=".huibuTv.TVActivity"-->
+<!--            android:exported="false"-->
+<!--            android:theme="@style/Theme.Leanback"/>-->
         <activity
             android:name=".Activity.IndexActivity"
             android:exported="true"

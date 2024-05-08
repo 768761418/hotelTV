@@ -10,10 +10,10 @@ android {
 
     defaultConfig {
         applicationId = "com.qb.hotelTV"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 33
         versionCode = 3
-        versionName = "1.1.9"
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
