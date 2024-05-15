@@ -49,7 +49,7 @@ public class BackstageHttp {
     }
 
     public interface HotelMessageCallback{
-        void onHotelMessageResponse(String hotelName,String hotelLogo,String hotelBackground);
+        void onHotelMessageResponse(String hotelName,String hotelLogo,String hotelBackground,String resourceUrl,String detail, String videoUrl);
         void onHotelMessageFailure(int code,String msg);
     }
 
@@ -108,16 +108,10 @@ public class BackstageHttp {
                         }catch (Exception e){
                             callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
                         }
-
-
-
-
                     }
                 }
             });
     }
-
-
     public void getApk(String serverAddress,String tenant,ApkCallback callback){
 //       设置路径
         String url = serverAddress + ApiSetting.URL_GET_APK;
@@ -146,6 +140,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "apk1111: " + responseData);
                     try {
                         BaseResponseModel<BaseListModel<ApkModel>> apk = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<ApkModel>>>(){}.getType());
                         Integer code = apk.getCode();
@@ -165,8 +160,6 @@ public class BackstageHttp {
             }
         });
     }
-
-
     public void getHotelMessage(String serverAddress,String tenant,HotelMessageCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_HOTEL_MESSAGE;
@@ -193,31 +186,37 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "isis1: " + responseData);
+                    Log.d(TAG, "isis1: " + url);
+                    Log.d(TAG, "isis1: " + "tenant:" + tenant);
+                    Log.d(TAG, "isis1: " + "Authorization:" + ApiSetting.AUTHORIZATION);
                     try {
                         BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
                         }.getType());
                         Integer code = hotelMessage.getCode();
 
                         if (code != 0) {
-                            callback.onHotelMessageResponse("", "", "");
+                            callback.onHotelMessageResponse("", "", "","","","");
                             return;
                         }
 
                         String hotelName = hotelMessage.getData().getName();
                         String hotelLogo = hotelMessage.getData().getIconUrl();
                         String hotelBackground = hotelMessage.getData().getHomepageBackground();
-                        callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground);
+                        String resourceUrl = hotelMessage.getData().getResourceUrl();
+                        String detail = hotelMessage.getData().getDetail();
+                        String videoUrl = hotelMessage.getData().getVideoUrl();
+                        callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground,resourceUrl,detail,videoUrl);
                     }catch (Exception e){
-                        callback.onHotelMessageResponse("", "", "");
+                        Log.d(TAG, "isis: " + responseData);
+                        callback.onHotelMessageResponse("", "", "","","","");
+
                     }
 
                 }
             }
         });
     }
-
-
-
     public void getTvText(String serverAddress,String tenant,TvTextCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_TEXT;
@@ -277,7 +276,6 @@ public class BackstageHttp {
             }
         });
     }
-
     public void getTvChannel(String serverAddress,String tenant,TvChannelCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_CHANNEL;

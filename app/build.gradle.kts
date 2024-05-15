@@ -13,7 +13,7 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = 3
-        versionName = "1.2.0"
+        versionName = "1.2.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -91,4 +91,5 @@ dependencies {
 //    implementation(name:'webrtc', ext:'aar')
     //或androidx支持库的multidex库
     implementation ("androidx.multidex:multidex:2.0.1")
+
 }

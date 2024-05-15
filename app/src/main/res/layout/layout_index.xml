@@ -6,7 +6,6 @@
     <data></data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/index_main_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -22,6 +21,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/app_bg" />
 
+<!--        顶部栏-->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/index_top"
             android:layout_width="820dp"
@@ -122,94 +122,9 @@
             </LinearLayout>
 
 
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <!--                apk列表-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/index_apk_list"
-            android:layout_width="287dp"
-            android:layout_height="287dp"
-            android:background="@drawable/apk_list_bg"
-            app:layout_constraintRight_toRightOf="@+id/index_top"
-            app:layout_constraintTop_toBottomOf="@id/index_top"
-            tools:ignore="MissingConstraints"
-            android:layout_marginTop="20dp">
-            <LinearLayout
-                android:id="@+id/apk_layout"
-                android:weightSum="2"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="0dp">
-                    <LinearLayout
-                        android:id="@+id/apk1"
-                        android:gravity="center"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:nextFocusUp="@null">
-                        <include layout="@layout/item_apk" ></include>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/apk2"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:nextFocusUp="@null"
-                        android:layout_height="match_parent">
-                        <include layout="@layout/item_apk"></include>
-
-                    </LinearLayout>
-                </LinearLayout>
-                <LinearLayout
-                    android:weightSum="2"
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="0dp">
-                    <LinearLayout
-                        android:id="@+id/apk3"
-                        android:gravity="center"
-
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent">
-                        <include layout="@layout/item_apk"></include>
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:id="@+id/apk4"
-                        android:gravity="center"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent">
-                        <include layout="@layout/item_apk"></include>
-
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
-<!--            <androidx.recyclerview.widget.RecyclerView-->
-<!--                android:id="@+id/index_apk"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_height="0dp"-->
-<!--                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-<!--                app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                app:layout_constraintHeight_percent="0.95"-->
-<!--                app:layout_constraintLeft_toLeftOf="parent"-->
-<!--                app:layout_constraintRight_toRightOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:layout_constraintWidth_percent="0.8" />-->
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <!--                视频和频道列表-->
 
 
 
@@ -219,6 +134,9 @@
 
 
 
+
+
+<!--        底部信息栏-->
         <LinearLayout
             android:id="@+id/index_title"
             android:layout_width="820dp"
@@ -228,13 +146,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_image">
+            app:layout_constraintTop_toBottomOf="@id/index_main_layout">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="left">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -276,7 +194,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="right">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -297,7 +215,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center">
+                android:gravity="center"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -319,118 +238,184 @@
         </LinearLayout>
 
 
-        <FrameLayout
-            android:layout_width="510dp"
-            android:layout_height="287dp"
-            android:id="@+id/main_browse_fragment"
-            tools:ignore="MissingConstraints"
-            android:nextFocusRight="@id/apk1"
-            android:nextFocusUp="@null"
-            android:nextFocusDown="@null"
-            app:layout_constraintLeft_toLeftOf="@id/index_top"
-            app:layout_constraintTop_toBottomOf="@id/index_top"
-            android:visibility="gone"/>
-        <ImageView
-            android:id="@+id/tv_image"
-            android:layout_width="0dp"
-            android:layout_height="287dp"
-            android:nextFocusRight="@id/apk1"
-            android:nextFocusUp="@null"
-            android:nextFocusDown="@null"
-            android:src="@drawable/tv_bg"
-            android:layout_marginTop="20dp"
-            android:adjustViewBounds="true"
-            android:layout_marginRight="20dp"
-            app:layout_constraintLeft_toLeftOf="@id/index_top"
-            app:layout_constraintRight_toLeftOf="@id/index_apk_list"
-            app:layout_constraintTop_toBottomOf="@id/index_top"/>
 
-
-
-        <VideoView
-            android:id="@+id/index_video"
-            android:layout_width="480dp"
-            android:layout_height="270dp"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@id/index_top"
-            app:layout_constraintTop_toBottomOf="@id/index_top"
-            app:layout_constraintVertical_bias="0.504"
-            android:nextFocusDown="@null"
-            android:nextFocusLeft="@null"
-            android:nextFocusUp="@null"
-            android:nextFocusRight="@id/index_video_channel"
-            tools:ignore="MissingConstraints"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/index_video_err"
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="该频道无法播放，请联系后台管理人员"
-            app:layout_constraintTop_toTopOf="@id/index_video"
-            app:layout_constraintBottom_toBottomOf="@id/index_video"
-            app:layout_constraintLeft_toLeftOf="@id/index_video"
-            app:layout_constraintRight_toRightOf="@id/index_video"
-            android:textColor="@color/tv_item_text"
-            android:visibility="gone"
-            />
-
-
-
-        <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/index_video_loading"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:src="@drawable/loading"
-            app:layout_constraintTop_toTopOf="@id/index_video"
-            app:layout_constraintBottom_toBottomOf="@id/index_video"
-            app:layout_constraintLeft_toLeftOf="@id/index_video"
-            app:layout_constraintRight_toRightOf="@id/index_video"
-            android:visibility="gone"/>
-
+<!--        电视和apk列表-->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/index_video_channel_layout"
-            android:layout_width="100dp"
-            android:layout_height="270dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/index_video"
+            android:id="@+id/index_main_layout"
+            android:layout_width="820dp"
+            android:layout_height="287dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/index_top"
-            android:background="@drawable/tv_list_bg"
-            android:visibility="gone"
-            >
-            <TextView
-                android:id="@+id/index_video_channel_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:text="电视频道"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="@color/tv_item_text"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="10dp"/>
-
-            <androidx.leanback.widget.VerticalGridView
-                android:id="@+id/index_video_channel"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintWidth_percent="0.8"
-                app:layout_constraintHeight_percent="0.75"
-                app:layout_constraintTop_toBottomOf="@+id/index_video_channel_title"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginTop="5dp"
-                tools:ignore="MissingConstraints"
-                android:descendantFocusability="afterDescendants"
-                android:nextFocusLeft="@id/index_video"
+            android:layout_marginTop="20dp">
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/index_tv"
+                android:layout_width="510dp"
+                android:layout_height="287dp"
+                android:focusable="false"
                 android:nextFocusRight="@id/apk1"
-                android:focusable="true"/>
+                android:nextFocusUp="@null"
+                android:nextFocusDown="@null"
+                android:src="@drawable/tv_bg"
+                android:layout_marginTop="20dp"
+                android:adjustViewBounds="true"
+                android:layout_marginRight="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:ignore="MissingConstraints" />
+            <!--                apk列表-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/index_apk_list"
+                android:layout_width="287dp"
+                android:layout_height="287dp"
+                android:background="@drawable/apk_list_bg"
+                app:layout_constraintRight_toRightOf="parent"
+                tools:ignore="MissingConstraints">
+                <LinearLayout
+                    android:weightSum="2"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:layout_height="0dp">
+                        <LinearLayout
+                            android:id="@+id/apk1"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:nextFocusUp="@null">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="10dp"
+                                tools:ignore="MissingConstraints"
+                                android:gravity="center">
+                                <ImageView
+                                    android:id="@+id/tv_image"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/icon_tv"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/apk_item_text"
+                                    android:textSize="15sp"
+                                    android:text="@string/text_tv"
+                                    android:layout_gravity="center"/>
+                            </LinearLayout>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/apk2"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:nextFocusUp="@null"
+                            android:layout_height="match_parent">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="10dp"
+                                tools:ignore="MissingConstraints"
+                                android:gravity="center">
+                                <ImageView
+                                    android:id="@+id/app"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center"
+
+                                    android:src="@drawable/icon_app"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/apk_item_text"
+                                    android:textSize="15sp"
+                                    android:text="@string/text_app"
+                                    android:layout_gravity="center"/>
+                            </LinearLayout>
+
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/apk_layout"
+                        android:weightSum="2"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_weight="1"
+                        android:layout_height="0dp">
+                        <LinearLayout
+                            android:id="@+id/apk3"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="10dp"
+                                tools:ignore="MissingConstraints"
+                                android:gravity="center">
+                                <ImageView
+                                    android:id="@+id/hotel"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/icon_hospital"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/apk_item_text"
+                                    android:textSize="15sp"
+                                    android:text="@string/text_hospital"
+                                    android:layout_gravity="center"/>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/apk4"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="10dp"
+                                tools:ignore="MissingConstraints"
+                                android:gravity="center">
+                                <ImageView
+                                    android:id="@+id/video"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center"
+                                    android:src="@drawable/icon_video"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/apk_item_text"
+                                    android:textSize="15sp"
+                                    android:text="@string/text_video"
+                                    android:layout_gravity="center"/>
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 <!--        配置信息框-->

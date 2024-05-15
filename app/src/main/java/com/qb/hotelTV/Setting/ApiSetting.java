@@ -12,11 +12,14 @@ public class ApiSetting {
 
 //    BackstageHttp
     public static String SERVER = "http://113.106.109.130:23000";
+    public static String QA = "http://192.168.2.85:48080";
     public static String AUTHORIZATION = "Bearer test1";
     public static String PAGE_NO = "1";
     public static String PAGE_SIZE = "100";
 
-    public static String PREFIX = "/prod-api";
+//    public static String PREFIX = "/prod-api";
+    public static String PREFIX = "";
+
 
 //    获取信息的接口
     public static String URL_GET_ROOM_MESSAGE = PREFIX + "/admin-api/hotel/room/getNumber";

@@ -69,6 +69,9 @@
 
         <activity android:name=".huibuTv.MainActivity"
             android:exported="false"/>
+        <activity android:name=".Activity.AppActivity" android:exported="true"/>
+        <activity android:name=".Activity.HotelActivity" android:exported="true"/>
+        <activity android:name=".Activity.VideoActivity" android:exported="true"/>
         <receiver
             android:name=".receiver.TvBootReceiver"
             android:enabled="true"

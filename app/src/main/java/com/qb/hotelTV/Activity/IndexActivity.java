@@ -1,4 +1,6 @@
 package com.qb.hotelTV.Activity;
+import static com.qb.hotelTV.Utils.LoadUtils.dismissProgressDialog;
+import static com.qb.hotelTV.Utils.LoadUtils.showProgressDialog;
 import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,6 +35,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.maning.updatelibrary.InstallUtils;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
@@ -45,6 +50,7 @@ import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Setting.DownloadSetting;
+import com.qb.hotelTV.Setting.ProgressDialogSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
@@ -74,18 +80,14 @@ public class IndexActivity extends BaseActivity {
 
     private String geo,weather,strRoomName,
             strWifiName,strWifiPassword,strDeskNumber,
-            strHotelName,strHotelLogo,strHotelBg,
+            strHotelName,strHotelLogo,strHotelBg,strResourceUrl,strDetail, strVideoUrl,
             strTvText,strTvTextColor;
 
 //    从SharedPreferences中获取的数据
     private String serverAddress,tenant,roomNumber;
 
-//    用来存放apk的列表
-    ArrayList<ApkModel> apkList = new ArrayList<>();
-    ArrayList<VideoModel> videoList = new ArrayList<>();
     ProgressDialog progressDialog;
-    private boolean currentKeyCodeIsEnter = false;
-
+    private SimpleExoPlayer player ;
 //    焦点选中动画
     FocusScaleListener focusScaleListener = new FocusScaleListener();
 
@@ -116,24 +118,66 @@ public class IndexActivity extends BaseActivity {
             serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
             roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
             tenant  = sharedPreferences.getString(KEY_TENANT,"");
+            Log.d(TAG, "serverAddress: " +serverAddress);
+            Log.d(TAG, "roomNumber: " + roomNumber);
+            Log.d(TAG, "tenant: " +tenant);
             // 使用服务器地址和房间号
             // ...
             initUI();
         }
+
 //        组件动画
         focusChange();
-        openTv();
+        openClick();
     }
 
-    private void openTv(){
-        layoutIndexBinding.tvImage.setOnClickListener(new View.OnClickListener() {
+    private void openClick(){
+        layoutIndexBinding.apk1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(IndexActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         });
+
+        layoutIndexBinding.apk2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(IndexActivity.this, AppActivity.class);
+                intent.putExtra("bg",strHotelBg);
+                intent.putExtra("serverAddress",serverAddress);
+                intent.putExtra("tenant",tenant);
+                startActivity(intent);
+            }
+        });
+
+        layoutIndexBinding.apk3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(IndexActivity.this,HotelActivity.class);
+                intent.putExtra("bg",strHotelBg);
+                intent.putExtra("serverAddress",serverAddress);
+                intent.putExtra("tenant",tenant);
+                Log.d(TAG, "detail: " +  strDetail);
+                intent.putExtra("detail",strDetail);
+                startActivity(intent);
+            }
+        });
+
+        layoutIndexBinding.apk4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(IndexActivity.this,VideoActivity.class);
+                intent.putExtra("bg",strHotelBg);
+                intent.putExtra("serverAddress",serverAddress);
+                intent.putExtra("tenant",tenant);
+                Log.d(TAG, "strVideoUrl: " +strVideoUrl);
+                intent.putExtra("videoUrl",strVideoUrl);
+                startActivity(intent);
+            }
+        });
     }
+
 
 
 //    请求权限
@@ -154,151 +198,35 @@ public class IndexActivity extends BaseActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        // 当 Activity 失去焦点时，暂停视频播放
+        if (player != null){
+            player.pause();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (player != null){
+            // 当 Activity 重新获得焦点时，继续播放视频
+            player.play();
+        }
+
+    }
+
+
+
+    @Override
     protected void onDestroy() {
         // 移除所有未执行的任务，避免内存泄漏
         handler.removeCallbacksAndMessages(null);
+        if (player != null){
+            player.release();
+        }
         super.onDestroy();
-    }
-
-
-    private void setVideoMode(){
-        ViewGroup.LayoutParams params = layoutIndexBinding.mainBrowseFragment.getLayoutParams();
-//        ViewGroup.LayoutParams errMessage = layoutIndexBinding.indexVideoErr.getLayoutParams();
-        if (VIDEO_STATUS){
-                layoutIndexBinding.indexApkList.setVisibility(View.VISIBLE);
-//                layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
-//                    将焦点恢复
-//                layoutIndexBinding.indexVideo.setNextFocusRightId(R.id.index_apk_list);
-                params.width = dpToPx(510); // 将 dp 转换为像素
-                params.height = dpToPx(287); // 将 dp 转换为像素
-//                errMessage.width = dpToPx(180);
-//                layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
-//            }
-            VIDEO_STATUS = false;
-        }else {
-            layoutIndexBinding.indexApkList.setVisibility(View.GONE);
-            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
-//                    设置焦点避免乱跑
-            layoutIndexBinding.indexVideo.setNextFocusRightId(View.NO_ID);
-
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-//            errMessage.width = dpToPx(800);
-//            layoutIndexBinding.indexVideoErr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 50);
-//                    params.width = 320;
-//                    params.height = 240;
-            VIDEO_STATUS = true;
-        }
-        // 应用修改后的参数到 View 上
-        layoutIndexBinding.indexVideo.setLayoutParams(params);
-//        layoutIndexBinding.indexVideoErr.setLayoutParams(errMessage);
-    }
-
-    private void btnChangeVideoStatus() {
-        layoutIndexBinding.indexVideo.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.d(TAG, "onKey: "+keyCode+"|"+event.getAction());
-                if (keyCode == KeyEvent.KEYCODE_ENTER || keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
-                    if(event.getAction()==KeyEvent.ACTION_DOWN){
-                        if(VIDEO_STATUS){
-                            FULL_SCREEN_SIDEBAR = true;
-                            Toast.makeText(IndexActivity.this,"栏目出现",Toast.LENGTH_SHORT).show();
-                            setChannelLayoutParams(true);
-                            layoutIndexBinding.indexVideoChannel.requestFocus();
-                        }else
-                            setVideoMode();
-                    }
-                }else if(keyCode == KeyEvent.KEYCODE_BACK){
-                    if(event.getAction()==KeyEvent.ACTION_DOWN){
-                        if(FULL_SCREEN_SIDEBAR){
-                            Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
-                            setChannelLayoutParams(false);
-                            FULL_SCREEN_SIDEBAR = false;
-                            return true;
-                        }
-                        if(VIDEO_STATUS){
-                            Toast.makeText(IndexActivity.this,"关闭全屏",Toast.LENGTH_SHORT).show();
-                            //TODO 关闭侧边栏
-                            //TODO 关闭全屏
-                            setVideoMode();
-                            return true;
-                        }
-                    }
-
-                }
-                return false;
-            }
-        });
-
-        layoutIndexBinding.indexVideoChannel.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if(keyCode == KeyEvent.KEYCODE_BACK){
-                    if(FULL_SCREEN_SIDEBAR){
-                        Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
-                        setChannelLayoutParams(false);
-                        FULL_SCREEN_SIDEBAR = false;
-                        layoutIndexBinding.indexVideo.requestFocus();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-        layoutIndexBinding.indexVideoChannel.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                if(keyCode == KeyEvent.KEYCODE_BACK){
-                    if(FULL_SCREEN_SIDEBAR){
-                        Toast.makeText(IndexActivity.this,"关闭侧边栏",Toast.LENGTH_SHORT).show();
-                        setChannelLayoutParams(false);
-                        FULL_SCREEN_SIDEBAR = false;
-                        layoutIndexBinding.indexVideo.requestFocus();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
-    }
-    // 将 dp 单位转换为像素
-    private int dpToPx(int dp) {
-        float density = getResources().getDisplayMetrics().density;
-        return (int) (dp * density + 0.5f);
-    }
-
-
-    private void setChannelLayoutParams(boolean isFirstScenario) {
-        ViewGroup.LayoutParams params = layoutIndexBinding.indexVideoChannelLayout.getLayoutParams();
-        ConstraintLayout.LayoutParams layoutParams = (ConstraintLayout.LayoutParams) layoutIndexBinding.indexVideoChannelLayout.getLayoutParams();
-        if (isFirstScenario) {
-            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.VISIBLE);
-            params.width = dpToPx(300);
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            // 设置左边对齐父布局
-            layoutParams.leftToLeft = ConstraintLayout.LayoutParams.PARENT_ID;
-            // 清除其他约束
-            layoutParams.leftToRight = ConstraintLayout.LayoutParams.UNSET;
-            layoutParams.topToBottom = ConstraintLayout.LayoutParams.UNSET;
-            layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.UNSET;
-        } else {
-            layoutIndexBinding.indexVideoChannelLayout.setVisibility(View.GONE);
-            params.width =dpToPx(100);
-            params.height=dpToPx(270);
-            // 设置其他约束
-            layoutParams.leftToRight = R.id.index_video;
-            layoutParams.topToBottom = R.id.index_top;
-            layoutParams.bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID;
-            // 清除其他约束
-            layoutParams.leftToLeft = ConstraintLayout.LayoutParams.UNSET;
-        }
-
-        layoutIndexBinding.indexVideoChannelLayout.setLayoutParams(layoutParams);
-        layoutIndexBinding.indexVideoChannelLayout.setLayoutParams(params);
-
     }
 
 
@@ -314,30 +242,60 @@ public class IndexActivity extends BaseActivity {
         getGeoAndWeather(locationString);
         getDataFromHttp();
 
-        showProgressDialog();
+        showProgressDialog(IndexActivity.this, ProgressDialogSetting.loading);
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1 && TEXT==1 && TV_CHANNEL == 1 ){
+                if(GEO == 1 && WEATHER == 1 &&ROOM_MESSAGE ==1 && TEXT==1 ){
                     dismissProgressDialog();
                     timer.cancel();
 //                    在主线程修改组件
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            if (strResourceUrl != null && !strResourceUrl.equals("")){
+//                                设置视频
+//                                Uri uri = Uri.parse(strResourceUrl);
+//                                layoutIndexBinding.indexTv.setVideoURI(uri);
+//                                layoutIndexBinding.indexTv.start();
+//                                layoutIndexBinding.indexTv.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                                    @Override
+//                                    public void onPrepared(MediaPlayer mediaPlayer) {
+//                                        mediaPlayer.start();
+//                                        mediaPlayer.setLooping(true);
+//                                    }
+//                                });
+
+                                player = new SimpleExoPlayer.Builder(IndexActivity.this).build();
+//                                绑定player
+                                layoutIndexBinding.indexTv.setPlayer(player);
+                                // 隐藏控制面板
+                                layoutIndexBinding.indexTv.setUseController(false);
+//                                设置循环播放
+                                player.setRepeatMode(Player.REPEAT_MODE_ALL);
+                                MediaItem mediaItem = MediaItem.fromUri(strResourceUrl);
+                                player.setMediaItem(mediaItem);
+                                player.prepare();
+                                player.play();
+
+
+                            }
+
+//                            设置名称
                             if (strHotelName == null || strHotelName.equals("")){
                                 layoutIndexBinding.indexName.setText(Const.MSG_NETWORK_ERR);
                             }else {
                                 layoutIndexBinding.indexName.setText(strHotelName);
                             }
-
+//                            设置logo
                             if (strHotelLogo != null){
                                 Glide.with(IndexActivity.this)
                                         .load(strHotelLogo)
                                         .error(R.drawable.img)
                                         .into(layoutIndexBinding.indexLogo);
                             }
+//                            设置背景
                             if (strHotelBg != null){
                                 Glide.with(IndexActivity.this)
                                         .load(strHotelBg)
@@ -346,17 +304,16 @@ public class IndexActivity extends BaseActivity {
 
                             }
 
-
+//                            设置天气
                             layoutIndexBinding.indexSky.setText(geo + "  " + weather);
-
+//                            设置房间信息
                             layoutIndexBinding.indexRoomName.setText(strRoomName);
-
                             layoutIndexBinding.indexWifiName.setText(strWifiName);
                             layoutIndexBinding.indexWifiPassword.setText(strWifiPassword);
                             layoutIndexBinding.indexDeskNumber.setText(strDeskNumber);
 //                            apk的列表
 //                            layoutIndexBinding.indexApk.setAdapter(apkAdaptor);
-                            layoutIndexBinding.indexVideoChannel.setAdapter(videoModelAdapter);
+//                            设置滚动栏
                             if (strTvText == null || strTvText.equals("")){
                                 layoutIndexBinding.indexTvText.setVisibility(View.GONE);
                             }else {
@@ -371,17 +328,7 @@ public class IndexActivity extends BaseActivity {
             }
         };
         timer.schedule(timerTask,0,1000);
-        layoutIndexBinding.indexVideo.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-            @Override
-            public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                hideVideoLoading();
-                Drawable drawable = ContextCompat.getDrawable(IndexActivity.this, R.drawable.tv_err);
-                layoutIndexBinding.indexVideo.setBackground(drawable);
-                layoutIndexBinding.indexVideoErr.setVisibility(View.VISIBLE);
-                Toast.makeText(IndexActivity.this, Const.MSG_TV_ERR, Toast.LENGTH_SHORT).show();
-                return true; // 返回 true 表示已经处理了错误
-            }
-        });
+
     }
 
 
@@ -425,7 +372,7 @@ public class IndexActivity extends BaseActivity {
                     }
                 });
 
-                // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
+
                 handler.postDelayed(this, 60*1000);
             }
         };
@@ -436,7 +383,7 @@ public class IndexActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (tvText == null || tvText.equals("")){
+                if (tvText == null || tvText.equals("")||strTvTextColor==null||strTvTextColor.equals("")){
                     layoutIndexBinding.indexTvText.setVisibility(View.GONE);
                 }else {
                     layoutIndexBinding.indexTvText.setVisibility(View.VISIBLE);
@@ -480,49 +427,8 @@ public class IndexActivity extends BaseActivity {
 //            }
 //        };
 
-        videoModelAdapter = new CommonAdapter<VideoModel>(this,videoList,R.layout.item_tv) {
-            @Override
-            public void bindData(CommonViewHolder holder, VideoModel data, int position) {
-                holder.setText(R.id.tv_name,data.getStreamName());
-                holder.itemView.setOnFocusChangeListener(focusScaleListener);
-
-                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        //TODO
-                        String url = data.getStreamUrl();
-                        if (current_channel != data.getId()){
-                            current_channel = data.getId();
-                            Log.d(TAG, "viedo" + url);
-                            layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
-                            layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
-                            showVideoLoading();
-                            // 停止当前视频播放并释放资源
-                            layoutIndexBinding.indexVideo.stopPlayback();
-                            layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
-                            layoutIndexBinding.indexVideo.start();
-                        }
-                    }
-
-                    @Override
-                    public void onItemLongClick(int viewId, int position) {
-
-                    }
-                });
-            }
-        };
     }
 
-
-    private void showVideoLoading(){
-        layoutIndexBinding.indexVideoLoading.setVisibility(View.VISIBLE);
-        layoutIndexBinding.indexVideo.setEnabled(false);
-
-    }
-    private void hideVideoLoading(){
-        layoutIndexBinding.indexVideoLoading.setVisibility(View.GONE);
-        layoutIndexBinding.indexVideo.setEnabled(true);
-    }
 
 //    获取坐标
     private void getLocation(){
@@ -553,37 +459,17 @@ public class IndexActivity extends BaseActivity {
         }
     }
 
-//    外部启动apk
-    private void gotoOtherApp(String packageName,String apkUrl){
-        Log.d(TAG, "gotoOtherApp: "+packageName);
-        Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
-        if (launchIntent != null) {
-            startActivity(launchIntent);
-        } else {
-            // 应用未安装或包名无效
-            if(apkUrl.equals("")){
-                Toast.makeText(this, Const.MSG_APK_NOT_EXIST + ",请联系管理员添加apk文件", Toast.LENGTH_SHORT).show();
-            }else {
-                Toast.makeText(this, Const.MSG_APK_NOT_EXIST, Toast.LENGTH_SHORT).show();
-                installApp( apkUrl);
-            }
 
-        }
-    }
 
 //    焦点切换动画
     private void focusChange(){
-//        layoutIndexBinding.indexVideo.requestFocus();
-        layoutIndexBinding.tvImage.requestFocus();
-        layoutIndexBinding.tvImage.setOnFocusChangeListener(focusScaleListener);
-//        layoutIndexBinding.mainBrowseFragment.requestFocus();
-//        layoutIndexBinding.mainBrowseFragment.setOnFocusChangeListener(focusScaleListener);
-        layoutIndexBinding.indexVideo.setOnFocusChangeListener(focusScaleListener);
+//        layoutIndexBinding.tvImage.requestFocus();
+//        layoutIndexBinding.tvImage.setOnFocusChangeListener(focusScaleListener);
+        layoutIndexBinding.apk1.requestFocus();
         layoutIndexBinding.apk1.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk2.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk3.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk4.setOnFocusChangeListener(focusScaleListener);
-
     }
 
 
@@ -627,22 +513,24 @@ public class IndexActivity extends BaseActivity {
         }
     }
 
+
 //    从接口获取数据
     private void getDataFromHttp(){
         if (HOTEL_MESSAGE == 0){
             BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
                 @Override
-                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground) {
+                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground,String resourceUrl,String detail, String videoUrl) {
                     strHotelName = hotelName;
                     strHotelLogo = hotelLogo;
                     strHotelBg = hotelBackground;
+                    strResourceUrl = resourceUrl;
+                    strDetail = detail;
+                    strVideoUrl = videoUrl;
                     HOTEL_MESSAGE = 1;
                 }
-
                 @Override
                 public void onHotelMessageFailure(int code, String msg) {
                     strHotelName = "";
-
                     strHotelBg = "";
                     HOTEL_MESSAGE = 1;
                 }
@@ -655,7 +543,6 @@ public class IndexActivity extends BaseActivity {
                 public void onTvTextResponse(String tvText, String tvTextColor) {
                     strTvText = tvText;
                     strTvTextColor = tvTextColor;
-
                     TEXT = 1;
                 }
 
@@ -700,111 +587,62 @@ public class IndexActivity extends BaseActivity {
         }
 
 //        请求apk列表
-        if (APK == 0){
-            BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
-                @Override
-                public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
-                    try {
-                        apkList.clear();
-                        apkList.addAll(apkModelArrayList);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                int cur_line = 0;
-                                for (int i = 0; i < apkList.size(); i++) {
-                                    cur_line = i/2;
-                                    Log.d(TAG, "onApkResponse: " + apkList.get(i).getName());
-                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
-                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
-                                    Glide.with(IndexActivity.this)
-                                            .load(apkList.get(i).getLogoUrl())
-                                            .error(R.color.white)
-                                            .into((ImageView) item.findViewById(R.id.apk_logo));
-                                    ((TextView)item.findViewById(R.id.apk_name)).setText(apkList.get(i).getName());
-                                    int finalI = i;
-                                    item.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            if (apkList.get(finalI).getApkUrl() == null || apkList.get(finalI).getApkUrl().equals("")){
-                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),"");
-                                            }else {
-                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),apkList.get(finalI).getApkUrl());
-                                            }
+//        if (APK == 0){
+//            BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
+//                @Override
+//                public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
+//                    try {
+//                        apkList.clear();
+//                        apkList.addAll(apkModelArrayList);
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                int cur_line;
+//                                for (int i = 0; i < apkList.size(); i++) {
+//                                    cur_line = i/2;
+//                                    Log.d(TAG, "onApkResponse: " + apkList.get(i).getName());
+//                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
+//                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
+//                                    Glide.with(IndexActivity.this)
+//                                            .load(apkList.get(i).getLogoUrl())
+//                                            .error(R.color.white)
+//                                            .into((ImageView) item.findViewById(R.id.apk_logo));
+//                                    ((TextView)item.findViewById(R.id.apk_name)).setText(apkList.get(i).getName());
+//                                    int finalI = i;
+//                                    item.setOnClickListener(new View.OnClickListener() {
+//                                        @Override
+//                                        public void onClick(View view) {
+//                                            if (apkList.get(finalI).getApkUrl() == null || apkList.get(finalI).getApkUrl().equals("")){
+//                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),"");
+//                                            }else {
+//                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),apkList.get(finalI).getApkUrl());
+//                                            }
+//
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                        });
+////                        apkAdaptor.notifyDataSetChanged();
+//                    }catch (Exception e){
+//                        Log.e(TAG, "数据写入出错了 ",e);
+//                    }
+//
+//                    APK = 1;
+//                }
+//
+//                @Override
+//                public void onApkFailure(int code, String msg) {
+//                    Log.d(TAG, "onRoomMessageFailure: ");
+//                    APK = 1;
+//                }
+//            });
+//        }
 
-                                        }
-                                    });
-                                }
-                            }
-                        });
 
-
-
-//                        apkAdaptor.notifyDataSetChanged();
-                    }catch (Exception e){
-                        Log.e(TAG, "数据写入出错了 ",e);
-                    }
-
-                    APK = 1;
-                }
-
-                @Override
-                public void onApkFailure(int code, String msg) {
-                    Log.d(TAG, "onRoomMessageFailure: ");
-                    APK = 1;
-                }
-            });
-        }
-
-        if (TV_CHANNEL == 0){
-            BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
-                @Override
-                public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
-                    try {
-                        videoList.addAll(videoModels);
-                        videoModelAdapter.notifyDataSetChanged();
-                        String url = videoList.get(0).getStreamUrl();
-                        current_channel = videoList.get(0).getId();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                layoutIndexBinding.indexVideo.setBackgroundResource(android.R.color.transparent);
-                                layoutIndexBinding.indexVideoErr.setVisibility(View.GONE);
-                                layoutIndexBinding.indexVideo.setVideoURI(Uri.parse(url));
-                                layoutIndexBinding.indexVideo.start();
-                            }
-                        });
-                        TV_CHANNEL =1 ;
-                    }catch (Exception e){
-                        Log.e(TAG, "数据写入出错了 ", e);
-                        TV_CHANNEL =1 ;
-                    }
-                }
-
-                @Override
-                public void onTvChannelFailure(int code, String msg) {
-                    TV_CHANNEL =1 ;
-                }
-            });
-        }
         Log.d(TAG, "finish");
 
 
-    }
-
-    // 显示等待对话框
-    private void showProgressDialog() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading..."); // 设置等待消息
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); // 设置进度条样式为圆形旋转
-        progressDialog.setCancelable(false); // 设置对话框不可取消
-        progressDialog.show(); // 显示对话框
-    }
-
-    // 隐藏等待对话框
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss(); // 关闭对话框
-        }
     }
 
 
@@ -816,12 +654,11 @@ public class IndexActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 // 在点击事件中获取按下的按钮的 keycode
-                int keyCode = KeyEvent.KEYCODE_UNKNOWN; // 初始化为未知的 keycode
+                int keyCode; // 初始化为未知的 keycode
                 KeyEvent keyEvent = (KeyEvent) view.getTag(); // 从 view 的 tag 中获取 KeyEvent 对象
                 if (keyEvent != null) {
                     keyCode = keyEvent.getKeyCode(); // 获取按下的按钮的 keycode
                     Toast.makeText(IndexActivity.this, "!!!:" + keyCode, Toast.LENGTH_SHORT).show();
-
                 }
                 serverAddress = layoutIndexBinding.inputServerAddress.getText().toString();
                 roomNumber = layoutIndexBinding.inputRoomNumber.getText().toString();
@@ -847,267 +684,6 @@ public class IndexActivity extends BaseActivity {
         editor.apply();
     }
 
-
-    private void installApp(String apkUrl){
-        InstallUtils.checkInstallPermission(IndexActivity.this, new InstallUtils.InstallPermissionCallBack() {
-            @Override
-            public void onGranted() {
-                downloadApp(apkUrl);
-            }
-
-            @Override
-            public void onDenied() {
-                //弹出弹框提醒用户
-                AlertDialog alertDialog = new AlertDialog.Builder(IndexActivity.this)
-                        .setTitle("温馨提示")
-                        .setMessage("必须授权才能安装APK，请设置允许安装")
-                        .setNegativeButton("取消", null)
-                        .setPositiveButton("设置", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                //打开设置页面
-                                InstallUtils.openInstallPermissionSetting(IndexActivity.this, new InstallUtils.InstallPermissionCallBack() {
-                                    @Override
-                                    public void onGranted() {
-                                        //去下载Apk
-                                        downloadApp(apkUrl);
-                                    }
-
-                                    @Override
-                                    public void onDenied() {
-                                        //还是不允许咋搞？
-                                        Toast.makeText(IndexActivity.this, "必须授权才能安装APK，请设置允许安装！", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            }
-                        })
-                        .create();
-                alertDialog.show();
-            }
-        });
-    }
-
-    private void downloadApp(String apkUrl){
-        showProgressDialog();
-//2.下载APK
-        InstallUtils.with(this)
-                //必须-下载地址
-                .setApkUrl(apkUrl)
-                //非必须-下载保存的文件的完整路径+/name.apk，使用自定义路径需要获取读写权限
-                .setApkPath(DownloadSetting.APK_PATH + "xxx.apk")
-                //非必须-下载回调
-                .setCallBack(new InstallUtils.DownloadCallBack() {
-                    @Override
-                    public void onStart() {
-                        //下载开始
-                    }
-
-                    @Override
-                    public void onComplete(String path) {
-                        dismissProgressDialog();
-                        //下载完成
-                        //安装APK
-                        /**
-                         * 安装APK工具类
-                         * @param activity       上下文
-                         * @param filePath      文件路径
-                         * @param callBack      安装界面成功调起的回调
-                         */
-                        InstallUtils.installAPK(IndexActivity.this, path, new InstallUtils.InstallCallBack() {
-                            @Override
-                            public void onSuccess() {
-                                //onSuccess：表示系统的安装界面被打开
-                                //防止用户取消安装，在这里可以关闭当前应用，以免出现安装被取消
-                                Toast.makeText(IndexActivity.this, "正在安装程序", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onFail(Exception e) {
-                                Toast.makeText(IndexActivity.this, "安装失败:" + e.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onLoading(long total, long current) {
-                        //下载中
-                    }
-
-                    @Override
-                    public void onFail(Exception e) {
-                        //下载失败
-                    }
-
-                    @Override
-                    public void cancle() {
-                        //下载取消
-                    }
-                })
-                //开始下载
-                .startDownload();
-    }
-
-
-    /**
-     * 计时线程
-//     */
-//    private Runnable mTask01 = new Runnable() {
-//
-//        @Override
-//        public void run() {
-//            Date timeNow = new Date(System.currentTimeMillis());
-//            /* 计算User静止不动作的时间间距 */
-//            /**当前的系统时间 - 上次触摸屏幕的时间 = 静止不动的时间**/
-//            timePeriod = (long) timeNow.getTime() - (long) lastUpdateTime.getTime();
-//            /*将静止时间毫秒换算成秒*/
-//            float timePeriodSecond = ((float) timePeriod / 1000);
-//
-////            Log.d(TAG, "timePeriodSecond: " + timePeriodSecond);
-////            Log.d(TAG, "isShowingHeaders: " + pageAndListRowFragment.isShowingHeaders());
-//            if(pageAndListRowFragment.isShowingHeaders()){
-//                if(timePeriodSecond > mHoldStillTime){
-//                Toast.makeText(IndexActivity.this, "10s未操作", Toast.LENGTH_SHORT).show();
-////                模拟点击当前焦点的位置
-//                    pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_CENTER));
-//                    pageAndListRowFragment.getView().dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_CENTER));
-////                打印pageAndListRowFragment.isShowingHeaders();
-//                    updateUserActionTime();
-//                }
-//            }else{
-//                updateUserActionTime();
-//            }
-//
-//            /*反复调用自己进行检查*/
-//            mHandler01.postDelayed(mTask01, intervalKeypadSaver);
-//        }
-//    };
-//    /**
-//     * 持续屏保显示线程
-//     */
-//    private Runnable mTask02 = new Runnable() {
-//
-//        @Override
-//        public void run() {
-////
-//            if(isAuthorized){
-//                //        开始计时
-//                updateUserActionTime();
-//                mHandler01.postDelayed(mTask01, intervalKeypadSaver);
-//            }
-//            else {
-////                获取pageAndListRowFragment实例
-//                PageAndListRowFragment pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
-//                if(pageAndListRowFragment != null){
-//                    isAuthorized = pageAndListRowFragment.isAuthorized();
-//                }
-//                /*反复调用自己进行检查*/
-//                mHandler02.postDelayed(mTask02, intervalAuthorized);
-//            }
-//        }
-//    };
-//
-//
-//    /*用户有操作的时候不断重置静止时间和上次操作的时间*/
-//    public void updateUserActionTime() {
-//        Date timeNow = new Date(System.currentTimeMillis());
-//        lastUpdateTime.setTime(timeNow.getTime());
-//    }
-
-
-////    获取activity返回的结果
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(resultCode == -1){
-////            Toast.makeText(this, "返回结果", Toast.LENGTH_SHORT).show();
-////            获取pageAndListRowFragment实例
-//            PageAndListRowFragment pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
-//            if(pageAndListRowFragment != null){
-//                pageAndListRowFragment.setSelectedPosition(MyApplication.getChannelIndex(), false);
-//                pageAndListRowFragment.showHeader();
-//            }
-//        }
-//    }
-
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (layoutIndexBinding.mainBrowseFragment.hasFocus()){
-//            switch (keyCode) {
-//                case KeyEvent.KEYCODE_DPAD_UP:
-//                    pageAndListRowFragment.toggleChannel(false);
-//                    layoutIndexBinding.mainBrowseFragment.requestFocus();
-//                    Log.d(TAG, "onKeyDown: 上");
-//                    return true;
-//                case KeyEvent.KEYCODE_DPAD_DOWN:
-//                    pageAndListRowFragment.toggleChannel(true);
-//                    layoutIndexBinding.mainBrowseFragment.requestFocus();
-//                    Log.d(TAG, "onKeyDown: 下");
-//                    return  true;
-//                case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                    changeFocus();
-//                    Log.d(TAG, "onKeyDown: you");
-//                    return true;
-//                case KeyEvent.KEYCODE_DPAD_LEFT:
-////                pageAndListRowFragment.toggleHeader();
-//                    Log.d(TAG, "onKeyDown: 左");
-//                    return true;
-////                    return true;
-////                case KeyEvent.KEYCODE_ENTER:
-////                    setVideoMode();
-////                    return true;
-//
-//        }
-//
-//
-////
-//
-//
-//////            case KeyEvent.KEYCODE_DPAD_CENTER:
-////////                pageAndListRowFragment.toggleHeader();
-//////                Log.d(TAG, "onKeyDown: 确定");
-//////                break;
-//////            case KeyEvent.KEYCODE_BACK:
-//////                Log.d(TAG, "onKeyDown: 返回");
-//////                break;
-//////            case KeyEvent.KEYCODE_MENU:
-//////                Log.d(TAG, "onKeyDown: 菜单");
-//////                break;
-//        }
-////        return true;
-//        return super.onKeyDown(keyCode, event);
-//    }
-
-
-    private void changeFocus(){
-        layoutIndexBinding.apk1.requestFocus();
-    }
-
-//    @SuppressLint("RestrictedApi")
-//    @Override
-//    public boolean dispatchKeyEvent(KeyEvent event) {
-//        updateUserActionTime();
-//        return super.dispatchKeyEvent(event);
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        updateUserActionTime();
-//        if(isAuthorized){
-//            /*activity显示的时候启动线程*/
-//            mHandler01.postAtTime(mTask01, intervalKeypadSaver);
-//        }else
-//            mHandler02.postAtTime(mTask02, intervalAuthorized);
-//        super.onResume();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        /*activity不可见的时候取消线程*/
-//        mHandler01.removeCallbacks(mTask01);
-//        mHandler02.removeCallbacks(mTask02);
-//        super.onPause();
-//    }
 
 
 }

@@ -5,6 +5,10 @@ public class HotelMessageModel {
     private String name;
     private String iconUrl;
     private String homepageBackground;
+    private String resourceUrl;
+    private String detail;
+    private String videoUrl;
+
     private long createTime;
 
     public int getId() {
@@ -45,5 +49,26 @@ public class HotelMessageModel {
 
     public void setCreateTime(long createTime) {
         this.createTime = createTime;
+    }
+
+    public String getResourceUrl() {
+        return resourceUrl;
+    }
+
+    public void setResourceUrl(String resourceUrl) {
+        this.resourceUrl = resourceUrl;
+    }
+
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
     }
 }
