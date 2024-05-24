@@ -49,11 +49,15 @@ public class VideoActivity extends BaseActivity{
         }
 
         String bg = getIntent().getStringExtra("bg");
+        String title = getIntent().getStringExtra("title");
         if (bg != null) {
             Glide.with(VideoActivity.this)
                     .load(bg)
                     .error(R.drawable.app_bg)
                     .into(layoutVideoBinding.videoBackground);
+        }
+        if(title != null){
+            layoutVideoBinding.videoTitle.setText(title);
         }
     }
 }

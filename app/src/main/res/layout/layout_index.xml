@@ -271,6 +271,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 tools:ignore="MissingConstraints">
                 <LinearLayout
+                    android:id="@+id/apk_layout"
                     android:weightSum="2"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -287,28 +288,9 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:nextFocusUp="@null">
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="10dp"
-                                tools:ignore="MissingConstraints"
-                                android:gravity="center">
-                                <ImageView
-                                    android:id="@+id/tv_image"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/icon_tv"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/apk_item_text"
-                                    android:textSize="15sp"
-                                    android:text="@string/text_tv"
-                                    android:layout_gravity="center"/>
-                            </LinearLayout>
+                                <include layout="@layout/item_apk"/>
                         </LinearLayout>
+
                         <LinearLayout
                             android:id="@+id/apk2"
                             android:layout_width="0dp"
@@ -316,33 +298,12 @@
                             android:gravity="center"
                             android:nextFocusUp="@null"
                             android:layout_height="match_parent">
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="10dp"
-                                tools:ignore="MissingConstraints"
-                                android:gravity="center">
-                                <ImageView
-                                    android:id="@+id/app"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="center"
-
-                                    android:src="@drawable/icon_app"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/apk_item_text"
-                                    android:textSize="15sp"
-                                    android:text="@string/text_app"
-                                    android:layout_gravity="center"/>
-                            </LinearLayout>
-
+                                <include layout="@layout/item_apk"/>
                         </LinearLayout>
+
                     </LinearLayout>
                     <LinearLayout
-                        android:id="@+id/apk_layout"
+
                         android:weightSum="2"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
@@ -354,62 +315,28 @@
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent">
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="10dp"
-                                tools:ignore="MissingConstraints"
-                                android:gravity="center">
-                                <ImageView
-                                    android:id="@+id/hotel"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/icon_hospital"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/apk_item_text"
-                                    android:textSize="15sp"
-                                    android:text="@string/text_hospital"
-                                    android:layout_gravity="center"/>
+
+                                <include layout="@layout/item_apk"/>
+
                             </LinearLayout>
 
 
-                        </LinearLayout>
+
                         <LinearLayout
                             android:id="@+id/apk4"
                             android:gravity="center"
                             android:layout_weight="1"
                             android:layout_width="0dp"
                             android:layout_height="match_parent">
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:padding="10dp"
-                                tools:ignore="MissingConstraints"
-                                android:gravity="center">
-                                <ImageView
-                                    android:id="@+id/video"
-                                    android:layout_width="50dp"
-                                    android:layout_height="50dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/icon_video"/>
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textColor="@color/apk_item_text"
-                                    android:textSize="15sp"
-                                    android:text="@string/text_video"
-                                    android:layout_gravity="center"/>
-                            </LinearLayout>
+
+                                <include layout="@layout/item_apk"/>
+
+                        </LinearLayout>
 
 
                         </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

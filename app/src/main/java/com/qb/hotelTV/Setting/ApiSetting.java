@@ -11,8 +11,8 @@ public class ApiSetting {
 
 
 //    BackstageHttp
-    public static String SERVER = "http://113.106.109.130:23000";
-    public static String QA = "http://192.168.2.85:48080";
+    private String SERVER = "http://113.106.109.130:23000";
+    private String QA = "http://192.168.2.85:48080";
     public static String AUTHORIZATION = "Bearer test1";
     public static String PAGE_NO = "1";
     public static String PAGE_SIZE = "100";
@@ -32,4 +32,9 @@ public class ApiSetting {
     public static String URL_GET_TV_TEXT = PREFIX + "/admin-api/system/notice/page";
 
     public static String URL_GET_TV_CHANNEL = PREFIX + "/admin-api/hotel/playback/page";
+
+    public static String URL_GET_HOTEL_LIST = PREFIX + "/admin-api/cms/article-category/page";
+
+
+    public static String URL_GET_CMS_MESSAGE = PREFIX + "/admin-api/cms/article/page";
 }

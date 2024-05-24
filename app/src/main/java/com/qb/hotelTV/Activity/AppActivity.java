@@ -62,11 +62,15 @@ public class AppActivity extends BaseActivity{
     private void initUI() {
         layoutAppBinding = DataBindingUtil.setContentView(this, R.layout.layout_app);
         String bg = getIntent().getStringExtra("bg");
+        String title = getIntent().getStringExtra("title");
         if (bg != null) {
             Glide.with(AppActivity.this)
                     .load(bg)
                     .error(R.drawable.app_bg)
                     .into(layoutAppBinding.appBackground);
+        }
+        if (title != null){
+            layoutAppBinding.appTitle.setText(title);
         }
         getApkList();
     }

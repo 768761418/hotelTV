@@ -8,14 +8,22 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
+import com.qb.hotelTV.Model.CmsMessageModel;
+import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHotelBinding;
+
+import java.util.ArrayList;
 
 public class HotelActivity extends BaseActivity{
     private LayoutHotelBinding layoutHotelBinding;
     private FocusScaleListener focusScaleListener = new FocusScaleListener();
-    private String strHtml;
+    private String strHtml,strTitle;
+    String serverAddress,tenant;
+    private ArrayList<CmsMessageModel> cms = new ArrayList<>();
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -33,21 +41,55 @@ public class HotelActivity extends BaseActivity{
 
     private void init(){
         layoutHotelBinding = DataBindingUtil.setContentView(HotelActivity.this, R.layout.layout_hotel);
-        strHtml = getIntent().getStringExtra("detail");
-        if (strHtml != null && !strHtml.equals("")){
-            layoutHotelBinding.hotelWeb.loadDataWithBaseURL(null,strHtml,"text/html", "UTF-8", null);
-            layoutHotelBinding.hotelWeb.requestFocus();
-            layoutHotelBinding.hotelWeb.setOnFocusChangeListener(focusScaleListener);
-        }else {
-            layoutHotelBinding.hotelWeb.setVisibility(View.GONE);
-        }
+//        strHtml = getIntent().getStringExtra("detail");
+//        if (strHtml != null && !strHtml.equals("")){
+//            layoutHotelBinding.hotelWeb.loadDataWithBaseURL(null,strHtml,"text/html", "UTF-8", null);
+//            layoutHotelBinding.hotelWeb.requestFocus();
+//            layoutHotelBinding.hotelWeb.setOnFocusChangeListener(focusScaleListener);
+//        }else {
+//            layoutHotelBinding.hotelWeb.setVisibility(View.GONE);
+//        }
 
         String bg = getIntent().getStringExtra("bg");
+        int id = getIntent().getIntExtra("id",-1);
+        serverAddress = getIntent().getStringExtra("serverAddress");
+        tenant = getIntent().getStringExtra("tenant");
         if (bg != null) {
             Glide.with(HotelActivity.this)
                     .load(bg)
                     .error(R.drawable.app_bg)
                     .into(layoutHotelBinding.hotelBackground);
         }
+        if (id != -1 ){
+            BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, new BackstageHttp.CmsMessageCallBack() {
+                @Override
+                public void onCmsMessageResponse(ArrayList<CmsMessageModel> cmsMessageModels) {
+                    cms.clear();
+                    cms.addAll(cmsMessageModels);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            strHtml = cms.get(0).getContent();
+//                            strHtml = "";
+                            strTitle = cms.get(0).getTitle();
+                            if (strHtml != null && !strHtml.equals("")){
+                                layoutHotelBinding.hotelWeb.loadDataWithBaseURL(null,strHtml,"text/html", "UTF-8", null);
+                                layoutHotelBinding.hotelWeb.requestFocus();
+                                layoutHotelBinding.hotelWeb.setOnFocusChangeListener(focusScaleListener);
+                                layoutHotelBinding.hotelTitle.setText(strTitle);
+                            }else {
+                                layoutHotelBinding.hotelWeb.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onCmsMessageFailure(int code, String msg) {
+
+                }
+            });
+        }
+
     }
 }

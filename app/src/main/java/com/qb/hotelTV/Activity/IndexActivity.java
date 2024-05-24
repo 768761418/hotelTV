@@ -46,6 +46,7 @@ import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.ApkModel;
+import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
@@ -73,7 +74,7 @@ public class IndexActivity extends BaseActivity {
     int current_channel;
 
 //    接口是否运行状态码
-    private Integer GEO=0,WEATHER=0,TEXT=0,APK=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0,TV_CHANNEL =0;
+    private Integer GEO=0,WEATHER=0,TEXT=0,HOTEL_LIST=0,ROOM_MESSAGE=0,HOTEL_MESSAGE=0,TV_CHANNEL =0;
 //    视频是否全屏
     private boolean VIDEO_STATUS = false;
     private boolean FULL_SCREEN_SIDEBAR = false;
@@ -86,6 +87,7 @@ public class IndexActivity extends BaseActivity {
 //    从SharedPreferences中获取的数据
     private String serverAddress,tenant,roomNumber;
 
+    private ArrayList<HotelListModel> hotelList = new ArrayList<>();
     ProgressDialog progressDialog;
     private SimpleExoPlayer player ;
 //    焦点选中动画
@@ -128,7 +130,7 @@ public class IndexActivity extends BaseActivity {
 
 //        组件动画
         focusChange();
-        openClick();
+//        openClick();
     }
 
     private void openClick(){
@@ -143,24 +145,14 @@ public class IndexActivity extends BaseActivity {
         layoutIndexBinding.apk2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(IndexActivity.this, AppActivity.class);
-                intent.putExtra("bg",strHotelBg);
-                intent.putExtra("serverAddress",serverAddress);
-                intent.putExtra("tenant",tenant);
-                startActivity(intent);
+
             }
         });
 
         layoutIndexBinding.apk3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(IndexActivity.this,HotelActivity.class);
-                intent.putExtra("bg",strHotelBg);
-                intent.putExtra("serverAddress",serverAddress);
-                intent.putExtra("tenant",tenant);
-                Log.d(TAG, "detail: " +  strDetail);
-                intent.putExtra("detail",strDetail);
-                startActivity(intent);
+
             }
         });
 
@@ -255,18 +247,6 @@ public class IndexActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (strResourceUrl != null && !strResourceUrl.equals("")){
-//                                设置视频
-//                                Uri uri = Uri.parse(strResourceUrl);
-//                                layoutIndexBinding.indexTv.setVideoURI(uri);
-//                                layoutIndexBinding.indexTv.start();
-//                                layoutIndexBinding.indexTv.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                                    @Override
-//                                    public void onPrepared(MediaPlayer mediaPlayer) {
-//                                        mediaPlayer.start();
-//                                        mediaPlayer.setLooping(true);
-//                                    }
-//                                });
-
                                 player = new SimpleExoPlayer.Builder(IndexActivity.this).build();
 //                                绑定player
                                 layoutIndexBinding.indexTv.setPlayer(player);
@@ -586,6 +566,105 @@ public class IndexActivity extends BaseActivity {
             });
         }
 
+        if (HOTEL_LIST == 0){
+            BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
+                @Override
+                public void onHotelListResponse(ArrayList<HotelListModel> hotelListModels) {
+                    try {
+                        hotelList.clear();
+                        hotelList.addAll(hotelListModels);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int cur_line;
+                                for (int i = 0; i < hotelList.size(); i++) {
+                                    cur_line = i/2;
+                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getName());
+                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
+                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
+                                    Glide.with(IndexActivity.this)
+                                            .load(hotelList.get(i).getPicUrl())
+                                            .error(R.color.white)
+                                            .into((ImageView) item.findViewById(R.id.apk_logo));
+                                    ((TextView)item.findViewById(R.id.apk_name)).setText(hotelList.get(i).getName());
+                                    int finalI  = i;
+                                    switch (hotelList.get(i).getType()){
+
+                                        case 10:
+                                            item.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Intent intent = new Intent(IndexActivity.this, MainActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            break;
+                                        case 9:
+                                            item.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Intent intent = new Intent(IndexActivity.this, AppActivity.class);
+                                                    intent.putExtra("bg",strHotelBg);
+                                                    intent.putExtra("serverAddress",serverAddress);
+                                                    intent.putExtra("tenant",tenant);
+                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            break;
+                                        case 0:
+
+                                            item.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Intent intent = new Intent(IndexActivity.this,HotelActivity.class);
+                                                    intent.putExtra("bg",strHotelBg);
+                                                    intent.putExtra("serverAddress",serverAddress);
+                                                    intent.putExtra("tenant",tenant);
+                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+                                                    intent.putExtra("id",hotelList.get(finalI).getId());
+
+                                                    Log.d(TAG, "detail: " +  hotelList.get(finalI).getId());
+                                                    intent.putExtra("detail",strDetail);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            break;
+                                        case 2:
+                                            item.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Intent intent = new Intent(IndexActivity.this,VideoActivity.class);
+                                                    intent.putExtra("bg",strHotelBg);
+                                                    intent.putExtra("serverAddress",serverAddress);
+                                                    intent.putExtra("tenant",tenant);
+                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+                                                    Log.d(TAG, "strVideoUrl: " +strVideoUrl);
+                                                    intent.putExtra("videoUrl",strVideoUrl);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            break;
+
+
+                                    }
+
+                                }
+                            }
+                        });
+                    }catch (Exception e){
+                        
+                    }
+                   
+                }
+
+                @Override
+                public void onHotelLIstFailure(int code, String msg) {
+
+                }
+            });
+        }
+
 //        请求apk列表
 //        if (APK == 0){
 //            BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
@@ -649,7 +728,7 @@ public class IndexActivity extends BaseActivity {
 //    输入框
     private void showInputDialog() {
         layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
-        layoutIndexBinding.tvImage.setEnabled(false);
+//        layoutIndexBinding.tvImage.setEnabled(false);
         layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -667,7 +746,7 @@ public class IndexActivity extends BaseActivity {
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
                 initUI();
                 layoutIndexBinding.indexInput.setVisibility(View.GONE);
-                layoutIndexBinding.tvImage.setEnabled(true);
+//                layoutIndexBinding.tvImage.setEnabled(true);
 
             }
         });

@@ -9,6 +9,8 @@ import com.google.gson.reflect.TypeToken;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.BaseListModel;
 import com.qb.hotelTV.Model.BaseResponseModel;
+import com.qb.hotelTV.Model.CmsMessageModel;
+import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.Model.HotelMessageModel;
 import com.qb.hotelTV.Model.RoomMessageModel;
 import com.qb.hotelTV.Model.TvTextModel;
@@ -61,6 +63,16 @@ public class BackstageHttp {
     public interface TvChannelCallback{
         void onTvChannelResponse(ArrayList<VideoModel> videoModels);
         void onTvChannelFailure(int code,String msg);
+    }
+
+    public interface HotelListCallBack{
+        void onHotelListResponse(ArrayList<HotelListModel> hotelListModels);
+        void onHotelLIstFailure(int code,String msg);
+    }
+
+    public interface CmsMessageCallBack{
+        void onCmsMessageResponse(ArrayList<CmsMessageModel> cmsMessageModels);
+        void onCmsMessageFailure(int code,String msg);
     }
 
 
@@ -323,4 +335,127 @@ public class BackstageHttp {
         });
     }
 
+
+    public void getHotelList(String serverAddress,String tenant,HotelListCallBack callBack){
+//       设置路径
+        String url =serverAddress + ApiSetting.URL_GET_HOTEL_LIST;
+        Log.d(TAG, "getHotelList: " + url);
+//        添加参数
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
+        queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
+
+//        构建请求体
+        Request request = new Request.Builder()
+                .url(queryUrlBuilder.build())
+                .addHeader("tenant-id", tenant) // 添加请求头
+                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .build();
+//        接受回调
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String msg = "请输入正确的服务器";
+                int code = -1;
+                callBack.onHotelLIstFailure(code,msg);
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseData = response.body().string();
+
+                if(response.isSuccessful()){
+
+                    try {
+                        BaseResponseModel<BaseListModel<HotelListModel>> hotelList = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<HotelListModel>>>(){}.getType());
+                        int code = hotelList.getCode();
+                        if (code != 0 ){
+
+                        }
+                        ArrayList<HotelListModel> hotelListModels= hotelList.getData().getList();
+                        // 获取前四个元素的子列表
+                        List<HotelListModel> subList = hotelListModels.subList(0, Math.min(hotelListModels.size(), 4));
+
+                        // 创建一个新的 ArrayList 以包含子列表中的元素
+                        ArrayList<HotelListModel> firstFourElements = new ArrayList<>(subList);
+
+                        // 如果需要将原来的列表替换为前四个元素
+                        hotelListModels.clear();
+                        hotelListModels.addAll(firstFourElements);
+                        Log.d(TAG, "getHotelList: " + gson.toJson(hotelListModels));
+                        callBack.onHotelListResponse(hotelListModels);
+
+                    }catch (Exception e){
+                        String msg = "请输入正确的服务器";
+                        int code = -1;
+                        callBack.onHotelLIstFailure(code,msg);
+                    }
+
+                }
+            }
+        });
+    }
+
+    public void getCmsMessage(String serverAddress,String tenant,int id,CmsMessageCallBack callBack){
+//       设置路径
+        String url =serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
+        Log.d(TAG, "getHotelList111: " + url);
+//        添加参数
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
+        queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
+        queryUrlBuilder.addQueryParameter("categoryId",String.valueOf(id));
+
+//        构建请求体
+        Request request = new Request.Builder()
+                .url(queryUrlBuilder.build())
+                .addHeader("tenant-id", tenant) // 添加请求头
+                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .build();
+//        接受回调
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                String msg = "请输入正确的服务器";
+                int code = -1;
+                callBack.onCmsMessageFailure(code,msg);
+            }
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseData = response.body().string();
+
+                if(response.isSuccessful()){
+
+                    try {
+                        BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>(){}.getType());
+                        int code = cmsMessage.getCode();
+                        if (code != 0 ){
+                            String msg = "请输入正确的服务器";
+                            callBack.onCmsMessageFailure(code,msg);
+                        }
+                        ArrayList<CmsMessageModel> cmsMessageModels= cmsMessage.getData().getList();
+                        Log.d(TAG, "getHotelList111: " + gson.toJson(cmsMessageModels));
+                        // 获取1个元素的子列表
+                        List<CmsMessageModel> subList = cmsMessageModels.subList(0, Math.min(cmsMessageModels.size(), 2));
+
+                        // 创建一个新的 ArrayList 以包含子列表中的元素
+                        ArrayList<CmsMessageModel> firstFourElements = new ArrayList<>(subList);
+
+                        // 如果需要将原来的列表替换为前四个元素
+                        cmsMessageModels.clear();
+                        cmsMessageModels.addAll(firstFourElements);
+                        Log.d(TAG, "getHotelList111: " + gson.toJson(cmsMessageModels));
+                        callBack.onCmsMessageResponse(cmsMessageModels);
+
+                    }catch (Exception e){
+                        String msg = "请输入正确的服务器";
+                        int code = -1;
+                        callBack.onCmsMessageFailure(code,msg);
+                    }
+
+                }
+            }
+        });
+    }
 }
