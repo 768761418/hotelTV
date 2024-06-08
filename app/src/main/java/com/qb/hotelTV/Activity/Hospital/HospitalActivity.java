@@ -221,7 +221,7 @@ public class HospitalActivity extends BaseActivity {
         timer.schedule(timerTask,0,1000);
 
 
-        clickEvent();
+//        clickEvent();
         focusChange();
 
 
@@ -411,7 +411,7 @@ public class HospitalActivity extends BaseActivity {
 //        layoutIndexBinding.tvImage.requestFocus();
 //        layoutIndexBinding.tvImage.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule0.requestFocus();
-        layoutHospitalBinding.hospitalModule0.setOnFocusChangeListener(focusScaleListener);
+//        layoutHospitalBinding.hospitalModule0.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule1.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule2.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule3.setOnFocusChangeListener(focusScaleListener);
@@ -510,7 +510,7 @@ public class HospitalActivity extends BaseActivity {
                                     Log.d(TAG, "onApkResponse: " + hotelList.get(i).getPicUrl());
 
                                     //获取到每一个item的layout替换掉图片和文字和跳转地址
-                                    LinearLayout item = (LinearLayout) ((LinearLayout) layoutHospitalBinding.hospitalMainBottomLayout.getChildAt(i)).getChildAt(0);
+                                    LinearLayout item = (LinearLayout)  layoutHospitalBinding.hospitalMainBottomLayout.getChildAt(i);
 
                                     ImageView img  = item.findViewById(R.id.item_img);
 

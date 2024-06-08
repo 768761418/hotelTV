@@ -241,12 +241,7 @@
                 android:focusable="true"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
                     <include layout="@layout/item_module_type_one"></include>
-                </LinearLayout>
             </LinearLayout>
 
 <!--            功能2-->
@@ -260,13 +255,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/hospital_module_1"
                 tools:ignore="MissingConstraints">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
                     <include layout="@layout/item_module_type_one"></include>
-                </LinearLayout>
             </LinearLayout>
 
 <!--            功能3-->
@@ -276,18 +265,9 @@
                 android:layout_height="112dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:ignore="MissingConstraints"
-                android:focusable="true"
-
-                >
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
+                android:gravity="center"
+                android:focusable="true">
                     <include layout="@layout/item_module_type_two"/>
-                </LinearLayout>
-
-
-
             </LinearLayout>
 
 <!--            功能4-->
@@ -301,12 +281,7 @@
                 android:gravity="center"
                 android:focusable="true"
                 android:orientation="horizontal">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
                     <include layout="@layout/item_module_type_two"/>
-                </LinearLayout>
             </LinearLayout>
 
 <!--            功能5-->
@@ -320,14 +295,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/hospital_module_4"
                 android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
                     <include layout="@layout/item_module_type_two"/>
-                </LinearLayout>
-
             </LinearLayout>
 
 <!--            功能6-->
@@ -339,15 +307,8 @@
                 android:gravity="center"
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/hospital_module_5"
-                >
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
+                app:layout_constraintLeft_toRightOf="@id/hospital_module_5">
                     <include layout="@layout/item_module_type_two"/>
-                </LinearLayout>
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
