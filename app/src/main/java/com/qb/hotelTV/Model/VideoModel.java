@@ -1,7 +1,7 @@
 package com.qb.hotelTV.Model;
 
 public class VideoModel {
-    private Integer id;
+    private Long id;
     private String streamUrl;
     private String streamName;
     private String description;
@@ -12,11 +12,11 @@ public class VideoModel {
         this.streamUrl = streamUrl;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

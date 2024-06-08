@@ -12,4 +12,9 @@ public class TimeUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         return dateFormat.format(new Date());
     }
+
+    public static String getCurrentDateTime(int type){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+        return dateFormat.format(new Date());
+    }
 }

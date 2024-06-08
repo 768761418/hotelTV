@@ -13,7 +13,7 @@ public class ApiSetting {
 //    BackstageHttp
     private String SERVER = "http://113.106.109.130:23000";
     private String QA = "http://192.168.2.85:48080";
-    public static String AUTHORIZATION = "Bearer test1";
+    public static String AUTHORIZATION = "Bearer test134";
     public static String PAGE_NO = "1";
     public static String PAGE_SIZE = "100";
 

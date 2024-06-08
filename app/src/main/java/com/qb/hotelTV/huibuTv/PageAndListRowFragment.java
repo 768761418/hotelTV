@@ -60,7 +60,9 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "loadData: ");
         setupUi();
+        Log.d(TAG, "loadData1: ");
         loadData();
         mBackgroundManager = BackgroundManager.getInstance(getActivity());
         mBackgroundManager.attach(getActivity().getWindow());
@@ -79,13 +81,16 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     }
 
     private void loadData() {
+
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         setAdapter(mRowsAdapter);
+        Log.d(TAG, "loadData2: ");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 createRows();
                 startEntranceTransition();
+                Log.d(TAG, "loadData3: ");
             }
         }, 2000);
 
@@ -117,11 +122,13 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
     private void createRows() {
 //        获取本机mac地址
-        String mac = GetMAC.getDeviceMacAddress();
+//        String mac = GetMAC.getDeviceMacAddress();
+        String mac = "mac";
         Log.d("mac", mac);
 //      向服务器验证mac地址
 //        String status= GetMAC.checkMacAddress(mac);
         String status = "2";
+        Log.d(TAG, "loadData3: x" + status);
 //        结果0：不存在，1：存在但过期，2：可用
         switch (status){
             case "0":
@@ -175,13 +182,16 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 //                    AutoUpdate.showUpdateDialog(getActivity());
 //                }
                 boolean addThing = true;
+                Log.d(TAG, "createRows: " +addThing);
                 if(addThing){
 //                    ArrayList<Channel> channelsList = MyApplication.getChannelsList();
                     Context context = getContext();
                     ArrayList<VideoModel> channelsList = MyApplication.getVideoList(context);
+                    Log.d(TAG, "createRows: " +channelsList.toString());
                     for (int i = 0; i < channelsList.size(); i++) {
 //                        Channel channel = channelsList.get(i);
                         VideoModel channel = channelsList.get(i);
+                        Log.d(TAG, "createRows: " + channel.toString());
                         mRowsAdapter.add(new PageRow(new HeaderItem(i, (i+1)+" "+channel.getStreamName())));
                     }
 //                    授权

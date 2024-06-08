@@ -33,15 +33,19 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "进来绑定界面 ");
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
                     .commitNow();
+            Log.d(TAG, "初始化1 ");
         }
         /* 初始取得User可触碰屏幕的时间 */
         lastUpdateTime = new Date(System.currentTimeMillis());
         mHandler02.postDelayed(mTask02, intervalAuthorized);
+        Log.d(TAG, "初始化2 ");
         pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
+        Log.d(TAG, "初始化3 ");
     }
     /**
      * 计时线程

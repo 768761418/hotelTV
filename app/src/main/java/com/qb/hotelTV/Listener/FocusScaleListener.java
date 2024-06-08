@@ -10,13 +10,13 @@ public class FocusScaleListener implements View.OnFocusChangeListener {
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (hasFocus) {
-            v.animate().scaleX(1.01f).scaleY(1.01f).setDuration(300).start();
+            v.animate().scaleX(1.03f).scaleY(1.01f).setDuration(300).start();
             // 添加边框
             v.setBackground(getBorderDrawable());
         } else {
             v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
             // 移除边框
-            v.setBackground(null);
+//            v.setBackground(null);
         }
     }
 

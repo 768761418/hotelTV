@@ -6,6 +6,7 @@ public class HotelListModel {
     private String name;
     private String picUrl;
     private int type;
+    private String backgroundUrl;
 
     public int getId() {
         return id;
@@ -37,5 +38,13 @@ public class HotelListModel {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getBackgroundUrl() {
+        return backgroundUrl;
+    }
+
+    public void setBackgroundUrl(String backgroundUrl) {
+        this.backgroundUrl = backgroundUrl;
     }
 }

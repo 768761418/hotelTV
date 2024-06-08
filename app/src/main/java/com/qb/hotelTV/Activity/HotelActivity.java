@@ -21,7 +21,7 @@ public class HotelActivity extends BaseActivity{
     private LayoutHotelBinding layoutHotelBinding;
     private FocusScaleListener focusScaleListener = new FocusScaleListener();
     private String strHtml,strTitle;
-    String serverAddress,tenant;
+    private String serverAddress,tenant;
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
 
     @Override
@@ -41,15 +41,6 @@ public class HotelActivity extends BaseActivity{
 
     private void init(){
         layoutHotelBinding = DataBindingUtil.setContentView(HotelActivity.this, R.layout.layout_hotel);
-//        strHtml = getIntent().getStringExtra("detail");
-//        if (strHtml != null && !strHtml.equals("")){
-//            layoutHotelBinding.hotelWeb.loadDataWithBaseURL(null,strHtml,"text/html", "UTF-8", null);
-//            layoutHotelBinding.hotelWeb.requestFocus();
-//            layoutHotelBinding.hotelWeb.setOnFocusChangeListener(focusScaleListener);
-//        }else {
-//            layoutHotelBinding.hotelWeb.setVisibility(View.GONE);
-//        }
-
         String bg = getIntent().getStringExtra("bg");
         int id = getIntent().getIntExtra("id",-1);
         serverAddress = getIntent().getStringExtra("serverAddress");

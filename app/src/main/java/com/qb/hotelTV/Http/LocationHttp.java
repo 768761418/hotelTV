@@ -1,5 +1,7 @@
 package com.qb.hotelTV.Http;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.gson.JsonArray;
@@ -36,6 +38,7 @@ public class LocationHttp {
     public  void getWeather(String location,LocationHttpCallback callback){
 //       设置路径
         String url = ApiSetting.URL_WEATHER;
+        Log.d(TAG, "请求路径：" +url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("key", key);
@@ -57,6 +60,7 @@ public class LocationHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "请求结果：" +responseData);
                     String weather = "";
                     // 使用 Gson 解析 JSON 字符串
                     JsonParser parser = new JsonParser();
@@ -82,6 +86,7 @@ public class LocationHttp {
     public void getGeo(String location,LocationHttpCallback callback){
 //       设置路径
        String url = ApiSetting.URL_GEO;
+        Log.d(TAG, "请求路径：" +url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("key", key);
@@ -103,6 +108,7 @@ public class LocationHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "请求结果：" +responseData);
                     String locationName = "";
                     // 使用 Gson 解析 JSON 字符串
                     JsonParser parser = new JsonParser();

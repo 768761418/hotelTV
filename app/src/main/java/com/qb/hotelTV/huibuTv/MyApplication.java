@@ -19,6 +19,7 @@ import com.qb.hotelTV.R;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 
 
 public class MyApplication extends Application {
@@ -28,17 +29,19 @@ public class MyApplication extends Application {
     private static String hostIP;
     private static String authorizationStatus;
     private static String updateData;
+    private static final String  TAG = "MyApplication";
 
     public static SharedPreferences sharedPreferences;
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
-    private static final String PREFS_NAME = "HotelTV";
+    private static final String PREFS_NAME = "Hospital";
     private static boolean getModel = false;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate1: ");
 //        获取strings.xml中的字符串
         hostIP = getString(R.string.hostAddress);
         P2pConfig config = new P2pConfig.Builder()
@@ -61,60 +64,44 @@ public class MyApplication extends Application {
     public static void initVideoList(Context context){
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
-        if (isFirstRun){
-            Timer timer = new Timer();
-            TimerTask timerTask  = new TimerTask() {
+        Log.d(TAG, "isFirstRun: " + isFirstRun);
+
+
+        String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
+        String tenant  = sharedPreferences.getString(KEY_TENANT,"");
+        if (!serverAddress.equals("")&&!tenant.equals("")){
+            CountDownLatch latch = new CountDownLatch(1);
+            new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
-                    String tenant  = sharedPreferences.getString(KEY_TENANT,"");
-                    if (!serverAddress.equals("")&&!tenant.equals("")){
-                        BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
-                            @Override
-                            public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
-                                videoList=videoModels;
-                                getModel = true;
-                            }
-
-                            @Override
-                            public void onTvChannelFailure(int code, String msg) {
-                                getModel = true;
-                            }
-                        });
-
-                        timer.cancel();
-                    }
+                   videoList = BackstageHttp.getInstance().getTvChannel(serverAddress, tenant);
+                   getModel = true;
+//                   等待线程完成再继续
+                   latch.countDown();
                 }
-            };
-
-            timer.schedule(timerTask,0,1000);
-
-        }else {
-            String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
-            String tenant  = sharedPreferences.getString(KEY_TENANT,"");
-            BackstageHttp.getInstance().getTvChannel(serverAddress, tenant, new BackstageHttp.TvChannelCallback() {
-                @Override
-                public void onTvChannelResponse(ArrayList<VideoModel> videoModels) {
-                    videoList=videoModels;
-                    Log.d("989", "onTvChannelResponse: " + videoList);
-                    getModel = true;
-                }
-
-                @Override
-                public void onTvChannelFailure(int code, String msg) {
-                    Log.d("989", "onTvChannelsss: ");
-                    getModel = true;
-                }
-            });
-
+            }).start();
+//
+            try {
+                latch.await(); // 等待请求完成
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
+
+
+
+
+
     public static ArrayList<VideoModel> getVideoList(Context context) {
-        while (!getModel){
+//        while (!getModel){
+//            initVideoList(context);
+//        }
+        if (!getModel){
             initVideoList(context);
         }
-
+        Log.d(TAG, "video: " +videoList.toString() );
         return videoList;
     }
 

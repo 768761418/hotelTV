@@ -29,7 +29,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class BackstageHttp {
-    private static String TAG = LocationHttp.class.getSimpleName();
+    private static  final  String TAG = LocationHttp.class.getSimpleName();
     //    设置单例
     private BackstageHttp() {}
     private static BackstageHttp instance = new BackstageHttp();
@@ -79,6 +79,7 @@ public class BackstageHttp {
     public void getRoomMessage(String serverAddress,String roomNumber,String tenant,RoomMessageCallback callback){
 //       设置路径
             String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
+            Log.d(TAG, "请求路径: " + url);
 //        添加参数
             HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
             queryUrlBuilder.addQueryParameter("number", roomNumber);
@@ -103,6 +104,7 @@ public class BackstageHttp {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         String responseData = response.body().string();
+                        Log.d(TAG, "请求结果" + responseData);
                         try {
                             BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
                             Integer code = roomMessage.getCode();
@@ -118,6 +120,7 @@ public class BackstageHttp {
                                 callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
                             }
                         }catch (Exception e){
+                            Log.e(TAG, "errorHttp",e );
                             callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
                         }
                     }
@@ -127,6 +130,7 @@ public class BackstageHttp {
     public void getApk(String serverAddress,String tenant,ApkCallback callback){
 //       设置路径
         String url = serverAddress + ApiSetting.URL_GET_APK;
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -152,7 +156,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "apk1111: " + responseData);
+                    Log.d(TAG, "请求结果" + responseData);
                     try {
                         BaseResponseModel<BaseListModel<ApkModel>> apk = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<ApkModel>>>(){}.getType());
                         Integer code = apk.getCode();
@@ -164,6 +168,7 @@ public class BackstageHttp {
                         ArrayList<ApkModel> apkModelArrayList = apk.getData().getList();
                         callback.onApkResponse(apkModelArrayList);
                     }catch (Exception e){
+                        Log.e(TAG, "errorHttp",e );
                         ArrayList<ApkModel> apkModelArrayList = new ArrayList<>();
                         callback.onApkResponse(apkModelArrayList);
                     }
@@ -175,6 +180,7 @@ public class BackstageHttp {
     public void getHotelMessage(String serverAddress,String tenant,HotelMessageCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_HOTEL_MESSAGE;
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
 
@@ -198,10 +204,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "isis1: " + responseData);
-                    Log.d(TAG, "isis1: " + url);
-                    Log.d(TAG, "isis1: " + "tenant:" + tenant);
-                    Log.d(TAG, "isis1: " + "Authorization:" + ApiSetting.AUTHORIZATION);
+                    Log.d(TAG, "请求结果" + responseData);
                     try {
                         BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
                         }.getType());
@@ -220,6 +223,7 @@ public class BackstageHttp {
                         String videoUrl = hotelMessage.getData().getVideoUrl();
                         callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground,resourceUrl,detail,videoUrl);
                     }catch (Exception e){
+                        Log.e(TAG, "errorHttp",e );
                         Log.d(TAG, "isis: " + responseData);
                         callback.onHotelMessageResponse("", "", "","","","");
 
@@ -232,6 +236,7 @@ public class BackstageHttp {
     public void getTvText(String serverAddress,String tenant,TvTextCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_TEXT;
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -257,6 +262,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
+                    Log.d(TAG, "请求结果" + responseData);
                     BaseResponseModel<BaseListModel<TvTextModel>> tvText = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<TvTextModel>>>(){}.getType());
                     Integer code = tvText.getCode();
 
@@ -288,10 +294,10 @@ public class BackstageHttp {
             }
         });
     }
-    public void getTvChannel(String serverAddress,String tenant,TvChannelCallback callback){
+    public ArrayList<VideoModel> getTvChannel(String serverAddress,String tenant){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
-        Log.d(TAG, "getTvChannel: " + url);
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -305,41 +311,31 @@ public class BackstageHttp {
                 .build();
 //        接受回调
         Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                String msg = "请输入正确的服务器";
-                int code = -1;
-                callback.onTvChannelFailure(code,msg);
-            }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String responseData = response.body().string();
-                    try {
-                        BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
-                        int code = tvChannel.getCode();
-                        if (code != 0) {
-                            callback.onTvChannelResponse(null);
-                            return;
-                        }
-                        ArrayList<VideoModel> videoModels = tvChannel.getData().getList();
-                        callback.onTvChannelResponse(videoModels );
-                    }catch (Exception e){
-                        ArrayList<VideoModel> videoModels = new ArrayList<>();
-                        callback.onTvChannelResponse(videoModels );
-                    }
-
+        ArrayList<VideoModel> videoModels = new ArrayList<>();
+        try{
+            Response response = call.execute();
+            if (response.isSuccessful()){
+                String responseData = response.body().string();
+                Log.d(TAG, "请求结果" + responseData);
+                BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
+                int code = tvChannel.getCode();
+                if (code != 0) {
+                    Log.d(TAG, "请求失败" + url + "//" + responseData);
+                    return videoModels;
                 }
+                videoModels = tvChannel.getData().getList();
             }
-        });
+        }catch (Exception e){
+                Log.e(TAG, "errorHttp",e );
+        }
+        return  videoModels;
     }
 
 
     public void getHotelList(String serverAddress,String tenant,HotelListCallBack callBack){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_HOTEL_LIST;
-        Log.d(TAG, "getHotelList: " + url);
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -363,7 +359,7 @@ public class BackstageHttp {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseData = response.body().string();
-
+                Log.d(TAG, "请求结果" + responseData);
                 if(response.isSuccessful()){
 
                     try {
@@ -374,7 +370,7 @@ public class BackstageHttp {
                         }
                         ArrayList<HotelListModel> hotelListModels= hotelList.getData().getList();
                         // 获取前四个元素的子列表
-                        List<HotelListModel> subList = hotelListModels.subList(0, Math.min(hotelListModels.size(), 4));
+                        List<HotelListModel> subList = hotelListModels.subList(0, Math.min(hotelListModels.size(), 6));
 
                         // 创建一个新的 ArrayList 以包含子列表中的元素
                         ArrayList<HotelListModel> firstFourElements = new ArrayList<>(subList);
@@ -386,6 +382,7 @@ public class BackstageHttp {
                         callBack.onHotelListResponse(hotelListModels);
 
                     }catch (Exception e){
+                        Log.e(TAG, "errorHttp",e );
                         String msg = "请输入正确的服务器";
                         int code = -1;
                         callBack.onHotelLIstFailure(code,msg);
@@ -399,7 +396,7 @@ public class BackstageHttp {
     public void getCmsMessage(String serverAddress,String tenant,int id,CmsMessageCallBack callBack){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
-        Log.d(TAG, "getHotelList111: " + url);
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -417,6 +414,7 @@ public class BackstageHttp {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "onFailure: " , e);
                 String msg = "请输入正确的服务器";
                 int code = -1;
                 callBack.onCmsMessageFailure(code,msg);
@@ -424,7 +422,7 @@ public class BackstageHttp {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseData = response.body().string();
-
+                Log.d(TAG, "请求结果" + responseData);
                 if(response.isSuccessful()){
 
                     try {
@@ -435,7 +433,7 @@ public class BackstageHttp {
                             callBack.onCmsMessageFailure(code,msg);
                         }
                         ArrayList<CmsMessageModel> cmsMessageModels= cmsMessage.getData().getList();
-                        Log.d(TAG, "getHotelList111: " + gson.toJson(cmsMessageModels));
+                        Log.d(TAG, "getHotelList1112: " + gson.toJson(cmsMessageModels));
                         // 获取1个元素的子列表
                         List<CmsMessageModel> subList = cmsMessageModels.subList(0, Math.min(cmsMessageModels.size(), 2));
 
@@ -445,10 +443,11 @@ public class BackstageHttp {
                         // 如果需要将原来的列表替换为前四个元素
                         cmsMessageModels.clear();
                         cmsMessageModels.addAll(firstFourElements);
-                        Log.d(TAG, "getHotelList111: " + gson.toJson(cmsMessageModels));
+                        Log.d(TAG, "getHotelList1113: " + gson.toJson(cmsMessageModels));
                         callBack.onCmsMessageResponse(cmsMessageModels);
 
                     }catch (Exception e){
+                        Log.e(TAG, "errorHttp",e );
                         String msg = "请输入正确的服务器";
                         int code = -1;
                         callBack.onCmsMessageFailure(code,msg);

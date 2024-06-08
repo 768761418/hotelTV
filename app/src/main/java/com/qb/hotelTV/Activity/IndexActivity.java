@@ -258,8 +258,6 @@ public class IndexActivity extends BaseActivity {
                                 player.setMediaItem(mediaItem);
                                 player.prepare();
                                 player.play();
-
-
                             }
 
 //                            设置名称
@@ -750,8 +748,6 @@ public class IndexActivity extends BaseActivity {
 
             }
         });
-
-
     }
 
     private void saveServerAddressAndRoomNumber(String serverAddress, String roomNumber,String tenant) {
