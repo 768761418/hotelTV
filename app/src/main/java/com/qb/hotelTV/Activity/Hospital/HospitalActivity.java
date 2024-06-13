@@ -356,56 +356,7 @@ public class HospitalActivity extends BaseActivity {
     }
 
 
-    private void clickEvent(){
-        layoutHospitalBinding.hospitalModule0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        });
-        layoutHospitalBinding.hospitalModule0.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule5.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        layoutHospitalBinding.hospitalModule6.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
 
     private void focusChange(){
 //        layoutIndexBinding.tvImage.requestFocus();
@@ -535,6 +486,7 @@ public class HospitalActivity extends BaseActivity {
                                     int finalI  = i;
                                     switch (hotelList.get(i).getType()){
                                         case 10:
+//                                            电视界面
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
@@ -544,6 +496,7 @@ public class HospitalActivity extends BaseActivity {
                                             });
                                             break;
                                         case 9:
+//                                            应用中心
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
@@ -557,21 +510,14 @@ public class HospitalActivity extends BaseActivity {
                                             });
                                             break;
                                         case 0:
-
+//                                            WEB图文
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalWebActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
-                                                    intent.putExtra("roomNumber",roomNumber);
-                                                    intent.putExtra("weather",weather);
-
+                                                    Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
+                                                    defaultPutIntent(intent,0);
                                                     intent.putExtra("title",hotelList.get(finalI).getName());
                                                     intent.putExtra("id",hotelList.get(finalI).getId());
-                                                    intent.putExtra("logo",strHotelLogo);
-
 
                                                     Log.d(TAG, "detail: " +  hotelList.get(finalI).getId());
                                                     intent.putExtra("detail",strDetail);
@@ -580,16 +526,15 @@ public class HospitalActivity extends BaseActivity {
                                             });
                                             break;
                                         case 2:
+//                                            视频
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, VideoActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
+                                                    Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
+                                                    defaultPutIntent(intent,1);
+
                                                     intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    Log.d(TAG, "strVideoUrl: " +strVideoUrl);
-                                                    intent.putExtra("videoUrl",strVideoUrl);
+                                                    intent.putExtra("id",hotelList.get(finalI).getId());
                                                     startActivity(intent);
                                                 }
                                             });
@@ -619,6 +564,17 @@ public class HospitalActivity extends BaseActivity {
 
 
 
+
+    }
+
+    private void defaultPutIntent(Intent intent,int type){
+        intent.putExtra("bg",strHotelBg);
+        intent.putExtra("serverAddress",serverAddress);
+        intent.putExtra("tenant",tenant);
+        intent.putExtra("roomNumber",roomNumber);
+        intent.putExtra("weather",weather);
+        intent.putExtra("logo",strHotelLogo);
+        intent.putExtra("type",type);
     }
 
 }

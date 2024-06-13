@@ -2,21 +2,21 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <data></data>
+    <data/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <ImageView
-            android:id="@+id/hotel_background"
+            android:id="@+id/hospital_child_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/app_bg" />
-
         <!--        顶部栏-->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/hospital_web_top"
+            android:id="@+id/hospital_child_top"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             app:layout_constraintHeight_percent="0.25"
@@ -35,7 +35,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/hospital_web_logo"
+                    android:id="@+id/hospital_child_logo"
                     android:layout_width="400dp"
                     android:layout_height="65dp"
                     android:adjustViewBounds="true"
@@ -45,7 +45,7 @@
 
             </LinearLayout>
 
-<!--            文字部分-->
+            <!--            文字部分-->
             <LinearLayout
                 android:id="@+id/linearLayout"
                 android:layout_width="350dp"
@@ -58,7 +58,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/hospital_web_time"
+                    android:id="@+id/hospital_child_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -70,7 +70,7 @@
                     android:textSize="30sp" />
 
                 <TextView
-                    android:id="@+id/hospital_web_date"
+                    android:id="@+id/hospital_child_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="day"
@@ -81,7 +81,7 @@
 
 
                 <TextView
-                    android:id="@+id/hospital_web_weather"
+                    android:id="@+id/hospital_child_weather"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="weather"
@@ -94,7 +94,7 @@
                     android:orientation="vertical"
                     android:gravity="right">
                     <TextView
-                        android:id="@+id/hospital_web_room_number"
+                        android:id="@+id/hospital_child_room_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="roomNumber"
@@ -109,115 +109,129 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/hospital_child_viewPager"
+            android:layout_width="900dp"
+            android:layout_height="360dp"
+            tools:ignore="MissingConstraints"
+            android:nextFocusLeft="@id/hospital_child_comeback"
+            android:nextFocusRight="@id/hospital_child_index"
+            app:layout_constraintTop_toBottomOf="@id/hospital_child_top"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
+            app:layout_constraintRight_toRightOf="parent"
+            />
 
         <WebView
             android:id="@+id/hospital_web_contact"
             android:layout_width="900dp"
-            android:layout_height="350dp"
-            app:layout_constraintTop_toBottomOf="@id/hospital_web_top"
+            android:layout_height="360dp"
+            tools:ignore="MissingConstraints"
+            android:nextFocusLeft="@id/hospital_child_comeback"
+            android:nextFocusRight="@id/hospital_child_index"
+            app:layout_constraintTop_toBottomOf="@id/hospital_child_top"
             app:layout_constraintLeft_toLeftOf="parent"
+            android:focusableInTouchMode="true"
+            android:focusable="true"
             app:layout_constraintRight_toRightOf="parent"
-            android:nextFocusLeft="@id/hospital_web_comeback"
-            android:nextFocusRight="@id/hospital_web_index" />
+            android:visibility="invisible"/>
 
 
-
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="@id/hospital_child_viewPager"
+            app:layout_constraintTop_toBottomOf="@id/hospital_child_viewPager"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            tools:ignore="MissingConstraints"
+            android:gravity="center">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_location"/>
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="@id/hospital_web_contact"
-                app:layout_constraintTop_toBottomOf="@id/hospital_web_contact"
-                android:layout_marginTop="20dp"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:text="当前位置:"
+                android:layout_marginLeft="5dp"/>
+            <TextView
+                android:id="@+id/hospital_web_current_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:text="当前位置:"
+                android:layout_marginLeft="5dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/hospital_child_viewPager"
+            app:layout_constraintRight_toRightOf="@id/hospital_child_viewPager"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/hospital_child_comeback"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/hospital_web_border"
+                android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                tools:ignore="MissingConstraints"
-                android:gravity="center">
+                android:gravity="center"
+                android:layout_marginLeft="10dp"
+                android:nextFocusLeft="@id/hospital_web_index"
+                android:focusableInTouchMode="true"
+                android:focusable="true">
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/icon_location"/>
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/icon_comeback"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15dp"
+                    android:text="返回"
                     android:textStyle="bold"
-                    android:text="当前位置:"
-                    android:layout_marginLeft="5dp"/>
-                <TextView
-                    android:id="@+id/hospital_web_current_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="15dp"
-                    android:textStyle="bold"
-                    android:text="当前位置:"
-                    android:layout_marginLeft="5dp"/>
-
+                    android:textSize="12dp"
+                    android:layout_marginLeft="2dp"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintTop_toBottomOf="@id/hospital_web_contact"
-                app:layout_constraintRight_toRightOf="@id/hospital_web_contact"
-                android:orientation="horizontal">
+                android:id="@+id/hospital_child_index"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/hospital_web_border"
+                android:orientation="horizontal"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:focusableInTouchMode="true"
+                android:focusable="true">
 
-                <LinearLayout
-                    android:id="@+id/hospital_web_comeback"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/hospital_web_border"
-                    android:layout_marginRight="15dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginLeft="10dp"
-                    android:nextFocusLeft="@id/hospital_web_index"
-                    android:focusable="true">
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:src="@drawable/icon_comeback"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="返回"
-                        android:textStyle="bold"
-                        android:textSize="12dp"
-                        android:layout_marginLeft="2dp"/>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/hospital_web_index"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/hospital_web_border"
-                    android:orientation="horizontal"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center"
-                    android:focusable="true">
-
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:src="@drawable/icon_index"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="首页"
-                        android:textStyle="bold"
-                        android:textSize="12dp"
-                        android:layout_marginLeft="2dp"/>
-                </LinearLayout>
-
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/icon_index"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="首页"
+                    android:textStyle="bold"
+                    android:textSize="12dp"
+                    android:layout_marginLeft="2dp"/>
             </LinearLayout>
+
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

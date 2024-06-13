@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.app.BrowseSupportFragment;
 import com.cdnbye.sdk.P2pEngine;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
@@ -45,7 +46,9 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
 //            if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_CONTENT)) {
 //                mContent = savedInstanceState.getString(KEY_CONTENT);
 //            }
-        mExoPlayer = new ExoPlayer.Builder(getContext()).build();
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext())
+                .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        mExoPlayer = new ExoPlayer.Builder(getContext(),renderersFactory).build();
         getMainFragmentAdapter().getFragmentHost().notifyDataReady(getMainFragmentAdapter());
     }
 
@@ -64,7 +67,7 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
             @Override
             public void onClick(View v) {
                 full_screen.setVisibility(View.GONE);
-                Toast.makeText(getActivity(),"点击全屏",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(),"点击全屏",Toast.LENGTH_SHORT).show();
             }
         });
         StyledPlayerView playerView = view.findViewById(R.id.player_view);
@@ -91,7 +94,7 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
         // Prepare the player.
         mExoPlayer.prepare();
 //            设置声音为最大
-//            mExoPlayer.setVolume(1f);
+        mExoPlayer.setVolume(1f);
         // Start the playback.
         mExoPlayer.play();
 //        设置channelIndex

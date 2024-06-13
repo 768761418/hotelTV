@@ -393,15 +393,15 @@ public class BackstageHttp {
         });
     }
 
-    public void getCmsMessage(String serverAddress,String tenant,int id,CmsMessageCallBack callBack){
+    public void getCmsMessage(String serverAddress,String tenant,int id,CmsMessageCallBack callBack) {
 //       设置路径
-        String url =serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
+        String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
         Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
         queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
-        queryUrlBuilder.addQueryParameter("categoryId",String.valueOf(id));
+        queryUrlBuilder.addQueryParameter("categoryId", String.valueOf(id));
 
 //        构建请求体
         Request request = new Request.Builder()
@@ -414,25 +414,27 @@ public class BackstageHttp {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "onFailure: " , e);
+                Log.e(TAG, "onFailure: ", e);
                 String msg = "请输入正确的服务器";
                 int code = -1;
-                callBack.onCmsMessageFailure(code,msg);
+                callBack.onCmsMessageFailure(code, msg);
             }
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseData = response.body().string();
                 Log.d(TAG, "请求结果" + responseData);
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     try {
-                        BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>(){}.getType());
+                        BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>() {
+                        }.getType());
                         int code = cmsMessage.getCode();
-                        if (code != 0 ){
+                        if (code != 0) {
                             String msg = "请输入正确的服务器";
-                            callBack.onCmsMessageFailure(code,msg);
+                            callBack.onCmsMessageFailure(code, msg);
                         }
-                        ArrayList<CmsMessageModel> cmsMessageModels= cmsMessage.getData().getList();
+                        ArrayList<CmsMessageModel> cmsMessageModels = cmsMessage.getData().getList();
                         Log.d(TAG, "getHotelList1112: " + gson.toJson(cmsMessageModels));
                         // 获取1个元素的子列表
                         List<CmsMessageModel> subList = cmsMessageModels.subList(0, Math.min(cmsMessageModels.size(), 2));
@@ -446,11 +448,11 @@ public class BackstageHttp {
                         Log.d(TAG, "getHotelList1113: " + gson.toJson(cmsMessageModels));
                         callBack.onCmsMessageResponse(cmsMessageModels);
 
-                    }catch (Exception e){
-                        Log.e(TAG, "errorHttp",e );
+                    } catch (Exception e) {
+                        Log.e(TAG, "errorHttp", e);
                         String msg = "请输入正确的服务器";
                         int code = -1;
-                        callBack.onCmsMessageFailure(code,msg);
+                        callBack.onCmsMessageFailure(code, msg);
                     }
 
                 }

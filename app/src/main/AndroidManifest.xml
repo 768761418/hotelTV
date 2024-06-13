@@ -32,6 +32,9 @@
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions"></uses-permission>
 
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
 
     <application
         android:allowBackup="true"
@@ -51,10 +54,6 @@
         <meta-data
             android:name="design_height_in_dp"
             android:value="540"/>
-<!--        <activity-->
-<!--            android:name=".huibuTv.TVActivity"-->
-<!--            android:exported="false"-->
-<!--            android:theme="@style/Theme.Leanback"/>-->
         <activity
             android:name=".Activity.IndexActivity"
             android:exported="true"
@@ -70,6 +69,8 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
+        <activity android:name=".Activity.Hospital.HospitalChildActivity" android:exported="true"/>
+
         <activity android:name=".Activity.Hospital.HospitalWebActivity" android:exported="true"/>
 
         <activity android:name=".huibuTv.MainActivity"

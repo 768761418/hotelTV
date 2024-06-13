@@ -1,12 +1,13 @@
 package com.qb.hotelTV.huibuTv;
 
+
+import androidx.fragment.app.FragmentActivity;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
-
-import androidx.fragment.app.FragmentActivity;
 
 import com.qb.hotelTV.R;
 
@@ -33,19 +34,15 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "进来绑定界面 ");
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
                     .commitNow();
-            Log.d(TAG, "初始化1 ");
         }
         /* 初始取得User可触碰屏幕的时间 */
         lastUpdateTime = new Date(System.currentTimeMillis());
         mHandler02.postDelayed(mTask02, intervalAuthorized);
-        Log.d(TAG, "初始化2 ");
         pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
-        Log.d(TAG, "初始化3 ");
     }
     /**
      * 计时线程
@@ -62,7 +59,7 @@ public class MainActivity extends FragmentActivity {
             float timePeriodSecond = ((float) timePeriod / 1000);
 
 //            Log.d(TAG, "timePeriodSecond: " + timePeriodSecond);
-//            Log.d(TAG, "isShowingHeaders: " + pageAndListRowFragment.isShowingHeaders());
+            Log.d(TAG, "isShowingHeaders: " + pageAndListRowFragment.isShowingHeaders());
             if(pageAndListRowFragment.isShowingHeaders()){
                 if(timePeriodSecond > mHoldStillTime){
 //                Toast.makeText(MainActivity.this, "10s未操作", Toast.LENGTH_SHORT).show();
@@ -155,9 +152,16 @@ public class MainActivity extends FragmentActivity {
                 this.finish();
                 Log.d(TAG, "onKeyDown: 返回");
                 return  true;
-
             case KeyEvent.KEYCODE_MENU:
                 Log.d(TAG, "onKeyDown: 菜单");
+                break;
+            case KeyEvent.KEYCODE_SPACE:
+                Log.d(TAG, "onKeyDown: 空格");
+                // 添加空格键的处理逻辑
+                break;
+            case KeyEvent.KEYCODE_ENTER:
+                Log.d(TAG, "onKeyDown: 回车");
+                // 添加回车键的处理逻辑
                 break;
         }
 //        return true;
