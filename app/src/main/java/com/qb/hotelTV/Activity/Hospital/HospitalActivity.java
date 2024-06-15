@@ -152,8 +152,8 @@ public class HospitalActivity extends BaseActivity {
 
 
     private void initUI(){
-        getLocation();
-        startUpdateTask();
+        locationString = getLocation();
+//        startUpdateTask();
 //        请求多个接口获取数据
         getGeoAndWeather(locationString);
         getDataFromHttp();
@@ -168,7 +168,6 @@ public class HospitalActivity extends BaseActivity {
                         @Override
                         public void run() {
                             timer.cancel();
-                            layoutHospitalBinding.indexSky.setText(weather);
 
                             if (strResourceUrl != null && !strResourceUrl.equals("")){
                                 player = new SimpleExoPlayer.Builder(HospitalActivity.this).build();
@@ -184,10 +183,7 @@ public class HospitalActivity extends BaseActivity {
                                 player.play();
                             }
                             if (strHotelLogo!= null){
-                                Glide.with(HospitalActivity.this)
-                                        .load(strHotelLogo)
-                                        .error(R.drawable.img)
-                                        .into(layoutHospitalBinding.hospitalLogo);
+                                layoutHospitalBinding.hospitalTop.initOrUpdateTopBar(strHotelLogo,roomNumber,weather);
                             }
 
 //                            设置背景
@@ -199,7 +195,7 @@ public class HospitalActivity extends BaseActivity {
 
                             }
 
-                            layoutHospitalBinding.indexRoomNumber.setText(roomNumber);
+
 
 
                             if (strTvText == null || strTvText.equals("")){
@@ -207,8 +203,6 @@ public class HospitalActivity extends BaseActivity {
                             }else {
                                 layoutHospitalBinding.hospitalTvText.setVisibility(View.VISIBLE);
                                 layoutHospitalBinding.hospitalTvText.setText(strTvText);
-//                                int color = Color.parseColor(strTvTextColor);
-//                                layoutHospitalBinding.hospitalTvText.setTextColor(color);
                             }
 
 
@@ -219,8 +213,6 @@ public class HospitalActivity extends BaseActivity {
             }
         };
         timer.schedule(timerTask,0,1000);
-
-
 //        clickEvent();
         focusChange();
 
@@ -263,58 +255,6 @@ public class HospitalActivity extends BaseActivity {
         editor.apply();
     }
 
-    //    获取坐标
-    private void getLocation(){
-        // 获取 LocationManager 实例
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // 请求最近一次的位置信息
-        try {
-            // 获取最近一次的位置信息
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(lastKnownLocation==null){
-                double latitude = 0;
-                double longitude = 0;
-                // 将经纬度保留两位小数并合成字符串
-                locationString = String.format("%.2f,%.2f",  longitude, latitude);
-                return;
-            }
-            do{
-                double latitude = lastKnownLocation.getLatitude();
-                double longitude = lastKnownLocation.getLongitude();
-                // 将经纬度保留两位小数并合成字符串
-                locationString = String.format("%.2f,%.2f",  longitude, latitude);
-                Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
-                // 在此处处理获取到的经纬度信息
-            } while(lastKnownLocation == null);
-        } catch (SecurityException e) {
-            // 处理没有定位权限的情况
-            Log.e(TAG, "Location permission denied: " + e.getMessage());
-        }
-    }
-
-    // 创建一个新的 Runnable 对象，用于更新日期和时间
-    private void startUpdateTask() {
-        Runnable updateTask = new Runnable() {
-            @Override
-            public void run() {
-                // 获取当前日期和时间
-                String currentDateTimeString = getCurrentDateTime(1);
-                // 分割日期和时间
-                String[] parts = currentDateTimeString.split(" ");
-                String datePart = parts[0];
-                String timePart = parts[1];
-                // 更新 TextView 的文本内容为当前日期和时间的各部分
-                layoutHospitalBinding.indexDate.setText(datePart);
-                layoutHospitalBinding.indexTime.setText(timePart);
-
-                // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
-                handler.postDelayed(this, 1000);
-            }
-        };
-
-        // 执行第一次任务
-        handler.post(updateTask);
-    }
 
     //    请求天气和温度
     private  void getGeoAndWeather(String locationString){
@@ -356,11 +296,8 @@ public class HospitalActivity extends BaseActivity {
     }
 
 
-
-
+//    焦点切换动画
     private void focusChange(){
-//        layoutIndexBinding.tvImage.requestFocus();
-//        layoutIndexBinding.tvImage.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule0.requestFocus();
 //        layoutHospitalBinding.hospitalModule0.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule1.setOnFocusChangeListener(focusScaleListener);
@@ -414,36 +351,6 @@ public class HospitalActivity extends BaseActivity {
             });
         }
 
-//        请求房间信息
-        if (!ROOM_MESSAGE){
-            BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant,new BackstageHttp.RoomMessageCallback() {
-                @Override
-                public void onRoomMessageResponse(int id, String roomName, String wifiPassword, String frontDeskPhone) {
-                    Log.d(TAG, "BackstageHttp" + id + "/" + roomName + "/" + wifiPassword + "/" + frontDeskPhone);
-                    if (roomName.equals("")){
-                        strRoomName = Const.MSG_ROOM_NOT_EXIST;
-                        strWifiName = Const.MSG_ROOM_NOT_EXIST;
-                    }else {
-                        strRoomName = roomName;
-                        strWifiName = roomNumber + "_" +roomName;
-                    }
-
-                    strWifiPassword = wifiPassword;
-                    strDeskNumber = frontDeskPhone;
-                    ROOM_MESSAGE =true;
-                }
-                @Override
-                public void onRoomMessageFailure(int code, String msg) {
-                    if(code == -1){
-                        strRoomName = "";
-                        strWifiName = roomNumber + "_" ;
-                        strWifiPassword = "";
-                        strDeskNumber = "";
-                        ROOM_MESSAGE = true ;
-                    }
-                }
-            });
-        }
 
         if (!HOTEL_LIST){
             BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
@@ -514,13 +421,23 @@ public class HospitalActivity extends BaseActivity {
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
+                                                    Intent intent = new Intent(HospitalActivity.this, HospitalWebActivity.class);
+                                                    String title = hotelList.get(finalI).getName();
+                                                    int id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,0,title,id);
+//                                                    intent.putExtra("detail",strDetail);
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                            break;
+                                        case 1:
+                                            item.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
                                                     Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
-                                                    defaultPutIntent(intent,0);
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    intent.putExtra("id",hotelList.get(finalI).getId());
-
-                                                    Log.d(TAG, "detail: " +  hotelList.get(finalI).getId());
-                                                    intent.putExtra("detail",strDetail);
+                                                    String title = hotelList.get(finalI).getName();
+                                                    int id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,1,title,id);
                                                     startActivity(intent);
                                                 }
                                             });
@@ -531,10 +448,9 @@ public class HospitalActivity extends BaseActivity {
                                                 @Override
                                                 public void onClick(View view) {
                                                     Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
-                                                    defaultPutIntent(intent,1);
-
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    intent.putExtra("id",hotelList.get(finalI).getId());
+                                                    String title = hotelList.get(finalI).getName();
+                                                    int id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,2,title,id);
                                                     startActivity(intent);
                                                 }
                                             });
@@ -567,14 +483,12 @@ public class HospitalActivity extends BaseActivity {
 
     }
 
-    private void defaultPutIntent(Intent intent,int type){
-        intent.putExtra("bg",strHotelBg);
+    private void defaultPutIntent(Intent intent,int type,String title,int id){
         intent.putExtra("serverAddress",serverAddress);
         intent.putExtra("tenant",tenant);
         intent.putExtra("roomNumber",roomNumber);
-        intent.putExtra("weather",weather);
-        intent.putExtra("logo",strHotelLogo);
-        intent.putExtra("type",type);
+        intent.putExtra("title",title);
+        intent.putExtra("id",id);
     }
 
 }

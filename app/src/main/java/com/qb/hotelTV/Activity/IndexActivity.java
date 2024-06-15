@@ -228,7 +228,7 @@ public class IndexActivity extends BaseActivity {
         startUpdateTvTextTask();
         initAdapter();
 //        获取经纬度
-        getLocation();
+        locationString = getLocation();
 
 //        请求多个接口获取数据
         getGeoAndWeather(locationString);
@@ -408,34 +408,6 @@ public class IndexActivity extends BaseActivity {
     }
 
 
-//    获取坐标
-    private void getLocation(){
-        // 获取 LocationManager 实例
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // 请求最近一次的位置信息
-        try {
-            // 获取最近一次的位置信息
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(lastKnownLocation==null){
-                double latitude = 0;
-                double longitude = 0;
-                // 将经纬度保留两位小数并合成字符串
-                locationString = String.format("%.2f,%.2f",  longitude, latitude);
-                return;
-            }
-            do{
-                double latitude = lastKnownLocation.getLatitude();
-                double longitude = lastKnownLocation.getLongitude();
-                // 将经纬度保留两位小数并合成字符串
-                locationString = String.format("%.2f,%.2f",  longitude, latitude);
-                Log.d(TAG, "Latitude: " + latitude + ", Longitude: " + longitude);
-                // 在此处处理获取到的经纬度信息
-            } while(lastKnownLocation == null);
-        } catch (SecurityException e) {
-            // 处理没有定位权限的情况
-            Log.e(TAG, "Location permission denied: " + e.getMessage());
-        }
-    }
 
 
 

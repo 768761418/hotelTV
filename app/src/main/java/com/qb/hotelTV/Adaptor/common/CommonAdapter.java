@@ -30,6 +30,8 @@ public  abstract class CommonAdapter<T> extends RecyclerView.Adapter<CommonViewH
     private int layoutId;
 
 
+
+
     //手动更新数据
     private void updateData(){
         notifyDataSetChanged();

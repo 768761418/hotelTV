@@ -60,7 +60,7 @@ public class LocationHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "请求结果：" +responseData);
+                    Log.d(TAG, "请求结果W：" +responseData);
                     String weather = "";
                     // 使用 Gson 解析 JSON 字符串
                     JsonParser parser = new JsonParser();
@@ -108,7 +108,7 @@ public class LocationHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "请求结果：" +responseData);
+                    Log.d(TAG, "请求结果G：" +responseData);
                     String locationName = "";
                     // 使用 Gson 解析 JSON 字符串
                     JsonParser parser = new JsonParser();

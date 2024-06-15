@@ -7,9 +7,22 @@ public class HotelListModel {
     private String picUrl;
     private int type;
     private String backgroundUrl;
+    private Long status;
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
     }
 
     public String getName() {
@@ -24,9 +37,6 @@ public class HotelListModel {
         return type;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public void setName(String name) {
         this.name = name;

@@ -60,10 +60,6 @@ public class BackstageHttp {
         void onTvTextFailure(int code,String msg);
     }
 
-    public interface TvChannelCallback{
-        void onTvChannelResponse(ArrayList<VideoModel> videoModels);
-        void onTvChannelFailure(int code,String msg);
-    }
 
     public interface HotelListCallBack{
         void onHotelListResponse(ArrayList<HotelListModel> hotelListModels);
@@ -104,7 +100,7 @@ public class BackstageHttp {
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                     if(response.isSuccessful()){
                         String responseData = response.body().string();
-                        Log.d(TAG, "请求结果" + responseData);
+                        Log.d(TAG, "请求结果0" + responseData);
                         try {
                             BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
                             Integer code = roomMessage.getCode();
@@ -156,7 +152,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "请求结果" + responseData);
+                    Log.d(TAG, "请求结果2" + responseData);
                     try {
                         BaseResponseModel<BaseListModel<ApkModel>> apk = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<ApkModel>>>(){}.getType());
                         Integer code = apk.getCode();
@@ -204,7 +200,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "请求结果" + responseData);
+                    Log.d(TAG, "请求结果3" + responseData);
                     try {
                         BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
                         }.getType());
@@ -262,7 +258,7 @@ public class BackstageHttp {
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String responseData = response.body().string();
-                    Log.d(TAG, "请求结果" + responseData);
+                    Log.d(TAG, "请求结果4" + responseData);
                     BaseResponseModel<BaseListModel<TvTextModel>> tvText = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<TvTextModel>>>(){}.getType());
                     Integer code = tvText.getCode();
 
@@ -316,7 +312,7 @@ public class BackstageHttp {
             Response response = call.execute();
             if (response.isSuccessful()){
                 String responseData = response.body().string();
-                Log.d(TAG, "请求结果" + responseData);
+                Log.d(TAG, "请求结果5" + responseData);
                 BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
                 int code = tvChannel.getCode();
                 if (code != 0) {
@@ -359,7 +355,7 @@ public class BackstageHttp {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseData = response.body().string();
-                Log.d(TAG, "请求结果" + responseData);
+                Log.d(TAG, "请求结果6" + responseData);
                 if(response.isSuccessful()){
 
                     try {
@@ -423,9 +419,8 @@ public class BackstageHttp {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 String responseData = response.body().string();
-                Log.d(TAG, "请求结果" + responseData);
+                Log.d(TAG, "请求结果7" + responseData);
                 if (response.isSuccessful()) {
-
                     try {
                         BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>() {
                         }.getType());
@@ -459,4 +454,66 @@ public class BackstageHttp {
             }
         });
     }
+
+
+    public void getCmsMessage(String serverAddress,String tenant,int id,int page_no,CmsMessageCallBack callBack) {
+        String page_size = "6";
+        String page_number = String.valueOf(page_no);
+//       设置路径
+        String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
+        Log.d(TAG, "请求路径: " + url);
+//        添加参数
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("pageNo", page_number);
+        queryUrlBuilder.addQueryParameter("pageSize",page_size);
+        queryUrlBuilder.addQueryParameter("categoryId", String.valueOf(id));
+        queryUrlBuilder.addQueryParameter("status","0");
+
+
+//        构建请求体
+        Request request = new Request.Builder()
+                .url(queryUrlBuilder.build())
+                .addHeader("tenant-id", tenant) // 添加请求头
+                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .build();
+//        接受回调
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                Log.e(TAG, "onFailure: ", e);
+                String msg = "请输入正确的服务器";
+                int code = -1;
+                callBack.onCmsMessageFailure(code, msg);
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                String responseData = response.body().string();
+                Log.d(TAG, "请求结果7" + responseData);
+                if (response.isSuccessful()) {
+                    try {
+                        BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>() {
+                        }.getType());
+                        int code = cmsMessage.getCode();
+                        if (code != 0) {
+                            String msg = "请输入正确的服务器";
+                            callBack.onCmsMessageFailure(code, msg);
+                        }
+                        ArrayList<CmsMessageModel> cmsMessageModels = cmsMessage.getData().getList();
+                        callBack.onCmsMessageResponse(cmsMessageModels);
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "errorHttp", e);
+                        String msg = "请输入正确的服务器";
+                        int code = -1;
+                        callBack.onCmsMessageFailure(code, msg);
+                    }
+
+                }
+            }
+        });
+    }
+
+
 }
