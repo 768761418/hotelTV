@@ -389,7 +389,7 @@ public class BackstageHttp {
         });
     }
 
-    public void getCmsMessage(String serverAddress,String tenant,int id,CmsMessageCallBack callBack) {
+    public void getCmsMessage(String serverAddress,String tenant,Long id,CmsMessageCallBack callBack) {
 //       设置路径
         String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
         Log.d(TAG, "请求路径: " + url);
@@ -436,8 +436,6 @@ public class BackstageHttp {
 
                         // 创建一个新的 ArrayList 以包含子列表中的元素
                         ArrayList<CmsMessageModel> firstFourElements = new ArrayList<>(subList);
-
-                        // 如果需要将原来的列表替换为前四个元素
                         cmsMessageModels.clear();
                         cmsMessageModels.addAll(firstFourElements);
                         Log.d(TAG, "getHotelList1113: " + gson.toJson(cmsMessageModels));
@@ -456,7 +454,7 @@ public class BackstageHttp {
     }
 
 
-    public void getCmsMessage(String serverAddress,String tenant,int id,int page_no,CmsMessageCallBack callBack) {
+    public void getCmsMessage(String serverAddress,String tenant,Long id,int page_no,CmsMessageCallBack callBack) {
         String page_size = "6";
         String page_number = String.valueOf(page_no);
 //       设置路径

@@ -1,14 +1,17 @@
 package com.qb.hotelTV.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
-public class BaseActivity extends FragmentActivity {
+import com.qb.hotelTV.Listener.FocusScaleListener;
+
+public class BaseActivity extends Activity {
+    public FocusScaleListener focusScaleListener = new FocusScaleListener();
 
     public String getLocation(){
         String locationString = "";

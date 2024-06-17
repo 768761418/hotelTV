@@ -34,16 +34,12 @@
             android:id="@+id/hospital_web_contact"
             android:layout_width="900dp"
             android:layout_height="360dp"
-            app:layout_constraintWidth_percent="0.9"
             tools:ignore="MissingConstraints"
-            android:nextFocusLeft="@id/hospital_child_comeback"
-            android:nextFocusRight="@id/hospital_child_index"
             app:layout_constraintTop_toBottomOf="@id/hospital_top"
             app:layout_constraintLeft_toLeftOf="parent"
             android:focusableInTouchMode="true"
             android:focusable="true"
-            app:layout_constraintRight_toRightOf="parent"
-            android:visibility="invisible"/>
+            app:layout_constraintRight_toRightOf="parent" />
 
         <com.qb.hotelTV.module.hospital.BottomBar
             android:id="@+id/bottom_bar"

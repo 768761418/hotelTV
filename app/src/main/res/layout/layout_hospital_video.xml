@@ -31,25 +31,23 @@
 
 
         <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/hospital_child_video"
+            android:id="@+id/hospital_video"
             android:layout_width="900dp"
             android:layout_height="360dp"
             tools:ignore="MissingConstraints"
-            android:nextFocusLeft="@id/hospital_child_comeback"
-            android:nextFocusRight="@id/hospital_child_index"
             app:layout_constraintTop_toBottomOf="@id/hospital_top"
             app:layout_constraintLeft_toLeftOf="parent"
             android:focusableInTouchMode="true"
             android:focusable="true"
-            app:layout_constraintRight_toRightOf="parent"
-            android:visibility="invisible"/>
+            app:layout_constraintRight_toRightOf="parent"/>
 
         <com.qb.hotelTV.module.hospital.BottomBar
+            android:id="@+id/bottom_bar"
             android:layout_width="900dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hospital_child_video"
+            app:layout_constraintTop_toBottomOf="@id/hospital_video"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
 

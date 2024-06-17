@@ -22,6 +22,9 @@ public class BottomBar extends ConstraintLayout {
     IndexOnclickListener indexOnclickListener;
     ComebackOnclickListener comebackOnclickListener;
 
+    UpOnclickListener upOnclickListener;
+    NextOnclickListener nextOnclickListener;
+
     public BottomBar(@NonNull Context context) {
         super(context);
         initUI(context);
@@ -43,11 +46,27 @@ public class BottomBar extends ConstraintLayout {
     public interface ComebackOnclickListener{
         void onComebackOnclickListener();
     }
-    public void setDoneOnclickListener(IndexOnclickListener indexOnclickListener) {
+    public interface UpOnclickListener{
+        void onUpOnclickListener();
+    }
+    public interface NextOnclickListener{
+        void onNextOnclickListener();
+    }
+
+
+
+    public void setIndexOnclickListener(IndexOnclickListener indexOnclickListener) {
         this.indexOnclickListener = indexOnclickListener;
     }
     public void setComebackOnclickListener(ComebackOnclickListener comebackOnclickListener){
         this.comebackOnclickListener = comebackOnclickListener;
+    }
+
+    public void setUpOnclickListener(UpOnclickListener upOnclickListener) {
+        this.upOnclickListener = upOnclickListener;
+    }
+    public void setNextOnclickListener(NextOnclickListener nextOnclickListener){
+        this.nextOnclickListener = nextOnclickListener;
     }
 
 
@@ -60,9 +79,9 @@ public class BottomBar extends ConstraintLayout {
         hospitalModuleBottomBarBinding.hospitalIndex.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (indexOnclickListener != null){
-//                    indexOnclickListener.onIndexOnclickListener();
-//                }
+                if (indexOnclickListener != null){
+                    indexOnclickListener.onIndexOnclickListener();
+                }
                 ((Activity)context).finish();
             }
         });
@@ -73,6 +92,25 @@ public class BottomBar extends ConstraintLayout {
 //                    comebackOnclickListener.onComebackOnclickListener();
 //                }
                 ((Activity)context).finish();
+            }
+        });
+
+        hospitalModuleBottomBarBinding.hospitalUp.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (upOnclickListener!=null){
+                    upOnclickListener.onUpOnclickListener();
+                }
+
+            }
+        });
+
+        hospitalModuleBottomBarBinding.hospitalNext.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (nextOnclickListener!=null){
+                    nextOnclickListener.onNextOnclickListener();
+                }
             }
         });
 
@@ -110,6 +148,15 @@ public class BottomBar extends ConstraintLayout {
         }else {
             hospitalModuleBottomBarBinding.hospitalNext.setVisibility(INVISIBLE);
         }
+    }
+
+
+    public int hospitalIndexId(){
+        return R.id.hospital_index;
+    }
+
+    public int hospitalComebackId(){
+        return R.id.hospital_comeback;
     }
 
 

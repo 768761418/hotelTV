@@ -42,7 +42,7 @@ public class HotelActivity extends BaseActivity{
     private void init(){
         layoutHotelBinding = DataBindingUtil.setContentView(HotelActivity.this, R.layout.layout_hotel);
         String bg = getIntent().getStringExtra("bg");
-        int id = getIntent().getIntExtra("id",-1);
+        Long id = getIntent().getLongExtra("id",-1);
         serverAddress = getIntent().getStringExtra("serverAddress");
         tenant = getIntent().getStringExtra("tenant");
         if (bg != null) {

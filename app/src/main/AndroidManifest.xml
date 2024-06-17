@@ -69,9 +69,11 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.Hospital.HospitalChildActivity" android:exported="true"/>
+        <activity android:name=".Activity.Hospital.HospitalVideoActivity" android:exported="true"/>
 
         <activity android:name=".Activity.Hospital.HospitalWebActivity" android:exported="true"/>
+        <activity android:name=".Activity.Hospital.HospitalListActivity" android:exported="true"/>
+
 
         <activity android:name=".huibuTv.MainActivity"
             android:exported="false"/>

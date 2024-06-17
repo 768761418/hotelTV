@@ -423,34 +423,40 @@ public class HospitalActivity extends BaseActivity {
                                                 public void onClick(View view) {
                                                     Intent intent = new Intent(HospitalActivity.this, HospitalWebActivity.class);
                                                     String title = hotelList.get(finalI).getName();
-                                                    int id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,0,title,id);
+                                                    Long id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,title,id);
+                                                    Log.d(TAG, "onClick: " + title);
 //                                                    intent.putExtra("detail",strDetail);
                                                     startActivity(intent);
                                                 }
                                             });
                                             break;
                                         case 1:
+                                            // 图文列表
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
+                                                    Intent intent = new Intent(HospitalActivity.this, HospitalListActivity.class);
                                                     String title = hotelList.get(finalI).getName();
-                                                    int id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,1,title,id);
+                                                    Long id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,title,id);
+                                                    Log.d(TAG, "onClick: " + title);
+//                                                    intent.putExtra("detail",strDetail);
                                                     startActivity(intent);
                                                 }
                                             });
+
+
                                             break;
                                         case 2:
 //                                            视频
                                             item.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalChildActivity.class);
+                                                    Intent intent = new Intent(HospitalActivity.this, HospitalVideoActivity.class);
                                                     String title = hotelList.get(finalI).getName();
-                                                    int id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,2,title,id);
+                                                    Long id = hotelList.get(finalI).getId();
+                                                    defaultPutIntent(intent,title,id);
                                                     startActivity(intent);
                                                 }
                                             });
@@ -483,7 +489,7 @@ public class HospitalActivity extends BaseActivity {
 
     }
 
-    private void defaultPutIntent(Intent intent,int type,String title,int id){
+    private void defaultPutIntent(Intent intent,String title,Long id){
         intent.putExtra("serverAddress",serverAddress);
         intent.putExtra("tenant",tenant);
         intent.putExtra("roomNumber",roomNumber);

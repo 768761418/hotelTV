@@ -2,18 +2,18 @@ package com.qb.hotelTV.Model;
 
 public class HotelListModel {
 
-    private int id;
+    private Long id;
     private String name;
     private String picUrl;
     private int type;
     private String backgroundUrl;
     private Long status;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
