@@ -36,6 +36,31 @@ public class HospitalVideoActivity extends BaseActivity {
         initUI();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (player != null) {
+            player.pause(); // 在失去焦点时暂停视频
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (player != null) {
+            player.play(); // 在恢复焦点时继续播放视频
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (player != null) {
+            player.release(); // 在关闭界面时销毁播放器
+            player = null;
+        }
+    }
+
     private void initUI(){
         layoutHospitalVideoBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital_video);
 

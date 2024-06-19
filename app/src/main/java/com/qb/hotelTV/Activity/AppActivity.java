@@ -71,6 +71,7 @@ public class AppActivity extends BaseActivity{
         }
         if (title != null){
             layoutAppBinding.appTitle.setText(title);
+            layoutAppBinding.bottomBar.setTitle(title);
         }
         getApkList();
     }

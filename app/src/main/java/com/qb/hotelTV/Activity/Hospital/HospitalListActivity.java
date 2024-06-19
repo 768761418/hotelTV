@@ -187,7 +187,6 @@ public class HospitalListActivity extends BaseActivity {
 
 
     private void getImageData(){
-        //        TODO 添加图文列表
 
         BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, currentPageNo, new BackstageHttp.CmsMessageCallBack() {
             @Override
@@ -219,6 +218,7 @@ public class HospitalListActivity extends BaseActivity {
                                     .error(R.color.white)
                                     .into((imageView));
 
+                            item.setOnFocusChangeListener(focusScaleListener);
                             int finalI = i;
                             imageView.setOnClickListener(new View.OnClickListener() {
                                 @Override
