@@ -17,6 +17,8 @@ public class ApiSetting {
     public static String PAGE_NO = "1";
     public static String PAGE_SIZE = "100";
 
+    public static String PASSWORD = "Ug1d2orQ";
+
 //    public static String PREFIX = "/prod-api";
     public static String PREFIX = "";
 

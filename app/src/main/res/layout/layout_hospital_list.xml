@@ -38,62 +38,68 @@
             app:layout_constraintTop_toBottomOf="@id/hospital_top"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:focusableInTouchMode="false"
+            android:focusable="false">
             <LinearLayout
                 android:layout_width="900dp"
                 android:layout_height="180dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:focusableInTouchMode="false"
+                android:focusable="false">
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="900dp"
                 android:layout_height="180dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:focusableInTouchMode="false"
+                android:focusable="false">
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
 
                 <ImageView
-                    android:layout_width="300dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="280dp"
+                    android:layout_height="170dp"
                     android:src="@color/white"
-                    android:padding="5dp"
+                    android:layout_marginLeft="20dp"
                     android:focusableInTouchMode="true"
                     android:focusable="true"/>
 

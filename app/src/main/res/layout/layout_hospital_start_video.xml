@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/hospital_start_video"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:visibility="gone"/>
+    <ImageView
+        android:id="@+id/hospital_start_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/hospital_next_btn"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:src="@color/apk_bg"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="50dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

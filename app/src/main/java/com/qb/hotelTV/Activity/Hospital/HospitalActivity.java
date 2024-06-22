@@ -1,8 +1,6 @@
 package com.qb.hotelTV.Activity.Hospital;
 
-import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -74,7 +72,7 @@ public class HospitalActivity extends BaseActivity {
 //    经纬度
     private String locationString ;
     private SimpleExoPlayer player ;
-    FocusScaleListener focusScaleListener = new FocusScaleListener();
+
 
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";

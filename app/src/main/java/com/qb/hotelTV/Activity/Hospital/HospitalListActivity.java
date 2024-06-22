@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Http.LocationHttp;
+import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHospitalListBinding;
@@ -36,6 +37,7 @@ public class HospitalListActivity extends BaseActivity {
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
     private SimpleExoPlayer player ;
     private int currentPageNo = 1 ;
+    FocusScaleListener focusScaleListener = new FocusScaleListener();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,7 +105,6 @@ public class HospitalListActivity extends BaseActivity {
         layoutHospitalListBinding.bottomBar.setNextOnclickListener(new BottomBar.NextOnclickListener() {
             @Override
             public void onNextOnclickListener() {
-
                 currentPageNo+=1;
                 layoutHospitalListBinding.bottomBar.showUpAndNext();
                 Log.d(TAG, "onNextOnclickListener: " +currentPageNo);
@@ -113,7 +114,6 @@ public class HospitalListActivity extends BaseActivity {
         layoutHospitalListBinding.bottomBar.setUpOnclickListener(new BottomBar.UpOnclickListener() {
             @Override
             public void onUpOnclickListener() {
-                Log.d(TAG, "onNextOnclickListener: 222");
                 currentPageNo-=1;
                 layoutHospitalListBinding.bottomBar.showUpAndNext();
                 if (currentPageNo<=1){
@@ -200,6 +200,8 @@ public class HospitalListActivity extends BaseActivity {
                         if (cms.size()<6){
                             layoutHospitalListBinding.bottomBar.hideUpOrNext(false);
                             for (int i= cms.size();i<6;i++){
+//                                LinearLayout item = (LinearLayout) ( (LinearLayout) layoutHospitalListBinding.hospitalList.getChildAt(i%2)).getChildAt(i % 3);
+//                                ImageView imageView = (ImageView) item.getChildAt(0);
                                 LinearLayout item = (LinearLayout)  layoutHospitalListBinding.hospitalList.getChildAt(i%2);
                                 ImageView imageView = (ImageView) item.getChildAt(i % 3);
                                 imageView.setVisibility(View.GONE);
@@ -211,22 +213,24 @@ public class HospitalListActivity extends BaseActivity {
                             //获取到每一个item的layout替换掉图片和文字和跳转地址
                             LinearLayout item = (LinearLayout)  layoutHospitalListBinding.hospitalList.getChildAt(i%2);
                             ImageView imageView = (ImageView) item.getChildAt(i % 3);
+//                            LinearLayout item = (LinearLayout) ( (LinearLayout) layoutHospitalListBinding.hospitalList.getChildAt(i%2)).getChildAt(i % 3);
+//                            ImageView imageView = (ImageView) item.getChildAt(0);
                             imageView.setVisibility(View.VISIBLE);
+                            imageView.setOnFocusChangeListener(focusScaleListener);
 //                            加载图片
                             Glide.with(HospitalListActivity.this)
                                     .load(cms.get(i).getPicUrl())
                                     .error(R.color.white)
                                     .into((imageView));
 
-                            item.setOnFocusChangeListener(focusScaleListener);
+
                             int finalI = i;
-                            imageView.setOnClickListener(new View.OnClickListener() {
+                            item.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     Intent intent = new Intent(HospitalListActivity.this, HospitalWebActivity.class);
                                     String content = cms.get(finalI).getContent();
                                     Long imgId = cms.get(finalI).getCategoryId();
-                                    Log.d(TAG, "content: "+content);
                                     intent.putExtra("serverAddress",serverAddress);
                                     intent.putExtra("tenant",tenant);
                                     intent.putExtra("roomNumber",roomNumber);
@@ -236,6 +240,7 @@ public class HospitalListActivity extends BaseActivity {
                                     startActivityForResult(intent,1);
                                 }
                             });
+
 
                         }
 
