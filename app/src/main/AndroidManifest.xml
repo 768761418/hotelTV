@@ -60,7 +60,10 @@
             android:exported="true"
             android:screenOrientation="landscape"></activity>
 
-        <activity android:name=".Activity.Hospital.HospitalStartVideoActivity" android:exported="true">
+        <activity android:name=".Activity.Hospital.HospitalStartVideoActivity" android:exported="true"/>
+
+        <activity android:name=".Activity.Hospital.HospitalActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -68,9 +71,6 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Activity.Hospital.HospitalActivity"
-            android:exported="true"></activity>
         <activity android:name=".Activity.Hospital.HospitalVideoActivity" android:exported="true"/>
 
         <activity android:name=".Activity.Hospital.HospitalWebActivity" android:exported="true"/>

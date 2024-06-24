@@ -15,6 +15,10 @@ import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHospitalVideoBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -73,7 +77,12 @@ public class HospitalVideoActivity extends BaseActivity {
         locationString = getLocation();
         getGeoAndWeather(locationString);
         //        获取接口数据
-        getData();
+        try{
+            getData();
+        }catch (Exception e){
+            Log.e(TAG, "initUI: ", e);
+        }
+
 
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -147,21 +156,14 @@ public class HospitalVideoActivity extends BaseActivity {
     }
 
 
-    private void getData(){
+    private void getData() throws JSONException {
         if (!HOTEL_MESSAGE){
-            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
-                @Override
-                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground,String resourceUrl,String detail, String videoUrl) {
-                    strHotelLogo = hotelLogo;
-                    strHotelBg = hotelBackground;
-                    HOTEL_MESSAGE = true;
-                }
-                @Override
-                public void onHotelMessageFailure(int code, String msg) {
-                    strHotelBg = "";
-                    HOTEL_MESSAGE = true;
-                }
-            });
+            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            if (hotelMessageJson != null){
+                strHotelLogo = hotelMessageJson.getString("iconUrl");;
+                strHotelBg = hotelMessageJson.getString("homepageBackground");;
+            }
+            HOTEL_MESSAGE = true;
         }
 
         BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, new BackstageHttp.CmsMessageCallBack() {

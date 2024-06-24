@@ -57,6 +57,9 @@ import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
 import com.qb.hotelTV.huibuTv.PageAndListRowFragment;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Timer;
@@ -232,7 +235,12 @@ public class IndexActivity extends BaseActivity {
 
 //        请求多个接口获取数据
         getGeoAndWeather(locationString);
-        getDataFromHttp();
+        try {
+            getDataFromHttp();
+        }catch (Exception e){
+            Log.e(TAG, "initUI: ", e);
+        }
+
 
         showProgressDialog(IndexActivity.this, ProgressDialogSetting.loading);
         Timer timer = new Timer();
@@ -465,26 +473,18 @@ public class IndexActivity extends BaseActivity {
 
 
 //    从接口获取数据
-    private void getDataFromHttp(){
+    private void getDataFromHttp() throws JSONException {
         if (HOTEL_MESSAGE == 0){
-            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
-                @Override
-                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground,String resourceUrl,String detail, String videoUrl) {
-                    strHotelName = hotelName;
-                    strHotelLogo = hotelLogo;
-                    strHotelBg = hotelBackground;
-                    strResourceUrl = resourceUrl;
-                    strDetail = detail;
-                    strVideoUrl = videoUrl;
-                    HOTEL_MESSAGE = 1;
-                }
-                @Override
-                public void onHotelMessageFailure(int code, String msg) {
-                    strHotelName = "";
-                    strHotelBg = "";
-                    HOTEL_MESSAGE = 1;
-                }
-            });
+            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            if (hotelMessageJson != null){
+                strHotelName = hotelMessageJson.getString("name");
+                strHotelLogo = hotelMessageJson.getString("iconUrl");;
+                strHotelBg = hotelMessageJson.getString("homepageBackground");;
+                strResourceUrl = hotelMessageJson.getString("resourceUrl");;
+                strDetail = hotelMessageJson.getString("detail");;
+                strVideoUrl = hotelMessageJson.getString("videoUrl");;
+            }
+            HOTEL_MESSAGE = 1;
         }
 //        请求滚动栏
         if (TEXT == 0){

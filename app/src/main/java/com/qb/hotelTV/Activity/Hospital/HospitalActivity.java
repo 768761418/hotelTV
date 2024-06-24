@@ -44,10 +44,14 @@ import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.HotelListModel;
+import com.qb.hotelTV.Model.StartData;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutHospitalBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -154,7 +158,12 @@ public class HospitalActivity extends BaseActivity {
 //        startUpdateTask();
 //        请求多个接口获取数据
         getGeoAndWeather(locationString);
-        getDataFromHttp();
+        try {
+            getDataFromHttp();
+        }catch (Exception e){
+            Log.e(TAG, "initUI: ", e);
+        }
+
 
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -309,27 +318,32 @@ public class HospitalActivity extends BaseActivity {
 
 
     //    从接口获取数据
-    private void getDataFromHttp(){
-        if (!HOTEL_MESSAGE){
-            BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant, new BackstageHttp.HotelMessageCallback() {
-                @Override
-                public void onHotelMessageResponse(String hotelName, String hotelLogo, String hotelBackground,String resourceUrl,String detail, String videoUrl) {
-                    strHotelName = hotelName;
-                    strHotelLogo = hotelLogo;
-                    strHotelBg = hotelBackground;
-                    strResourceUrl = resourceUrl;
-                    strDetail = detail;
-                    strVideoUrl = videoUrl;
-                    HOTEL_MESSAGE = true;
-                }
-                @Override
-                public void onHotelMessageFailure(int code, String msg) {
-                    strHotelName = "";
-                    strHotelBg = "";
-                    HOTEL_MESSAGE = true;
-                }
-            });
+    private void getDataFromHttp() throws JSONException {
+        if (!HOTEL_MESSAGE) {
+           JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+           if (hotelMessageJson != null){
+               strHotelName = hotelMessageJson.getString("name");
+               strHotelLogo = hotelMessageJson.getString("iconUrl");;
+               strHotelBg = hotelMessageJson.getString("homepageBackground");;
+               strResourceUrl = hotelMessageJson.getString("resourceUrl");;
+               strDetail = hotelMessageJson.getString("detail");;
+               strVideoUrl = hotelMessageJson.getString("videoUrl");;
+           }
+            HOTEL_MESSAGE = true;
+           JSONObject startData = hotelMessageJson.getJSONObject("startData");
+           if (startData.getInt("open") == 1){
+               Intent intent = new Intent(HospitalActivity.this, HospitalStartVideoActivity.class);
+               intent.putExtra("startType",startData.getInt("type"));
+               intent.putExtra("startUrl",startData.getString("url"));
+               intent.putExtra("startSecond",startData.getLong("second"));
+               intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
+               intent.putExtra("startContent",startData.getString("content"));
+               startActivity(intent);
+           }
+
+
         }
+
 //        请求滚动栏
         if (!TEXT){
             BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {

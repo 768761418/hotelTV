@@ -13,13 +13,18 @@ import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.Model.HotelMessageModel;
 import com.qb.hotelTV.Model.RoomMessageModel;
+import com.qb.hotelTV.Model.StartData;
 import com.qb.hotelTV.Model.TvTextModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.Setting.ApiSetting;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,7 +41,12 @@ public class BackstageHttp {
     public static BackstageHttp getInstance() {
         return instance;
     }
-    static OkHttpClient client = new OkHttpClient();
+    // 设置5秒超时
+    static OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .build();
     Gson gson = new Gson();
 
 
@@ -123,6 +133,8 @@ public class BackstageHttp {
                 }
             });
     }
+
+
     public void getApk(String serverAddress,String tenant,ApkCallback callback){
 //       设置路径
         String url = serverAddress + ApiSetting.URL_GET_APK;
@@ -173,7 +185,10 @@ public class BackstageHttp {
             }
         });
     }
-    public void getHotelMessage(String serverAddress,String tenant,HotelMessageCallback callback){
+
+
+//    获取配置,包括背景，logo等,返回一个json
+    public JSONObject getHotelMessage(String serverAddress,String tenant){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_HOTEL_MESSAGE;
         Log.d(TAG, "请求路径: " + url);
@@ -188,47 +203,80 @@ public class BackstageHttp {
                 .build();
 //        接受回调
         Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "onRoomMessageFailure" + url,e);
-                String msg = "请输入正确的服务器";
-                int code = -1;
-                callback.onHotelMessageFailure(code,msg);
-            }
-            @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String responseData = response.body().string();
-                    Log.d(TAG, "请求结果3" + responseData);
-                    try {
-                        BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
-                        }.getType());
-                        Integer code = hotelMessage.getCode();
-
-                        if (code != 0) {
-                            callback.onHotelMessageResponse("", "", "","","","");
-                            return;
-                        }
-
-                        String hotelName = hotelMessage.getData().getName();
-                        String hotelLogo = hotelMessage.getData().getIconUrl();
-                        String hotelBackground = hotelMessage.getData().getHomepageBackground();
-                        String resourceUrl = hotelMessage.getData().getResourceUrl();
-                        String detail = hotelMessage.getData().getDetail();
-                        String videoUrl = hotelMessage.getData().getVideoUrl();
-                        callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground,resourceUrl,detail,videoUrl);
-                    }catch (Exception e){
-                        Log.e(TAG, "errorHttp",e );
-                        Log.d(TAG, "isis: " + responseData);
-                        callback.onHotelMessageResponse("", "", "","","","");
-
-                    }
-
+        JSONObject hotelMessageJson = null;
+        try{
+            Response response = call.execute();
+            if (response.isSuccessful()){
+                String responseData = response.body().string();
+                JSONObject jsonObject = new JSONObject(responseData);
+                int code = jsonObject.getInt("code");
+//                如果不为0则请求失败不做处理
+                if (code == 0){
+                    hotelMessageJson = jsonObject.getJSONObject("data");
                 }
+
             }
-        });
+
+        }catch (IOException e){
+            Log.e(TAG, "getHotelMessage: ",e );
+        } catch (JSONException e) {
+            Log.e(TAG, "getHotelMessage: ",e );
+        }
+        return hotelMessageJson;
+
+
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+//                Log.e(TAG, "onRoomMessageFailure" + url,e);
+//                String msg = "请输入正确的服务器";
+//                int code = -1;
+//                callback.onHotelMessageFailure(code,msg);
+//            }
+//            @Override
+//            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+//                if(response.isSuccessful()){
+//                    String responseData = response.body().string();
+//                    Log.d(TAG, "请求结果3" + responseData);
+//                    try {
+//                        BaseResponseModel<HotelMessageModel> hotelMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<HotelMessageModel>>() {
+//                        }.getType());
+//                        Integer code = hotelMessage.getCode();
+//
+//                        if (code != 0) {
+//                            callback.onHotelMessageResponse("", "", "","","","");
+//                            return;
+//                        }
+//
+//                        String hotelName = hotelMessage.getData().getName();
+//                        String hotelLogo = hotelMessage.getData().getIconUrl();
+//                        String hotelBackground = hotelMessage.getData().getHomepageBackground();
+//                        String resourceUrl = hotelMessage.getData().getResourceUrl();
+//                        String detail = hotelMessage.getData().getDetail();
+//                        String videoUrl = hotelMessage.getData().getVideoUrl();
+//
+//                        StartData startData = hotelMessage.getData().getStartData();
+//                        String startUrl = hotelMessage.getData().getStartData().getUrl();
+//                        int startIsOPen = hotelMessage.getData().getStartData().getOpen();
+//                        int startType =  hotelMessage.getData().getStartData().getType();
+//                        long startSecond =  hotelMessage.getData().getStartData().getSecond();
+//                        int startIsOpenTxt =  hotelMessage.getData().getStartData().getOpenTxt();
+//                        String startContent =  hotelMessage.getData().getStartData().getContent();
+//
+//                        callback.onHotelMessageResponse(hotelName, hotelLogo, hotelBackground,resourceUrl,detail,videoUrl);
+//                    }catch (Exception e){
+//                        Log.e(TAG, "errorHttp",e );
+//                        Log.d(TAG, "isis: " + responseData);
+//                        callback.onHotelMessageResponse("", "", "","","","");
+//
+//                    }
+//
+//                }
+//            }
+//        });
     }
+
+
     public void getTvText(String serverAddress,String tenant,TvTextCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_TEXT;
@@ -290,6 +338,9 @@ public class BackstageHttp {
             }
         });
     }
+
+
+//    获取电视频道
     public ArrayList<VideoModel> getTvChannel(String serverAddress,String tenant){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
@@ -388,6 +439,8 @@ public class BackstageHttp {
             }
         });
     }
+
+
 
     public void getCmsMessage(String serverAddress,String tenant,Long id,CmsMessageCallBack callBack) {
 //       设置路径

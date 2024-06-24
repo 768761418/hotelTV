@@ -9,6 +9,17 @@ public class HotelMessageModel {
     private String detail;
     private String videoUrl;
 
+    private StartData startData;
+
+
+    public StartData getStartData() {
+        return startData;
+    }
+
+    public void setStartData(StartData startData) {
+        this.startData = startData;
+    }
+
     private long createTime;
 
     public int getId() {

@@ -8,10 +8,17 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.exoplayer2.upstream.HttpUtil;
+import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
+
+import org.json.JSONObject;
+
+import java.util.concurrent.CountDownLatch;
 
 public class BaseActivity extends Activity {
     public FocusScaleListener focusScaleListener = new FocusScaleListener();
+    private JSONObject hotel = null;
 
     public String getLocation(){
         String locationString = "";
@@ -39,5 +46,24 @@ public class BaseActivity extends Activity {
         } catch (SecurityException e) {
             return locationString;
         }
+    }
+
+    public JSONObject getHotelMessageFromHttp (String serverAddress, String tenant){
+        hotel = null;
+        CountDownLatch latch = new CountDownLatch(1);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                hotel = BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant);
+                latch.countDown();
+            }
+        }).start();
+//
+        try {
+            latch.await(); // 等待请求完成
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return hotel;
     }
 }

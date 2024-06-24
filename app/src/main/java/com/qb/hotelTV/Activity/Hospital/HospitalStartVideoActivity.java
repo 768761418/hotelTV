@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
@@ -22,13 +25,27 @@ import java.util.EventListener;
 public class HospitalStartVideoActivity extends BaseActivity {
     private SimpleExoPlayer player ;
     private PlayerView playerView;
-    private ImageView imageView,nextBtn;
-    private String url = "http://113.106.109.130:23000/admin-api/infra/file/24/get/19d44e6ac479abcc0a3561a0143584e955ee4584ac6daa3ba4844ebf5b974801.mp4";
-    private String imgUrl = "http://113.106.109.130:23000/admin-api/infra/file/24/get/830b63674f2cbf5406db6f5a72131d0367c22f4c544aba7f60381b731ee73fc2.png";
+    private ImageView imageView;
+    private LinearLayout nextBtn;
+    private String url,startContent ;
+    private int startType,startIsOpenTxt;
+    private long startSecond = 10;
+    private WebView webView;
     private Handler handler = new Handler();
-    private boolean isVideo = true;
     private  String TAG = "HospitalStartVideoActivity";
+    private boolean isShow = false;
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyDown: " + isShow);
+        if (isShow){
+            Log.d(TAG, "onKeyDown: ddd");
+            if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE || keyCode == KeyEvent.KEYCODE_ENTER){
+                finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,13 +59,31 @@ public class HospitalStartVideoActivity extends BaseActivity {
         playerView = findViewById(R.id.hospital_start_video);
         imageView = findViewById(R.id.hospital_start_img);
         nextBtn = findViewById(R.id.hospital_next_btn);
+        webView = findViewById(R.id.hospital_web);
         onClickNextBtn();
-//        如果是视频的话
-        if (isVideo){
+//        类型
+        startType = getIntent().getIntExtra("startType",1);
+//        地址
+        url = getIntent().getStringExtra("startUrl");
+//        持续秒速
+        startSecond =  getIntent().getLongExtra("startSecond",0);
+//        是否渲染web
+        startIsOpenTxt = getIntent().getIntExtra("startIsOpenTxt",0);
+        startContent = getIntent().getStringExtra("startContent");
+
+
+
+        Log.d(TAG, "initUI: " +startType);
+//        判断是否显示
+        //        1视频 2图片
+        if (startType == 1){
             videoStart();
-        } else {
+        } else if (startType == 2) {
             imgStart();
         }
+
+
+
     }
 
 //    图片展示10s后进入下一页
@@ -57,11 +92,9 @@ public class HospitalStartVideoActivity extends BaseActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(HospitalStartVideoActivity.this, HospitalActivity.class);
-                startActivity(intent);
-                finish();
+                closeThisActivity();
             }
-        }, 10000); // 延迟10秒（10000毫秒）
+        }, startSecond*1000); // 延迟10秒（10000毫秒）
     }
 
 //    十秒之后出现一个按钮进入下一页
@@ -72,19 +105,17 @@ public class HospitalStartVideoActivity extends BaseActivity {
                 nextBtn.setVisibility(View.VISIBLE);
                 nextBtn.clearFocus();
                 nextBtn.requestFocus();
-
+                isShow = true;
                 nextBtn.setOnFocusChangeListener(focusScaleListener);
                Log.d(TAG, "run:111 ");
             }
-        }, 3000); // 延迟10秒（10000毫秒）
+        }, 10000); // 延迟10秒（10000毫秒）
     }
 
     private void onClickNextBtn(){
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(HospitalStartVideoActivity.this, HospitalActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
@@ -92,8 +123,9 @@ public class HospitalStartVideoActivity extends BaseActivity {
 
 //    视频启动方法
     private void videoStart(){
+
         imageView.setVisibility(View.GONE);
-        playerView.setVisibility(View.INVISIBLE);
+        playerView.setVisibility(View.VISIBLE);
         player = new SimpleExoPlayer.Builder(HospitalStartVideoActivity.this).build();
 //                                绑定player
         playerView.setPlayer(player);
@@ -114,21 +146,29 @@ public class HospitalStartVideoActivity extends BaseActivity {
             public void onPlaybackStateChanged(int playbackState) {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
                 if (playbackState == Player.STATE_ENDED){
-                    Intent intent = new Intent(HospitalStartVideoActivity.this, HospitalActivity.class);
-                    startActivity(intent);
-                    finish();
+                    closeThisActivity();
                 }
             }
         });
     }
 
+    private void closeThisActivity(){
+        finish();
+    }
 
 //    图片启动方法
     private void imgStart(){
-        imageView.setVisibility(View.INVISIBLE);
+        imageView.setVisibility(View.VISIBLE);
+
         playerView.setVisibility(View.GONE);
+        if (startIsOpenTxt == 1){
+            webView.setVisibility(View.VISIBLE);
+            webView.loadData(startContent,"text/html","utf-8");
+        }
+
+        showNextBtn();
         Glide.with(HospitalStartVideoActivity.this)
-                .load(imgUrl)
+                .load(url)
                 .error(R.drawable.app_bg)
                 .into(imageView);
         startActivityAfterDelay();
