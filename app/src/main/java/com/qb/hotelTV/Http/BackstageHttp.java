@@ -60,10 +60,6 @@ public class BackstageHttp {
         void onApkFailure(int code,String msg);
     }
 
-    public interface HotelMessageCallback{
-        void onHotelMessageResponse(String hotelName,String hotelLogo,String hotelBackground,String resourceUrl,String detail, String videoUrl);
-        void onHotelMessageFailure(int code,String msg);
-    }
 
     public interface TvTextCallback{
         void onTvTextResponse(String tvText,String tvTextColor);
@@ -81,7 +77,15 @@ public class BackstageHttp {
         void onCmsMessageFailure(int code,String msg);
     }
 
+    public void loginSystem(String serverAddress,String roomNumber,String tenant){
+//       设置路径
+        String url = serverAddress + ApiSetting.LOGIN_API;
 
+    }
+
+
+
+//    获取房间信息
     public void getRoomMessage(String serverAddress,String roomNumber,String tenant,RoomMessageCallback callback){
 //       设置路径
             String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
@@ -277,6 +281,7 @@ public class BackstageHttp {
     }
 
 
+//    获取公告
     public void getTvText(String serverAddress,String tenant,TvTextCallback callback){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_TEXT;
@@ -442,6 +447,7 @@ public class BackstageHttp {
 
 
 
+//    获取文章管理
     public void getCmsMessage(String serverAddress,String tenant,Long id,CmsMessageCallBack callBack) {
 //       设置路径
         String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
@@ -506,7 +512,7 @@ public class BackstageHttp {
         });
     }
 
-
+    //获取文章管理分页
     public void getCmsMessage(String serverAddress,String tenant,Long id,int page_no,CmsMessageCallBack callBack) {
         String page_size = "6";
         String page_number = String.valueOf(page_no);

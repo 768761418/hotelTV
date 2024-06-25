@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class BaseActivity extends Activity {
     public FocusScaleListener focusScaleListener = new FocusScaleListener();
-    private JSONObject hotel = null;
+    private JSONObject hotelMessage = null;
 
     public String getLocation(){
         String locationString = "";
@@ -49,12 +49,12 @@ public class BaseActivity extends Activity {
     }
 
     public JSONObject getHotelMessageFromHttp (String serverAddress, String tenant){
-        hotel = null;
+        hotelMessage = null;
         CountDownLatch latch = new CountDownLatch(1);
         new Thread(new Runnable() {
             @Override
             public void run() {
-                hotel = BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant);
+                hotelMessage = BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant);
                 latch.countDown();
             }
         }).start();
@@ -64,6 +64,10 @@ public class BaseActivity extends Activity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return hotel;
+        return hotelMessage;
     }
+
+
+
+
 }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -63,6 +64,10 @@ public class AppActivity extends BaseActivity{
         layoutAppBinding = DataBindingUtil.setContentView(this, R.layout.layout_app);
         String bg = getIntent().getStringExtra("bg");
         String title = getIntent().getStringExtra("title");
+        int type = getIntent().getIntExtra("type",0);
+        if (type == 1){
+            layoutAppBinding.bottomBar.setVisibility(View.GONE);
+        }
         if (bg != null) {
             Glide.with(AppActivity.this)
                     .load(bg)

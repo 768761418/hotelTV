@@ -578,6 +578,7 @@ public class IndexActivity extends BaseActivity {
                                                     intent.putExtra("serverAddress",serverAddress);
                                                     intent.putExtra("tenant",tenant);
                                                     intent.putExtra("title",hotelList.get(finalI).getName());
+                                                    intent.putExtra("type",1);
                                                     startActivity(intent);
                                                 }
                                             });
