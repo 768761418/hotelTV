@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.BaseListModel;
@@ -51,6 +52,7 @@ public class BackstageHttp {
             .writeTimeout(5, TimeUnit.SECONDS)
             .build();
     Gson gson = new Gson();
+    private String Authorization;
 
 
     public interface RoomMessageCallback{
@@ -80,26 +82,55 @@ public class BackstageHttp {
         void onCmsMessageFailure(int code,String msg);
     }
 
-    public String loginSystem(String serverAddress,String roomNumber,String tenant) throws JSONException{
+//    登录函数
+    public void loginSystem(String serverAddress,String roomNumber,String tenant) {
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
+        String token = "";
+        JSONObject json;
+        try{
+            json = new JSONObject();
+            json.put("username",roomNumber);
+            json.put("password",ApiSetting.PASSWORD);
+            json.put("isCreate",1);
+        }catch (JSONException e){
+            json = null;
+            Log.e(TAG, "loginSystem: ", e);
+        }
 
+        if (json != null){
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json.toString());
+            Request request = new  Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .addHeader("tenant-id", tenant)
+                    .build();
 
-        JSONObject json = new JSONObject();
-        json.put("username",roomNumber);
-        json.put("password",ApiSetting.PASSWORD);
-        json.put("isCreate",1);
+            Call call = client.newCall(request);
 
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json.toString());
-        Request request = new  Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .addHeader("tenant-id", tenant)
-                .build();
+            try {
+                Response response = call.execute();
+                Log.d(TAG, "loginSystem: 123");
+                if (response.isSuccessful()){
+                    String responseData = response.body().string();
+                    JSONObject jsonObject = new JSONObject(responseData);
+                    int code = jsonObject.getInt("code");
+                    Log.d(TAG, "loginSystem:1 " + responseData);
+                    if (code == 0){
+                        Log.d(TAG, "loginSystem: " + responseData);
+                    }else {
+                        Log.d(TAG, "loginSystem: 456");
+                    }
 
-        Call call = client.newCall(request);
+                }
+            }catch (IOException e){
+                Log.e(TAG, "loginSystem: ", e);
+            } catch (JSONException e){
+                Log.e(TAG, "loginSystem: ", e);
+            }
+            Authorization="Bearer " + token;
+        }
 
-        return "";
     }
 
 

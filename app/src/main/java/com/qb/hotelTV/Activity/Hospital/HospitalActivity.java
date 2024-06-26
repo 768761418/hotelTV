@@ -186,10 +186,7 @@ public class HospitalActivity extends BaseActivity {
                                         .into(layoutHospitalBinding.hospitalBackground);
 
                             }
-
-
-
-
+//                            设置公告
                             if (strTvText == null || strTvText.equals("")){
                                 layoutHospitalBinding.hospitalTvText.setVisibility(View.GONE);
                             }else {
@@ -304,6 +301,8 @@ public class HospitalActivity extends BaseActivity {
 
     //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
+        loginSystem(serverAddress,roomNumber,tenant);
+
         if (!HOTEL_MESSAGE) {
            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
            if (hotelMessageJson != null){

@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.upstream.HttpUtil;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CountDownLatch;
@@ -19,6 +22,12 @@ import java.util.concurrent.CountDownLatch;
 public class BaseActivity extends Activity {
     public FocusScaleListener focusScaleListener = new FocusScaleListener();
     private JSONObject hotelMessage = null;
+
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     public String getLocation(){
         String locationString = "";
@@ -65,6 +74,24 @@ public class BaseActivity extends Activity {
             e.printStackTrace();
         }
         return hotelMessage;
+    }
+
+    public void loginSystem(String serverAddress,String roomNumber,String tenant){
+        CountDownLatch latch = new CountDownLatch(1);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                BackstageHttp.getInstance().loginSystem(serverAddress,roomNumber,tenant);
+                latch.countDown();
+            }
+        }).start();
+//
+        try {
+            latch.await(); // 等待请求完成
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
