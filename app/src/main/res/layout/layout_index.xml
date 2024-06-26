@@ -10,7 +10,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:screenOrientation="landscape"
-        tools:context=".Activity.IndexActivity"
+        tools:context=".Activity.Hotel.IndexActivity"
         tools:ignore="MissingClass">
 
 

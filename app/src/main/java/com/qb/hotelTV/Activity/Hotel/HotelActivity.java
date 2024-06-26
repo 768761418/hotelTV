@@ -1,4 +1,4 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.Hotel;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -8,16 +8,16 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.CmsMessageModel;
-import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHotelBinding;
 
 import java.util.ArrayList;
 
-public class HotelActivity extends BaseActivity{
+public class HotelActivity extends BaseActivity {
     private LayoutHotelBinding layoutHotelBinding;
     private FocusScaleListener focusScaleListener = new FocusScaleListener();
     private String strHtml,strTitle;

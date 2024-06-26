@@ -1,6 +1,5 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.Hotel;
 
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -8,12 +7,12 @@ import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutVideoBinding;
 
-public class VideoActivity extends BaseActivity{
+public class VideoActivity extends BaseActivity {
     LayoutVideoBinding layoutVideoBinding;
     private SimpleExoPlayer player ;
     @Override

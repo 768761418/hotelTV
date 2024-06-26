@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Http.BackstageHttp;

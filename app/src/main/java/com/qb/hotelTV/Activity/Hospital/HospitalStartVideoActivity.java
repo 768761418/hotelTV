@@ -1,6 +1,5 @@
 package com.qb.hotelTV.Activity.Hospital;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -19,8 +18,6 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.R;
-
-import java.util.EventListener;
 
 public class HospitalStartVideoActivity extends BaseActivity {
     private SimpleExoPlayer player ;

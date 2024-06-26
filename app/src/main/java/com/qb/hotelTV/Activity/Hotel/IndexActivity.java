@@ -1,35 +1,20 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.Hotel;
 import static com.qb.hotelTV.Utils.LoadUtils.dismissProgressDialog;
 import static com.qb.hotelTV.Utils.LoadUtils.showProgressDialog;
 import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationManager;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -38,9 +23,9 @@ import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.maning.updatelibrary.InstallUtils;
+import com.qb.hotelTV.Activity.AppActivity;
+import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
-import com.qb.hotelTV.Adaptor.common.CommonViewHolder;
 import com.qb.hotelTV.Const;
 import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
@@ -50,18 +35,15 @@ import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
-import com.qb.hotelTV.Setting.DownloadSetting;
 import com.qb.hotelTV.Setting.ProgressDialogSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
-import com.qb.hotelTV.huibuTv.PageAndListRowFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -162,7 +144,7 @@ public class IndexActivity extends BaseActivity {
         layoutIndexBinding.apk4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(IndexActivity.this,VideoActivity.class);
+                Intent intent = new Intent(IndexActivity.this, VideoActivity.class);
                 intent.putExtra("bg",strHotelBg);
                 intent.putExtra("serverAddress",serverAddress);
                 intent.putExtra("tenant",tenant);

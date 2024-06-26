@@ -29,8 +29,11 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class BackstageHttp {
@@ -77,10 +80,26 @@ public class BackstageHttp {
         void onCmsMessageFailure(int code,String msg);
     }
 
-    public void loginSystem(String serverAddress,String roomNumber,String tenant){
+    public String loginSystem(String serverAddress,String roomNumber,String tenant) throws JSONException{
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
 
+
+        JSONObject json = new JSONObject();
+        json.put("username",roomNumber);
+        json.put("password",ApiSetting.PASSWORD);
+        json.put("isCreate",1);
+
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), json.toString());
+        Request request = new  Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .addHeader("tenant-id", tenant)
+                .build();
+
+        Call call = client.newCall(request);
+
+        return "";
     }
 
 
