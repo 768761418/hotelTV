@@ -87,6 +87,9 @@ public class BackstageHttp {
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
         String token = "";
+        Log.d(TAG, "loginSystem: " + serverAddress);
+        Log.d(TAG, "loginSystem: " + roomNumber);
+        Log.d(TAG, "loginSystem: " + tenant);
         JSONObject json;
         try{
             json = new JSONObject();
@@ -115,9 +118,9 @@ public class BackstageHttp {
                     String responseData = response.body().string();
                     JSONObject jsonObject = new JSONObject(responseData);
                     int code = jsonObject.getInt("code");
-                    Log.d(TAG, "loginSystem:1 " + responseData);
+                    Log.d(TAG, "loginSystem: " + responseData);
                     if (code == 0){
-                        Log.d(TAG, "loginSystem: " + responseData);
+                        token = jsonObject.getJSONObject("data").getString("accessToken");
                     }else {
                         Log.d(TAG, "loginSystem: 456");
                     }
@@ -129,6 +132,7 @@ public class BackstageHttp {
                 Log.e(TAG, "loginSystem: ", e);
             }
             Authorization="Bearer " + token;
+            Log.d(TAG, "loginSystem: " + Authorization);
         }
 
     }
@@ -147,7 +151,7 @@ public class BackstageHttp {
             Request request = new Request.Builder()
                     .url(queryUrlBuilder.build())
                     .addHeader("tenant-id", tenant) // 添加请求头
-                    .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                    .addHeader("Authorization", Authorization) // 添加请求头
                     .build();
 //        接受回调
             Call call = client.newCall(request);
@@ -202,7 +206,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -253,7 +257,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -345,7 +349,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -409,7 +413,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -447,7 +451,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -512,7 +516,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);
@@ -581,7 +585,7 @@ public class BackstageHttp {
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
                 .addHeader("tenant-id", tenant) // 添加请求头
-                .addHeader("Authorization", ApiSetting.AUTHORIZATION) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
 //        接受回调
         Call call = client.newCall(request);

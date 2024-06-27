@@ -49,10 +49,11 @@ public class HospitalListActivity extends BaseActivity {
 
     private void initUI(){
         layoutHospitalListBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital_list);
+        String[] data = commonData.getData();
+        serverAddress = data[0];
+        tenant =data[1];
+        roomNumber = data[2];
 
-        roomNumber = getIntent().getStringExtra("roomNumber");
-        serverAddress = getIntent().getStringExtra("serverAddress");
-        tenant =getIntent().getStringExtra("tenant");
         id = getIntent().getLongExtra("id",-1);
         title = getIntent().getStringExtra("title");
         //        获取天气

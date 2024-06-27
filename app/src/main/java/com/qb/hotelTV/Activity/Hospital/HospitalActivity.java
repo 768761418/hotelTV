@@ -4,6 +4,7 @@ package com.qb.hotelTV.Activity.Hospital;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -126,6 +127,7 @@ public class HospitalActivity extends BaseActivity {
             serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
             roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
             tenant  = sharedPreferences.getString(KEY_TENANT,"");
+            commonData.setData(serverAddress,tenant,roomNumber);
             Log.d(TAG, "serverAddress: " +serverAddress);
             Log.d(TAG, "roomNumber: " + roomNumber);
             Log.d(TAG, "tenant: " +tenant);
@@ -143,6 +145,8 @@ public class HospitalActivity extends BaseActivity {
 //        startUpdateTask();
 //        请求多个接口获取数据
         getGeoAndWeather(locationString);
+        Log.d(TAG, "initUI: login");
+        startUpdateTvTextTask();
         try {
             getDataFromHttp();
         }catch (Exception e){
@@ -225,7 +229,7 @@ public class HospitalActivity extends BaseActivity {
                 serverAddress = layoutHospitalBinding.inputServerAddress.getText().toString();
                 roomNumber = layoutHospitalBinding.inputRoomNumber.getText().toString();
                 tenant = layoutHospitalBinding.inputTenant.getText().toString();
-                Log.d(TAG, "tenant:xxx" + tenant);
+                commonData.setData(serverAddress,tenant,roomNumber);
                 // 保存服务器地址和房间号到 SharedPreferences
                 saveServerAddressAndRoomNumber(serverAddress, roomNumber,tenant);
                 initUI();
@@ -301,7 +305,7 @@ public class HospitalActivity extends BaseActivity {
 
     //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
-        loginSystem(serverAddress,roomNumber,tenant);
+        login(serverAddress,roomNumber,tenant);
 
         if (!HOTEL_MESSAGE) {
            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
@@ -311,11 +315,11 @@ public class HospitalActivity extends BaseActivity {
                strHotelBg = hotelMessageJson.getString("homepageBackground");;
                strResourceUrl = hotelMessageJson.getString("resourceUrl");;
                strDetail = hotelMessageJson.getString("detail");;
-               strVideoUrl = hotelMessageJson.getString("videoUrl");;
-           }
+               strVideoUrl = hotelMessageJson.getString("videoUrl");;}
             HOTEL_MESSAGE = true;
            JSONObject startData = hotelMessageJson.getJSONObject("startData");
            if (startData.getInt("open") == 1){
+
                Intent intent = new Intent(HospitalActivity.this, HospitalStartVideoActivity.class);
                intent.putExtra("startType",startData.getInt("type"));
                intent.putExtra("startUrl",startData.getString("url"));
@@ -485,10 +489,47 @@ public class HospitalActivity extends BaseActivity {
 
     }
 
+    private void startUpdateTvTextTask(){
+        Runnable startUpdateTvTextTask = new Runnable() {
+            @Override
+            public void run() {
+                BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
+                    @Override
+                    public void onTvTextResponse(String tvText, String tvTextColor) {
+                        updateTvText(tvText);
+//                        TODO 校验该账号是否存在
+                    }
+
+                    @Override
+                    public void onTvTextFailure(int code, String msg) {
+                        updateTvText("");
+                    }
+                });
+
+
+                handler.postDelayed(this, 30*1000);
+            }
+        };
+        handler.post(startUpdateTvTextTask);
+    }
+
+    private void updateTvText(final String tvText){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (tvText == null || tvText.equals("")||strTvTextColor==null||strTvTextColor.equals("")){
+                    layoutHospitalBinding.hospitalTvText.setVisibility(View.GONE);
+                }else {
+                    layoutHospitalBinding.hospitalTvText.setVisibility(View.VISIBLE);
+                    layoutHospitalBinding.hospitalTvText.setText(tvText);
+                    int color = Color.parseColor(strTvTextColor);
+                    layoutHospitalBinding.hospitalTvText.setTextColor(color);
+                }
+            }
+        });
+    }
+
     private void defaultPutIntent(Intent intent,String title,Long id){
-        intent.putExtra("serverAddress",serverAddress);
-        intent.putExtra("tenant",tenant);
-        intent.putExtra("roomNumber",roomNumber);
         intent.putExtra("title",title);
         intent.putExtra("id",id);
     }

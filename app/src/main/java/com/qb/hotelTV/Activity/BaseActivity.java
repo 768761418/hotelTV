@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.upstream.HttpUtil;
+import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 public class BaseActivity extends Activity {
     public FocusScaleListener focusScaleListener = new FocusScaleListener();
     private JSONObject hotelMessage = null;
+    public CommonData commonData = CommonData.getInstance();
 
 
     @Override
@@ -76,12 +78,11 @@ public class BaseActivity extends Activity {
         return hotelMessage;
     }
 
-    public void loginSystem(String serverAddress,String roomNumber,String tenant){
+    public void login(String serverAddress,String roomNumber,String tenant){
         CountDownLatch latch = new CountDownLatch(1);
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 BackstageHttp.getInstance().loginSystem(serverAddress,roomNumber,tenant);
                 latch.countDown();
             }
