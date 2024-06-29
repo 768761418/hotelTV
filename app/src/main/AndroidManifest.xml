@@ -60,6 +60,8 @@
             android:exported="true"
             android:screenOrientation="landscape"></activity>
 
+        <activity android:name=".Activity.SocketNoticeActivity" android:exported="true"/>
+
         <activity android:name=".Activity.Hospital.HospitalStartVideoActivity" android:exported="true"/>
 
         <activity android:name=".Activity.Hospital.HospitalActivity"

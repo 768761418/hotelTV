@@ -72,7 +72,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
 
         Log.d(TAG, "initUI: " +startType);
 //        判断是否显示
-        //        1视频 2图片
+        // 1视频 2图片
         if (startType == 1){
             videoStart();
         } else if (startType == 2) {

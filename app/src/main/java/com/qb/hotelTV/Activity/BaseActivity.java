@@ -2,6 +2,7 @@ package com.qb.hotelTV.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,9 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.upstream.HttpUtil;
+import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
+import com.qb.hotelTV.Listener.WebSocketClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,13 +27,10 @@ public class BaseActivity extends Activity {
     public FocusScaleListener focusScaleListener = new FocusScaleListener();
     private JSONObject hotelMessage = null;
     public CommonData commonData = CommonData.getInstance();
+    private String TAG = "BaseActivity";
 
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
+//    获取经纬度
     public String getLocation(){
         String locationString = "";
         // 获取 LocationManager 实例
@@ -59,6 +59,7 @@ public class BaseActivity extends Activity {
         }
     }
 
+//    获取酒店配置
     public JSONObject getHotelMessageFromHttp (String serverAddress, String tenant){
         hotelMessage = null;
         CountDownLatch latch = new CountDownLatch(1);
@@ -78,6 +79,7 @@ public class BaseActivity extends Activity {
         return hotelMessage;
     }
 
+//    登录
     public void login(String serverAddress,String roomNumber,String tenant){
         CountDownLatch latch = new CountDownLatch(1);
         new Thread(new Runnable() {
@@ -96,6 +98,48 @@ public class BaseActivity extends Activity {
     }
 
 
+//    拼接websocket路径
+    public String getWebSocketUrl(String serverAddress){
+        String token = BackstageHttp.getInstance().getToken();
+        if (serverAddress.startsWith("http://")) {
+            return serverAddress.replace("http://", "ws://") + "/infra/ws?token=" + token;
+        } else if (serverAddress.startsWith("https://")) {
+            return serverAddress.replace("https://", "ws://") + "/infra/ws?token=" + token;
+        }
+        return null;
+    }
+
+//    处理接收到websocket信息事件
+    public void initWebSocket(Context context, WebSocketClient webSocketClient, String url){
+        webSocketClient = new WebSocketClient(url);
+        webSocketClient.setMessageCallback(new WebSocketClient.MessageCallback() {
+            @Override
+            public void onMessageCallback(String data) {
+                try{
+                    JSONObject jsonObject = new JSONObject(data);
+                    String type = jsonObject.getString("type");
+                    if (type.equals("insert-notice")){
+//                        由于websocket二级是字符串所以先拿字符串然后转成json
+                        String strContent = jsonObject.getString("content");
+                        JSONObject contentObject = new JSONObject(strContent);
+//                        获取播放信息
+                        String content= contentObject.getString("content");
+//                        配置信息
+                        JSONObject configData = contentObject.getJSONObject("configData");
+                        int webType = configData.getInt("type");
+                        long webSecond = configData.getLong("second");
+                        Intent intent = new Intent(context, SocketNoticeActivity.class);
+                        intent.putExtra("url",content);
+                        intent.putExtra("type",webType);
+                        intent.putExtra("second",webSecond);
+                        startActivity(intent);
+                    }
+                }catch (JSONException e){
+                    Log.e(TAG, "onMessageCallback: " + data, e );
+                }
+            }
+        });
+    }
 
 
 }

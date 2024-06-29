@@ -1,6 +1,7 @@
 package com.qb.hotelTV.Activity.Hospital;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,9 +30,11 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.AppActivity;
 import com.qb.hotelTV.Activity.BaseActivity;
+import com.qb.hotelTV.Activity.SocketNoticeActivity;
 import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Http.LocationHttp;
+import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.PermissionUtils;
@@ -62,6 +66,7 @@ public class HospitalActivity extends BaseActivity {
 //    经纬度
     private String locationString ;
     private SimpleExoPlayer player ;
+    private WebSocketClient webSocketClient;
 
 
     private static final String KEY_SERVER_ADDRESS = "server_address";
@@ -105,6 +110,18 @@ public class HospitalActivity extends BaseActivity {
             player.play();
         }
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        销毁时释放资源
+        if (player != null){
+            player = null;
+        }
+        if (webSocketClient != null){
+            webSocketClient.close();
+        }
     }
 
     @Override
@@ -152,7 +169,13 @@ public class HospitalActivity extends BaseActivity {
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
         }
-
+        Log.d(TAG, "initUI: " + serverAddress);
+        String webSocketUrl = getWebSocketUrl(serverAddress);
+        Log.d(TAG, "webSocketUrl: "+webSocketUrl);
+        if (webSocketUrl != null){
+            initWebSocket(this,webSocketClient,webSocketUrl);
+            Log.d(TAG, "初始化websocket");
+        }
 
         Timer timer = new Timer();
         TimerTask timerTask = new TimerTask() {
@@ -219,13 +242,6 @@ public class HospitalActivity extends BaseActivity {
         layoutHospitalBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 在点击事件中获取按下的按钮的 keycode
-                int keyCode; // 初始化为未知的 keycode
-                KeyEvent keyEvent = (KeyEvent) view.getTag(); // 从 view 的 tag 中获取 KeyEvent 对象
-                if (keyEvent != null) {
-                    keyCode = keyEvent.getKeyCode(); // 获取按下的按钮的 keycode
-                    Toast.makeText(HospitalActivity.this, "!!!:" + keyCode, Toast.LENGTH_SHORT).show();
-                }
                 serverAddress = layoutHospitalBinding.inputServerAddress.getText().toString();
                 roomNumber = layoutHospitalBinding.inputRoomNumber.getText().toString();
                 tenant = layoutHospitalBinding.inputTenant.getText().toString();
@@ -305,8 +321,10 @@ public class HospitalActivity extends BaseActivity {
 
     //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
+//        登录获取token
         login(serverAddress,roomNumber,tenant);
 
+//        获取配置信息
         if (!HOTEL_MESSAGE) {
            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
            if (hotelMessageJson != null){
@@ -319,7 +337,6 @@ public class HospitalActivity extends BaseActivity {
             HOTEL_MESSAGE = true;
            JSONObject startData = hotelMessageJson.getJSONObject("startData");
            if (startData.getInt("open") == 1){
-
                Intent intent = new Intent(HospitalActivity.this, HospitalStartVideoActivity.class);
                intent.putExtra("startType",startData.getInt("type"));
                intent.putExtra("startUrl",startData.getString("url"));
@@ -351,7 +368,7 @@ public class HospitalActivity extends BaseActivity {
             });
         }
 
-
+//        获取界面列表
         if (!HOTEL_LIST){
             BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
                 @Override
@@ -481,14 +498,9 @@ public class HospitalActivity extends BaseActivity {
             });
         }
 
-
-
-
-
-
-
     }
 
+//    更新公告栏数据
     private void startUpdateTvTextTask(){
         Runnable startUpdateTvTextTask = new Runnable() {
             @Override
@@ -513,6 +525,7 @@ public class HospitalActivity extends BaseActivity {
         handler.post(startUpdateTvTextTask);
     }
 
+//    更新公告
     private void updateTvText(final String tvText){
         runOnUiThread(new Runnable() {
             @Override
@@ -529,9 +542,16 @@ public class HospitalActivity extends BaseActivity {
         });
     }
 
+//    默认携带参数
     private void defaultPutIntent(Intent intent,String title,Long id){
         intent.putExtra("title",title);
         intent.putExtra("id",id);
     }
+
+
+
+
+
+
 
 }

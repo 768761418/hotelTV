@@ -53,6 +53,7 @@ public class BackstageHttp {
             .build();
     Gson gson = new Gson();
     private String Authorization;
+    private String token;
 
 
     public interface RoomMessageCallback{
@@ -82,11 +83,14 @@ public class BackstageHttp {
         void onCmsMessageFailure(int code,String msg);
     }
 
+    public String getToken(){
+        return token;
+    }
+
 //    登录函数
     public void loginSystem(String serverAddress,String roomNumber,String tenant) {
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
-        String token = "";
         Log.d(TAG, "loginSystem: " + serverAddress);
         Log.d(TAG, "loginSystem: " + roomNumber);
         Log.d(TAG, "loginSystem: " + tenant);
@@ -113,9 +117,10 @@ public class BackstageHttp {
 
             try {
                 Response response = call.execute();
-                Log.d(TAG, "loginSystem: 123");
+                String responseData = response.body().string();
+                Log.d(TAG, "loginSystem: " +responseData);
                 if (response.isSuccessful()){
-                    String responseData = response.body().string();
+
                     JSONObject jsonObject = new JSONObject(responseData);
                     int code = jsonObject.getInt("code");
                     Log.d(TAG, "loginSystem: " + responseData);
