@@ -21,8 +21,6 @@ public class AppActivity extends BaseActivity {
     private LayoutAppBinding layoutAppBinding;
     private final String TAG = "AppActivity";
     private boolean apkIsGet = false;
-    //    用来存放apk的列表
-    private ArrayList<ApkModel> apkList = new ArrayList<>();;
 
     String serverAddress,tenant;
     private ApkAdaptor apkAdaptor;
@@ -41,6 +39,7 @@ public class AppActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUI();
+
     }
 
     private void initUI() {
@@ -68,29 +67,44 @@ public class AppActivity extends BaseActivity {
     private void getApkList(){
         serverAddress = getIntent().getStringExtra("serverAddress");
         tenant = getIntent().getStringExtra("tenant");
-        BackstageHttp.getInstance().getApk(serverAddress, tenant, new BackstageHttp.ApkCallback() {
+        new Thread(new Runnable() {
             @Override
-            public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (apkModelArrayList != null && !apkModelArrayList.isEmpty()) {
-                            apkList.clear();
-                            apkList.addAll(apkModelArrayList);
-                            apkAdaptor = new ApkAdaptor(AppActivity.this, apkList);
+            public void run() {
+                ArrayList<ApkModel> apkModelArrayList =  BackstageHttp.getInstance().getApk(serverAddress, tenant);
+                if (!apkModelArrayList.isEmpty()){
+                    apkAdaptor = new ApkAdaptor(AppActivity.this, apkModelArrayList);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             layoutAppBinding.appApkList.setAdapter(apkAdaptor);
                             apkAdaptor.notifyDataSetChanged();
                         }
-                    }
-                });
+                    });
 
+                }
             }
-            @Override
-            public void onApkFailure(int code, String msg) {
-                apkAdaptor.notifyDataSetChanged();
-                apkIsGet =true;
-            }
-        });
+        }).start();
+
+
+//        BackstageHttp.getInstance().getApk(serverAddress, tenant, new BackstageHttp.ApkCallback() {
+//            @Override
+//            public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        if (apkModelArrayList != null && !apkModelArrayList.isEmpty()) {
+//
+//                        }
+//                    }
+//                });
+//
+//            }
+//            @Override
+//            public void onApkFailure(int code, String msg) {
+//                apkAdaptor.notifyDataSetChanged();
+//                apkIsGet =true;
+//            }
+//        });
     }
 
 

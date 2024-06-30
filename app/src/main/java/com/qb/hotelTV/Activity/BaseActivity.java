@@ -3,14 +3,19 @@ package com.qb.hotelTV.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView;
 import com.google.android.exoplayer2.upstream.HttpUtil;
 import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Data.CommonData;
@@ -28,6 +33,8 @@ public class BaseActivity extends Activity {
     private JSONObject hotelMessage = null;
     public CommonData commonData = CommonData.getInstance();
     private String TAG = "BaseActivity";
+    private Handler handler = new Handler();
+    private boolean isGetToken = true;
 
 
 //    获取经纬度
@@ -109,13 +116,22 @@ public class BaseActivity extends Activity {
         return null;
     }
 
-//    处理接收到websocket信息事件
+//    初始化websocket
     public void initWebSocket(Context context, WebSocketClient webSocketClient, String url){
         webSocketClient = new WebSocketClient(url);
+        Log.d(TAG, "initWebSocket: " + url);
+        if (webSocketClient.isConnected()){
+            Toast.makeText(context,"已连接至服务器socket",Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(context,"请检查服务器是否正常",Toast.LENGTH_SHORT).show();
+
+        }
+
         webSocketClient.setMessageCallback(new WebSocketClient.MessageCallback() {
             @Override
             public void onMessageCallback(String data) {
                 try{
+                    Log.d(TAG, "initWebSocket: " + data);
                     JSONObject jsonObject = new JSONObject(data);
                     String type = jsonObject.getString("type");
                     if (type.equals("insert-notice")){
@@ -139,7 +155,54 @@ public class BaseActivity extends Activity {
                 }
             }
         });
+        sendPingToServer(webSocketClient);
+    }
+//    持续发ping给服务器实现长连接
+    private void sendPingToServer(WebSocketClient webSocketClient){
+        Runnable sendMessageToServer = new Runnable() {
+            @Override
+            public void run() {
+                webSocketClient.sendMessage("ping");
+                Log.d(TAG, "run: ping");
+
+                handler.postDelayed(this, 60*1000);
+            }
+        };
+        handler.post(sendMessageToServer);
     }
 
+//    获取公告并修改组件
+    public void getAnnouncements(String serverAddress,String tenant,MarqueeTextView view){
+        BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
+            @Override
+            public void onTvTextResponse(String tvText, String tvTextColor,int code) {
+                Log.d(TAG, "onTvTextResponse: " + tvText );
+                Log.d(TAG, "onTvTextResponse: " +tvTextColor );
+//                主线程修改公告
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (tvText == null || tvText.equals("")){
+                            view.setVisibility(View.GONE);
+                        }else {
+                            view.setVisibility(View.VISIBLE);
+                            view.setText(tvText);
+                            Log.d(TAG, "run: 221");
+                            if (tvTextColor!= null){
+                                Log.d(TAG, "run: 222");
+                                int color = Color.parseColor(tvTextColor);
+                                view.setTextColor(color);
+                            }
+                        }
+                    }
+                });
 
+            }
+
+            @Override
+            public void onTvTextFailure(int code, String msg) {
+                view.setVisibility(View.GONE);
+            }
+        });
+    }
 }

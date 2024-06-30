@@ -330,7 +330,7 @@ public class IndexActivity extends BaseActivity {
             public void run() {
                 BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
                     @Override
-                    public void onTvTextResponse(String tvText, String tvTextColor) {
+                    public void onTvTextResponse(String tvText, String tvTextColor,int code) {
                         updateTvText(tvText);
                     }
 
@@ -472,7 +472,7 @@ public class IndexActivity extends BaseActivity {
         if (TEXT == 0){
             BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
                 @Override
-                public void onTvTextResponse(String tvText, String tvTextColor) {
+                public void onTvTextResponse(String tvText, String tvTextColor,int code) {
                     strTvText = tvText;
                     strTvTextColor = tvTextColor;
                     TEXT = 1;
@@ -518,161 +518,106 @@ public class IndexActivity extends BaseActivity {
             });
         }
 
-        if (HOTEL_LIST == 0){
-            BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
-                @Override
-                public void onHotelListResponse(ArrayList<HotelListModel> hotelListModels) {
-                    try {
-                        hotelList.clear();
-                        hotelList.addAll(hotelListModels);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                int cur_line;
-                                for (int i = 0; i < hotelList.size(); i++) {
-                                    cur_line = i/2;
-                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getName());
-                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
-                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
-                                    Glide.with(IndexActivity.this)
-                                            .load(hotelList.get(i).getPicUrl())
-                                            .error(R.color.white)
-                                            .into((ImageView) item.findViewById(R.id.apk_logo));
-                                    ((TextView)item.findViewById(R.id.apk_name)).setText(hotelList.get(i).getName());
-                                    int finalI  = i;
-                                    switch (hotelList.get(i).getType()){
-
-                                        case 10:
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(IndexActivity.this, MainActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 9:
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(IndexActivity.this, AppActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    intent.putExtra("type",1);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 0:
-
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(IndexActivity.this,HotelActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    intent.putExtra("id",hotelList.get(finalI).getId());
-
-                                                    Log.d(TAG, "detail: " +  hotelList.get(finalI).getId());
-                                                    intent.putExtra("detail",strDetail);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 2:
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(IndexActivity.this,VideoActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    Log.d(TAG, "strVideoUrl: " +strVideoUrl);
-                                                    intent.putExtra("videoUrl",strVideoUrl);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-
-
-                                    }
-
-                                }
-                            }
-                        });
-                    }catch (Exception e){
-                        
-                    }
-                   
-                }
-
-                @Override
-                public void onHotelLIstFailure(int code, String msg) {
-
-                }
-            });
-        }
-
-//        请求apk列表
-//        if (APK == 0){
-//            BackstageHttp.getInstance().getApk(serverAddress, tenant,new BackstageHttp.ApkCallback() {
+//        if (HOTEL_LIST == 0){
+//            BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
 //                @Override
-//                public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
+//                public void onHotelListResponse(ArrayList<HotelListModel> hotelListModels) {
 //                    try {
-//                        apkList.clear();
-//                        apkList.addAll(apkModelArrayList);
+//                        hotelList.clear();
+//                        hotelList.addAll(hotelListModels);
 //                        runOnUiThread(new Runnable() {
 //                            @Override
 //                            public void run() {
 //                                int cur_line;
-//                                for (int i = 0; i < apkList.size(); i++) {
+//                                for (int i = 0; i < hotelList.size(); i++) {
 //                                    cur_line = i/2;
-//                                    Log.d(TAG, "onApkResponse: " + apkList.get(i).getName());
+//                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getName());
 //                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
 //                                    LinearLayout item = (LinearLayout) ((LinearLayout)layoutIndexBinding.apkLayout.getChildAt(cur_line)).getChildAt(i%2);
 //                                    Glide.with(IndexActivity.this)
-//                                            .load(apkList.get(i).getLogoUrl())
+//                                            .load(hotelList.get(i).getPicUrl())
 //                                            .error(R.color.white)
 //                                            .into((ImageView) item.findViewById(R.id.apk_logo));
-//                                    ((TextView)item.findViewById(R.id.apk_name)).setText(apkList.get(i).getName());
-//                                    int finalI = i;
-//                                    item.setOnClickListener(new View.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(View view) {
-//                                            if (apkList.get(finalI).getApkUrl() == null || apkList.get(finalI).getApkUrl().equals("")){
-//                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),"");
-//                                            }else {
-//                                                gotoOtherApp(apkList.get(finalI).getSchemeUrl(),apkList.get(finalI).getApkUrl());
-//                                            }
+//                                    ((TextView)item.findViewById(R.id.apk_name)).setText(hotelList.get(i).getName());
+//                                    int finalI  = i;
+//                                    switch (hotelList.get(i).getType()){
 //
-//                                        }
-//                                    });
+//                                        case 10:
+//                                            item.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View view) {
+//                                                    Intent intent = new Intent(IndexActivity.this, MainActivity.class);
+//                                                    startActivity(intent);
+//                                                }
+//                                            });
+//                                            break;
+//                                        case 9:
+//                                            item.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View view) {
+//                                                    Intent intent = new Intent(IndexActivity.this, AppActivity.class);
+//                                                    intent.putExtra("bg",strHotelBg);
+//                                                    intent.putExtra("serverAddress",serverAddress);
+//                                                    intent.putExtra("tenant",tenant);
+//                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+//                                                    intent.putExtra("type",1);
+//                                                    startActivity(intent);
+//                                                }
+//                                            });
+//                                            break;
+//                                        case 0:
+//
+//                                            item.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View view) {
+//                                                    Intent intent = new Intent(IndexActivity.this,HotelActivity.class);
+//                                                    intent.putExtra("bg",strHotelBg);
+//                                                    intent.putExtra("serverAddress",serverAddress);
+//                                                    intent.putExtra("tenant",tenant);
+//                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+//                                                    intent.putExtra("id",hotelList.get(finalI).getId());
+//
+//                                                    Log.d(TAG, "detail: " +  hotelList.get(finalI).getId());
+//                                                    intent.putExtra("detail",strDetail);
+//                                                    startActivity(intent);
+//                                                }
+//                                            });
+//                                            break;
+//                                        case 2:
+//                                            item.setOnClickListener(new View.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(View view) {
+//                                                    Intent intent = new Intent(IndexActivity.this,VideoActivity.class);
+//                                                    intent.putExtra("bg",strHotelBg);
+//                                                    intent.putExtra("serverAddress",serverAddress);
+//                                                    intent.putExtra("tenant",tenant);
+//                                                    intent.putExtra("title",hotelList.get(finalI).getName());
+//                                                    Log.d(TAG, "strVideoUrl: " +strVideoUrl);
+//                                                    intent.putExtra("videoUrl",strVideoUrl);
+//                                                    startActivity(intent);
+//                                                }
+//                                            });
+//                                            break;
+//
+//
+//                                    }
+//
 //                                }
 //                            }
 //                        });
-////                        apkAdaptor.notifyDataSetChanged();
 //                    }catch (Exception e){
-//                        Log.e(TAG, "数据写入出错了 ",e);
+//
 //                    }
 //
-//                    APK = 1;
 //                }
 //
 //                @Override
-//                public void onApkFailure(int code, String msg) {
-//                    Log.d(TAG, "onRoomMessageFailure: ");
-//                    APK = 1;
+//                public void onHotelLIstFailure(int code, String msg) {
+//
 //                }
 //            });
 //        }
 
-
-        Log.d(TAG, "finish");
 
 
     }

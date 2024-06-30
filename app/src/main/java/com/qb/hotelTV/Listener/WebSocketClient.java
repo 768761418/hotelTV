@@ -1,5 +1,7 @@
 package com.qb.hotelTV.Listener;
 
+import android.util.Log;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -11,6 +13,7 @@ public class WebSocketClient extends WebSocketListener {
     private OkHttpClient client;
     private WebSocket webSocket;
     private MessageCallback messageCallback;
+    private boolean isConnect = true;
 
     public WebSocketClient(String url) {
         client = new OkHttpClient();
@@ -23,6 +26,10 @@ public class WebSocketClient extends WebSocketListener {
         void onMessageCallback(String data);
     }
 
+    // 新增方法：检查WebSocket连接是否已建立
+    public boolean isConnected() {
+        return webSocket != null && isConnect;
+    }
 
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
@@ -34,9 +41,13 @@ public class WebSocketClient extends WebSocketListener {
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
         System.out.println("Received message: " + text);
-        // 在这里处理接收到的文本消息
-        if (messageCallback != null){
-            messageCallback.onMessageCallback(text);
+        if (text.equals("pong")){
+            System.out.println("Received message: " + text);
+        }else {
+            // 在这里处理接收到的文本消息
+            if (messageCallback != null){
+                messageCallback.onMessageCallback(text);
+            }
         }
     }
 
@@ -57,6 +68,7 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {
         super.onFailure(webSocket, t, response);
+        isConnect = false;
         t.printStackTrace();
         System.out.println("WebSocket Failure: " + t.getMessage());
     }

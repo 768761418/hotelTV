@@ -29,29 +29,26 @@ public class SocketNoticeActivity extends BaseActivity{
     private Handler handler;
 
 
+//    设置只有音量键和关机键有效
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        switch (keyCode){
+//            // 允许的按键
+//            case KeyEvent.KEYCODE_VOLUME_UP:
+//            case KeyEvent.KEYCODE_VOLUME_DOWN:
+//            case KeyEvent.KEYCODE_POWER:
+//                // 允许的事件
+//                return false;
+//            default:
+//                return  true;
+//        }
+//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initUI();
-        // 禁用除了加减音量和开关机之外的其他按键
-        View decorView = getWindow().getDecorView();
-        decorView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                switch (keyCode) {
-                    // 允许的按键
-                    case KeyEvent.KEYCODE_VOLUME_UP:
-                    case KeyEvent.KEYCODE_VOLUME_DOWN:
-                    case KeyEvent.KEYCODE_POWER:
-                        // 允许的事件
-                        return false;
-                    default:
-                        // 禁用其他所有按键事件
-                        return true;
-                }
-            }
-        });
+
     }
 
     private void initUI(){

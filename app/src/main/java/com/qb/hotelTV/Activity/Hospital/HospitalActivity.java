@@ -41,6 +41,7 @@ import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.databinding.LayoutHospitalBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
+import org.httpd.util.IFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,9 +57,8 @@ public class HospitalActivity extends BaseActivity {
     private Handler handler = new Handler();
     private ArrayList<HotelListModel> hotelList = new ArrayList<>();
 
-    private String geo,weather,strRoomName,
-            strWifiName,strWifiPassword,strDeskNumber,
-            strHotelName,strHotelLogo,strHotelBg,strResourceUrl,strDetail, strVideoUrl,
+    private String geo,weather,
+            strHotelLogo,strHotelBg,strResourceUrl,strDetail, strVideoUrl,
             strTvText,strTvTextColor;
     private boolean GEO=false,WEATHER=false,TEXT=false,HOTEL_LIST=false,ROOM_MESSAGE=false,HOTEL_MESSAGE=false,TV_CHANNEL =false;
 //    请求接口的请求头
@@ -214,12 +214,12 @@ public class HospitalActivity extends BaseActivity {
 
                             }
 //                            设置公告
-                            if (strTvText == null || strTvText.equals("")){
-                                layoutHospitalBinding.hospitalTvText.setVisibility(View.GONE);
-                            }else {
-                                layoutHospitalBinding.hospitalTvText.setVisibility(View.VISIBLE);
-                                layoutHospitalBinding.hospitalTvText.setText(strTvText);
-                            }
+//                            if (strTvText == null || strTvText.equals("")){
+//                                layoutHospitalBinding.hospitalTvText.setVisibility(View.GONE);
+//                            }else {
+//                                layoutHospitalBinding.hospitalTvText.setVisibility(View.VISIBLE);
+//                                layoutHospitalBinding.hospitalTvText.setText(strTvText);
+//                            }
 
 
                         }
@@ -327,15 +327,25 @@ public class HospitalActivity extends BaseActivity {
 //        获取配置信息
         if (!HOTEL_MESSAGE) {
            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            String themeType = "hospital1";
            if (hotelMessageJson != null){
-               strHotelName = hotelMessageJson.getString("name");
+//               strHotelName = hotelMessageJson.getString("name");
                strHotelLogo = hotelMessageJson.getString("iconUrl");;
                strHotelBg = hotelMessageJson.getString("homepageBackground");;
                strResourceUrl = hotelMessageJson.getString("resourceUrl");;
                strDetail = hotelMessageJson.getString("detail");;
-               strVideoUrl = hotelMessageJson.getString("videoUrl");;}
+               strVideoUrl = hotelMessageJson.getString("videoUrl");
+               themeType = hotelMessageJson.getString("themeType");
+           }
+
+           // TODO 切换主题
+            if (themeType.equals("hospital1")){
+
+            }
+
             HOTEL_MESSAGE = true;
            JSONObject startData = hotelMessageJson.getJSONObject("startData");
+//           判断是否需要开机动画
            if (startData.getInt("open") == 1){
                Intent intent = new Intent(HospitalActivity.this, HospitalStartVideoActivity.class);
                intent.putExtra("startType",startData.getInt("type"));
@@ -351,163 +361,47 @@ public class HospitalActivity extends BaseActivity {
 
 //        请求滚动栏
         if (!TEXT){
-            BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
-                @Override
-                public void onTvTextResponse(String tvText, String tvTextColor) {
-                    strTvText = tvText;
-                    strTvTextColor = tvTextColor;
-                    TEXT = true;
-                }
-
-                @Override
-                public void onTvTextFailure(int code, String msg) {
-                    strTvText = "";
-                    strTvTextColor = "";
-                    TEXT = true;
-                }
-            });
+            getAnnouncements(serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
+//            BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
+//                @Override
+//                public void onTvTextResponse(String tvText, String tvTextColor,int code) {
+//                    strTvText = tvText;
+//                    strTvTextColor = tvTextColor;
+//                    TEXT = true;
+//                }
+//
+//                @Override
+//                public void onTvTextFailure(int code, String msg) {
+//                    strTvText = "";
+//                    strTvTextColor = "";
+//                    TEXT = true;
+//                }
+//            });
         }
 
 //        获取界面列表
         if (!HOTEL_LIST){
-            BackstageHttp.getInstance().getHotelList(serverAddress, tenant, new BackstageHttp.HotelListCallBack() {
+            new Thread(new Runnable() {
                 @Override
-                public void onHotelListResponse(ArrayList<HotelListModel> hotelListModels) {
-                    try {
-                        hotelList.clear();
-                        hotelList.addAll(hotelListModels);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (int i = 0; i < hotelList.size(); i++) {
-                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getName());
-                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getBackgroundUrl());
-                                    Log.d(TAG, "onApkResponse: " + hotelList.get(i).getPicUrl());
-
-                                    //获取到每一个item的layout替换掉图片和文字和跳转地址
-                                    LinearLayout item = (LinearLayout)  layoutHospitalBinding.hospitalMainBottomLayout.getChildAt(i);
-
-                                    ImageView img  = item.findViewById(R.id.item_img);
-
-                                    Glide.with(HospitalActivity.this)
-                                            .load(hotelList.get(i).getPicUrl())
-                                            .error(R.color.black)
-                                            .into(img);
-
-                                    ((TextView)item.findViewById(R.id.item_text)).setText(hotelList.get(i).getName());
-
-
-                                    SimpleTarget<Drawable>  simpleTarget = new SimpleTarget<Drawable>() {
-                                        @Override
-                                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                            item.setBackground(resource);
-                                        }
-                                    };
-                                    Glide.with(HospitalActivity.this)
-                                            .load(hotelList.get(i).getBackgroundUrl())
-                                            .error(R.color.white)
-                                            .into(simpleTarget);
-                                    int finalI  = i;
-                                    switch (hotelList.get(i).getType()){
-                                        case 10:
-//                                            电视界面
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, MainActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 9:
-//                                            应用中心
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, AppActivity.class);
-                                                    intent.putExtra("bg",strHotelBg);
-                                                    intent.putExtra("serverAddress",serverAddress);
-                                                    intent.putExtra("tenant",tenant);
-                                                    intent.putExtra("title",hotelList.get(finalI).getName());
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 0:
-//                                            WEB图文
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalWebActivity.class);
-                                                    String title = hotelList.get(finalI).getName();
-                                                    Long id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,title,id);
-                                                    Log.d(TAG, "onClick: " + title);
-//                                                    intent.putExtra("detail",strDetail);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-                                        case 1:
-                                            // 图文列表
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalListActivity.class);
-                                                    String title = hotelList.get(finalI).getName();
-                                                    Long id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,title,id);
-                                                    Log.d(TAG, "onClick: " + title);
-//                                                    intent.putExtra("detail",strDetail);
-                                                    startActivity(intent);
-                                                }
-                                            });
-
-
-                                            break;
-                                        case 2:
-//                                            视频
-                                            item.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    Intent intent = new Intent(HospitalActivity.this, HospitalVideoActivity.class);
-                                                    String title = hotelList.get(finalI).getName();
-                                                    Long id = hotelList.get(finalI).getId();
-                                                    defaultPutIntent(intent,title,id);
-                                                    startActivity(intent);
-                                                }
-                                            });
-                                            break;
-
-
-                                    }
-
-                                }
-                            }
-                        });
-                    }catch (Exception e){
-
+                public void run() {
+                    ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
+                    if (!hotelListModels.isEmpty()){
+                        hotelListOnclick(hotelListModels);
                     }
-
                 }
-
-                @Override
-                public void onHotelLIstFailure(int code, String msg) {
-
-                }
-            });
+            }).start();
         }
 
     }
 
-//    更新公告栏数据
+//    定时更新公告栏数据
     private void startUpdateTvTextTask(){
         Runnable startUpdateTvTextTask = new Runnable() {
             @Override
             public void run() {
                 BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
                     @Override
-                    public void onTvTextResponse(String tvText, String tvTextColor) {
+                    public void onTvTextResponse(String tvText, String tvTextColor,int code) {
                         updateTvText(tvText);
 //                        TODO 校验该账号是否存在
                     }
@@ -519,7 +413,7 @@ public class HospitalActivity extends BaseActivity {
                 });
 
 
-                handler.postDelayed(this, 30*1000);
+                handler.postDelayed(this, 5*1000);
             }
         };
         handler.post(startUpdateTvTextTask);
@@ -548,6 +442,124 @@ public class HospitalActivity extends BaseActivity {
         intent.putExtra("id",id);
     }
 
+
+//    界面点击模块事件
+    private void hotelListOnclick(ArrayList<HotelListModel> hotelListModels){
+        try {
+            hotelList.clear();
+            hotelList.addAll(hotelListModels);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < hotelList.size(); i++) {
+                        Log.d(TAG, "onApkResponse: " + hotelList.get(i).getName());
+                        Log.d(TAG, "onApkResponse: " + hotelList.get(i).getBackgroundUrl());
+                        Log.d(TAG, "onApkResponse: " + hotelList.get(i).getPicUrl());
+
+                        //获取到每一个item的layout替换掉图片和文字和跳转地址
+                        LinearLayout item = (LinearLayout)  layoutHospitalBinding.hospitalMainBottomLayout.getChildAt(i);
+
+                        ImageView img  = item.findViewById(R.id.item_img);
+
+                        Glide.with(HospitalActivity.this)
+                                .load(hotelList.get(i).getPicUrl())
+                                .error(R.color.black)
+                                .into(img);
+
+                        ((TextView)item.findViewById(R.id.item_text)).setText(hotelList.get(i).getName());
+
+
+                        SimpleTarget<Drawable>  simpleTarget = new SimpleTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                item.setBackground(resource);
+                            }
+                        };
+                        Glide.with(HospitalActivity.this)
+                                .load(hotelList.get(i).getBackgroundUrl())
+                                .error(R.color.white)
+                                .into(simpleTarget);
+                        int finalI  = i;
+                        switch (hotelList.get(i).getType()){
+                            case 10:
+//                                            电视界面
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(HospitalActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                                break;
+                            case 9:
+//                                            应用中心
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(HospitalActivity.this, AppActivity.class);
+                                        intent.putExtra("bg",strHotelBg);
+                                        intent.putExtra("serverAddress",serverAddress);
+                                        intent.putExtra("tenant",tenant);
+                                        intent.putExtra("title",hotelList.get(finalI).getName());
+                                        startActivity(intent);
+                                    }
+                                });
+                                break;
+                            case 0:
+//                                            WEB图文
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(HospitalActivity.this, HospitalWebActivity.class);
+                                        String title = hotelList.get(finalI).getName();
+                                        Long id = hotelList.get(finalI).getId();
+                                        defaultPutIntent(intent,title,id);
+                                        Log.d(TAG, "onClick: " + title);
+//                                                    intent.putExtra("detail",strDetail);
+                                        startActivity(intent);
+                                    }
+                                });
+                                break;
+                            case 1:
+                                // 图文列表
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(HospitalActivity.this, HospitalListActivity.class);
+                                        String title = hotelList.get(finalI).getName();
+                                        Long id = hotelList.get(finalI).getId();
+                                        defaultPutIntent(intent,title,id);
+                                        Log.d(TAG, "onClick: " + title);
+//                                                    intent.putExtra("detail",strDetail);
+                                        startActivity(intent);
+                                    }
+                                });
+                                break;
+                            case 2:
+//                                            视频
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(HospitalActivity.this, HospitalVideoActivity.class);
+                                        String title = hotelList.get(finalI).getName();
+                                        Long id = hotelList.get(finalI).getId();
+                                        defaultPutIntent(intent,title,id);
+                                        startActivity(intent);
+                                    }
+                                });
+                                break;
+
+
+                        }
+
+                    }
+                }
+            });
+        }catch (Exception e){
+
+        }
+
+    }
 
 
 
