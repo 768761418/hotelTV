@@ -5,6 +5,15 @@ public class TvTextModel {
     private String title;
     private String  content;
     private String textColor;
+    private int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public int getStatus() {
         return status;
