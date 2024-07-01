@@ -56,49 +56,20 @@ public class HospitalListActivity extends BaseActivity {
 
         id = getIntent().getLongExtra("id",-1);
         title = getIntent().getStringExtra("title");
-        //        获取天气
-        locationString = getLocation();
-        getGeoAndWeather(locationString);
+
+        layoutHospitalListBinding.hospitalTop.setRoomNumber(roomNumber);
+        //      获取天气和地址
+        getGeoAndWeather(null,layoutHospitalListBinding.hospitalTop.weather());
+
         //        获取接口数据
         try {
             getData();
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
         }
+//        设置底部标题栏
+        layoutHospitalListBinding.bottomBar.setTitle(title);
 
-
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (GEO&&WEATHER&&HOTEL_MESSAGE){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "run: xxxxxs" );
-                            if (strHotelLogo!= null){
-                                layoutHospitalListBinding.hospitalTop.initOrUpdateTopBar(strHotelLogo,roomNumber,weather);
-                            }
-
-                            // 设置背景
-                            if (strHotelBg != null){
-                                Glide.with(HospitalListActivity.this)
-                                        .load(strHotelBg)
-                                        .error(R.drawable.app_bg)
-                                        .into(layoutHospitalListBinding.hospitalBackground);
-
-                            }
-                            layoutHospitalListBinding.bottomBar.setTitle(title);
-                        }
-                    });
-
-
-                    timer.cancel();
-                }
-            }
-        };
-
-        timer.schedule(timerTask,0,1000);
 
 //        隐藏上一页初始化
         layoutHospitalListBinding.bottomBar.showUpAndNext();
@@ -132,56 +103,16 @@ public class HospitalListActivity extends BaseActivity {
         });
     }
 
-    //    请求天气和温度
-    private  void getGeoAndWeather(String locationString){
-//        请求地址
-        if (!GEO){
-            LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    geo = responseData;
-                    GEO = true;
-                }
-
-                @Override
-                public void onFailure(String failName) {
-                    geo = "";
-                    GEO = true;
-                }
-            });
-        }
-
-//        请求天气
-        if (!WEATHER){
-            LocationHttp.getInstance().getWeather(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    weather = responseData;
-                    WEATHER = true;
-                }
-
-                @Override
-                public void onFailure(String failName) {
-                    weather = "";
-                    WEATHER = true;
-                }
-            });
-        }
-    }
 
 
     private void getData() throws JSONException {
-        if (!HOTEL_MESSAGE){
-            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            if (hotelMessageJson != null){
-                strHotelLogo = hotelMessageJson.getString("iconUrl");;
-                strHotelBg = hotelMessageJson.getString("homepageBackground");;
-            }
-            HOTEL_MESSAGE = true;
+        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+        if (hotelMessageJson != null){
+            String logoUrl = hotelMessageJson.getString("iconUrl");;
+            String bgUrl = hotelMessageJson.getString("homepageBackground");
+//                初始化背景和logo
+            initLogoAndBackGround(HospitalListActivity.this,layoutHospitalListBinding.hospitalTop.logo(),logoUrl,layoutHospitalListBinding.hospitalBackground,bgUrl);
         }
-
-
-
     }
 
 

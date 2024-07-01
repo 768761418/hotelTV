@@ -113,12 +113,20 @@
                     android:textSize="16sp" />
 
                 <TextView
-                    android:id="@+id/index_sky"
+                    android:id="@+id/index_geo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="geo"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/index_weather"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="weather"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginLeft="3dp"/>
             </LinearLayout>
 
 

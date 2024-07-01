@@ -1,6 +1,7 @@
 package com.qb.hotelTV.Activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -8,12 +9,16 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
+import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Adaptor.ApkAdaptor;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.R;
 
 import com.qb.hotelTV.databinding.LayoutAppBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -44,18 +49,30 @@ public class AppActivity extends BaseActivity {
 
     private void initUI() {
         layoutAppBinding = DataBindingUtil.setContentView(this, R.layout.layout_app);
-        String bg = getIntent().getStringExtra("bg");
         String title = getIntent().getStringExtra("title");
+        String[] data = commonData.getData();
+        serverAddress = data[0];
+        tenant =data[1];
+
+
         int type = getIntent().getIntExtra("type",0);
         if (type == 1){
             layoutAppBinding.bottomBar.setVisibility(View.GONE);
         }
-        if (bg != null) {
-            Glide.with(AppActivity.this)
-                    .load(bg)
-                    .error(R.drawable.app_bg)
-                    .into(layoutAppBinding.appBackground);
+
+        try {
+            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            String themeType = "hospital1";
+            if (hotelMessageJson != null){
+                String logoUrl = hotelMessageJson.getString("iconUrl");;
+                String bgUrl = hotelMessageJson.getString("homepageBackground");
+//                初始化背景和logo
+                initLogoAndBackGround(AppActivity.this,null,logoUrl,layoutAppBinding.appBackground,bgUrl);
+            }
+        }catch (JSONException e){
+            Log.e(TAG, "initUI: ", e);
         }
+
         if (title != null){
             layoutAppBinding.appTitle.setText(title);
             layoutAppBinding.bottomBar.setTitle(title);
@@ -65,8 +82,6 @@ public class AppActivity extends BaseActivity {
 
 
     private void getApkList(){
-        serverAddress = getIntent().getStringExtra("serverAddress");
-        tenant = getIntent().getStringExtra("tenant");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,26 +100,6 @@ public class AppActivity extends BaseActivity {
             }
         }).start();
 
-
-//        BackstageHttp.getInstance().getApk(serverAddress, tenant, new BackstageHttp.ApkCallback() {
-//            @Override
-//            public void onApkResponse(ArrayList<ApkModel> apkModelArrayList) {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (apkModelArrayList != null && !apkModelArrayList.isEmpty()) {
-//
-//                        }
-//                    }
-//                });
-//
-//            }
-//            @Override
-//            public void onApkFailure(int code, String msg) {
-//                apkAdaptor.notifyDataSetChanged();
-//                apkIsGet =true;
-//            }
-//        });
     }
 
 

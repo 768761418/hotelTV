@@ -30,19 +30,19 @@ public class SocketNoticeActivity extends BaseActivity{
 
 
 //    设置只有音量键和关机键有效
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        switch (keyCode){
-//            // 允许的按键
-//            case KeyEvent.KEYCODE_VOLUME_UP:
-//            case KeyEvent.KEYCODE_VOLUME_DOWN:
-//            case KeyEvent.KEYCODE_POWER:
-//                // 允许的事件
-//                return false;
-//            default:
-//                return  true;
-//        }
-//    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            // 允许的按键
+            case KeyEvent.KEYCODE_VOLUME_UP:
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+            case KeyEvent.KEYCODE_POWER:
+                // 允许的事件
+                return false;
+            default:
+                return  true;
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

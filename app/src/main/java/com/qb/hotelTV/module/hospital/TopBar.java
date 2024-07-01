@@ -7,7 +7,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -16,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.HospitalModuleTopBarBinding;
+
+import org.w3c.dom.Text;
 
 public class TopBar extends LinearLayout {
     private HospitalModuleTopBarBinding hospitalModuleTopBarBinding;
@@ -89,8 +93,19 @@ public class TopBar extends LinearLayout {
     public void initOrUpdateTopBar(String logo,String roomNumber,String weather){
         setLogo(logo);
         setRoomNumber(roomNumber);
-        setWeather(weather);
+//        setWeather(weather);
     }
+
+    public TextView weather(){
+        return hospitalModuleTopBarBinding.weather;
+    }
+    public TextView roomNumber(){
+        return hospitalModuleTopBarBinding.roomNumber;
+    }
+    public ImageView logo(){
+        return hospitalModuleTopBarBinding.logo;
+    }
+
 
 
 }

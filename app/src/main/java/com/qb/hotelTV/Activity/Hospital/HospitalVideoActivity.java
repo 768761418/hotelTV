@@ -67,8 +67,7 @@ public class HospitalVideoActivity extends BaseActivity {
 
     private void initUI(){
         layoutHospitalVideoBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital_video);
-
-
+//        获取通用请求数据
         String[] data = commonData.getData();
         serverAddress = data[0];
         tenant =data[1];
@@ -76,9 +75,10 @@ public class HospitalVideoActivity extends BaseActivity {
 
         id = getIntent().getLongExtra("id",-1);
         title = getIntent().getStringExtra("title");
-        //        获取天气
-        locationString = getLocation();
-        getGeoAndWeather(locationString);
+        layoutHospitalVideoBinding.hospitalTop.setRoomNumber(roomNumber);
+        layoutHospitalVideoBinding.bottomBar.setTitle(title);
+//      获取天气和地址
+        getGeoAndWeather(null,layoutHospitalVideoBinding.hospitalTop.weather());
         //        获取接口数据
         try{
             getData();
@@ -87,86 +87,19 @@ public class HospitalVideoActivity extends BaseActivity {
         }
 
 
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (GEO&&WEATHER&&HOTEL_MESSAGE){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "run: xxxxxs" );
-                            if (strHotelLogo!= null){
-                                layoutHospitalVideoBinding.hospitalTop.initOrUpdateTopBar(strHotelLogo,roomNumber,weather);
-                            }
-
-                            // 设置背景
-                            if (strHotelBg != null){
-                                Glide.with(HospitalVideoActivity.this)
-                                        .load(strHotelBg)
-                                        .error(R.drawable.app_bg)
-                                        .into(layoutHospitalVideoBinding.hospitalBackground);
-
-                            }
-                            layoutHospitalVideoBinding.bottomBar.setTitle(title);
-                        }
-                    });
-
-
-                    timer.cancel();
-                }
-            }
-        };
-
-        timer.schedule(timerTask,0,1000);
     }
 
-    //    请求天气和温度
-    private  void getGeoAndWeather(String locationString){
-//        请求地址
-        if (!GEO){
-            LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    geo = responseData;
-                    GEO = true;
-                }
 
-                @Override
-                public void onFailure(String failName) {
-                    geo = "";
-                    GEO = true;
-                }
-            });
-        }
 
-//        请求天气
-        if (!WEATHER){
-            LocationHttp.getInstance().getWeather(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    weather = responseData;
-                    WEATHER = true;
-                }
-
-                @Override
-                public void onFailure(String failName) {
-                    weather = "";
-                    WEATHER = true;
-                }
-            });
-        }
-    }
 
 
     private void getData() throws JSONException {
-        if (!HOTEL_MESSAGE){
-            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            if (hotelMessageJson != null){
-                strHotelLogo = hotelMessageJson.getString("iconUrl");;
-                strHotelBg = hotelMessageJson.getString("homepageBackground");;
-            }
-            HOTEL_MESSAGE = true;
+        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+        if (hotelMessageJson != null){
+            String logoUrl = hotelMessageJson.getString("iconUrl");;
+            String bgUrl = hotelMessageJson.getString("homepageBackground");
+//                初始化背景和logo
+            initLogoAndBackGround(HospitalVideoActivity.this,layoutHospitalVideoBinding.hospitalTop.logo(),logoUrl,layoutHospitalVideoBinding.hospitalBackground,bgUrl);
         }
 
         BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, new BackstageHttp.CmsMessageCallBack() {

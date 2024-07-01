@@ -57,7 +57,8 @@ public class HospitalWebActivity extends BaseActivity {
         id = getIntent().getLongExtra("id",-1);
         title = getIntent().getStringExtra("title");
         strHtml = getIntent().getStringExtra("content");
-        boolean isList = getIntent().getBooleanExtra("isList",false);
+        layoutHospitalWebBinding.hospitalTop.setRoomNumber(roomNumber);
+        layoutHospitalWebBinding.bottomBar.setTitle(title);
 
         layoutHospitalWebBinding.bottomBar.setIndexOnclickListener(new BottomBar.IndexOnclickListener() {
                 @Override
@@ -68,9 +69,8 @@ public class HospitalWebActivity extends BaseActivity {
             });
 
 
-//        获取天气
-        locationString = getLocation();
-        getGeoAndWeather(locationString);
+//      获取天气和地址
+        getGeoAndWeather(null,layoutHospitalWebBinding.hospitalTop.weather());
 //        获取接口数据
         try{
             getData();
@@ -156,14 +156,15 @@ public class HospitalWebActivity extends BaseActivity {
     }
 
     private void getData() throws JSONException {
-        if (!HOTEL_MESSAGE){
-            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            if (hotelMessageJson != null){
-                strHotelLogo = hotelMessageJson.getString("iconUrl");;
-                strHotelBg = hotelMessageJson.getString("homepageBackground");;
-            }
-            HOTEL_MESSAGE = true;
+        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+        if (hotelMessageJson != null){
+            String logoUrl = hotelMessageJson.getString("iconUrl");;
+            String bgUrl = hotelMessageJson.getString("homepageBackground");
+//                初始化背景和logo
+            initLogoAndBackGround(HospitalWebActivity.this,layoutHospitalWebBinding.hospitalTop.logo(),logoUrl,layoutHospitalWebBinding.hospitalBackground,bgUrl);
         }
+
+
         if (strHtml != null && !strHtml.equals("")){
             layoutHospitalWebBinding.hospitalWebContact.loadData(strHtml,"text/html","utf-8");
             layoutHospitalWebBinding.hospitalWebContact.requestFocus();
@@ -177,8 +178,6 @@ public class HospitalWebActivity extends BaseActivity {
                     cms.clear();
                     cms.addAll(cmsMessageModels);
                     strHtml = cms.get(0).getContent();
-                    Log.d(TAG, "xxs: " +strHtml);
-
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

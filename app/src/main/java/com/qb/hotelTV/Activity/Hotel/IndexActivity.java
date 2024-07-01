@@ -37,6 +37,7 @@ import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Setting.ProgressDialogSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
@@ -52,8 +53,6 @@ public class IndexActivity extends BaseActivity {
     private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
     private final String  TAG = IndexActivity.class.getSimpleName();
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 //    经纬度
     String locationString;
     int current_channel;
@@ -75,13 +74,10 @@ public class IndexActivity extends BaseActivity {
     private ArrayList<HotelListModel> hotelList = new ArrayList<>();
     ProgressDialog progressDialog;
     private SimpleExoPlayer player ;
+    private SharedPreferencesUtils sharedPreferencesUtils;
 //    焦点选中动画
     FocusScaleListener focusScaleListener = new FocusScaleListener();
 
-    private static final String KEY_SERVER_ADDRESS = "server_address";
-    private static final String KEY_ROOM_NUMBER = "room_number";
-    private static final String KEY_TENANT = "tenant";
-    private static final String PREFS_NAME = "HotelTV";
 
 
     @Override
@@ -89,25 +85,24 @@ public class IndexActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
-//        闪退日志
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(this);
-//        请求权限
-        PermissionUtils permissionUtils = new PermissionUtils();
-        permissionUtils.checkPermission(this);
-        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
+
+        sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
+
+        boolean isFirstRun = sharedPreferencesUtils.loadIsFirstRun();
+
         if (isFirstRun) {
             // 如果是第一次进入，则显示输入对话框
             showInputDialog();
         } else {
             // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
-            serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
-            roomNumber = sharedPreferences.getString(KEY_ROOM_NUMBER, "");
-            tenant  = sharedPreferences.getString(KEY_TENANT,"");
+            serverAddress = sharedPreferencesUtils.loadServerAddress();
+            roomNumber = sharedPreferencesUtils.loadRoomNumber();
+            tenant  = sharedPreferencesUtils.loadTenant();
+            commonData.setData(serverAddress,tenant,roomNumber);
             Log.d(TAG, "serverAddress: " +serverAddress);
             Log.d(TAG, "roomNumber: " + roomNumber);
             Log.d(TAG, "tenant: " +tenant);
+            layoutIndexBinding.indexRoomName.setText(roomNumber);
             // 使用服务器地址和房间号
             // ...
             initUI();
@@ -174,37 +169,6 @@ public class IndexActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // 当 Activity 失去焦点时，暂停视频播放
-        if (player != null){
-            player.pause();
-        }
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (player != null){
-            // 当 Activity 重新获得焦点时，继续播放视频
-            player.play();
-        }
-
-    }
-
-
-
-    @Override
-    protected void onDestroy() {
-        // 移除所有未执行的任务，避免内存泄漏
-        handler.removeCallbacksAndMessages(null);
-        if (player != null){
-            player.release();
-        }
-        super.onDestroy();
-    }
 
 
     private void initUI(){
@@ -272,8 +236,6 @@ public class IndexActivity extends BaseActivity {
 
                             }
 
-//                            设置天气
-                            layoutIndexBinding.indexSky.setText(geo + "  " + weather);
 //                            设置房间信息
                             layoutIndexBinding.indexRoomName.setText(strRoomName);
                             layoutIndexBinding.indexWifiName.setText(strWifiName);
@@ -650,14 +612,7 @@ public class IndexActivity extends BaseActivity {
         });
     }
 
-    private void saveServerAddressAndRoomNumber(String serverAddress, String roomNumber,String tenant) {
-        editor = sharedPreferences.edit();
-        editor.putString(KEY_SERVER_ADDRESS, serverAddress);
-        editor.putString(KEY_ROOM_NUMBER, roomNumber);
-        editor.putString(KEY_TENANT,tenant);
-        editor.putBoolean("isFirstRun", false); // 标记不是第一次运行
-        editor.apply();
-    }
+
 
 
 
