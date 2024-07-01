@@ -15,7 +15,7 @@
             android:id="@+id/item_img"
             android:layout_width="50dp"
             android:layout_height="50dp"
-
+            android:src="@color/white"
            />
         <TextView
             android:id="@+id/item_text"

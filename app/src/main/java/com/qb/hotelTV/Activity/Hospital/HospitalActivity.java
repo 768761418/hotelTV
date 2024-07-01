@@ -76,9 +76,7 @@ public class HospitalActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         layoutHospitalBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital);
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
-
         boolean isFirstRun = sharedPreferencesUtils.loadIsFirstRun();
-
         if (isFirstRun) {
             // 如果是第一次进入，则显示输入对话框
             showInputDialog();
@@ -91,11 +89,12 @@ public class HospitalActivity extends BaseActivity {
             Log.d(TAG, "serverAddress: " +serverAddress);
             Log.d(TAG, "roomNumber: " + roomNumber);
             Log.d(TAG, "tenant: " +tenant);
-            layoutHospitalBinding.hospitalTop.setRoomNumber(roomNumber);
             // 使用服务器地址和房间号
             // ...
             initUI();
         }
+//        显示房间号
+        layoutHospitalBinding.hospitalTop.setRoomNumber(roomNumber);
 
     }
 
@@ -124,13 +123,13 @@ public class HospitalActivity extends BaseActivity {
 
     private void showInputDialog() {
         layoutHospitalBinding.indexInput.setVisibility(View.VISIBLE);
-//        layoutIndexBinding.tvImage.setEnabled(false);
         layoutHospitalBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 serverAddress = layoutHospitalBinding.inputServerAddress.getText().toString();
                 roomNumber = layoutHospitalBinding.inputRoomNumber.getText().toString();
                 tenant = layoutHospitalBinding.inputTenant.getText().toString();
+//                将数据保存到内存共享，让其他Activity也可用
                 commonData.setData(serverAddress,tenant,roomNumber);
                 // 保存服务器地址和房间号到 SharedPreferences中
                 sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
@@ -159,7 +158,12 @@ public class HospitalActivity extends BaseActivity {
 //        登录获取token
         login(serverAddress,roomNumber,tenant);
 //        获取配置信息
-        initStartVideoOrImg();
+        initStartVideoOrImg(HospitalActivity.this,
+                serverAddress,tenant,
+                layoutHospitalBinding.hospitalTop.logo(),
+                layoutHospitalBinding.hospitalBackground,
+                layoutHospitalBinding.hospitalTv
+        );
 //      请求滚动栏公告
         getAnnouncements(serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
 //        获取界面列表
@@ -168,7 +172,7 @@ public class HospitalActivity extends BaseActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels);
+                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,"hospital1");
                 }
             }
         }).start();
@@ -192,42 +196,7 @@ public class HospitalActivity extends BaseActivity {
 
 
 
-//    初始化启动图片或视频
-    private void initStartVideoOrImg(){
-        try{
-            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            String themeType = "hospital1";
-            if (hotelMessageJson != null){
-                String logoUrl = hotelMessageJson.getString("iconUrl");;
-                String bgUrl = hotelMessageJson.getString("homepageBackground");
-                String videoUrl = hotelMessageJson.getString("resourceUrl");
-//                初始化背景和logo
-                initLogoAndBackGround(HospitalActivity.this,layoutHospitalBinding.hospitalTop.logo(),logoUrl,layoutHospitalBinding.hospitalBackground,bgUrl);
-                initIndexVideo(HospitalActivity.this,layoutHospitalBinding.hospitalTv,videoUrl);
 
-                themeType = hotelMessageJson.getString("themeType");
-            }
-            JSONObject startData = hotelMessageJson.getJSONObject("startData");
-//           判断是否需要开机动画
-            if (startData.getInt("open") == 1){
-                Intent intent = new Intent(HospitalActivity.this, HospitalStartVideoActivity.class);
-                intent.putExtra("startType",startData.getInt("type"));
-                intent.putExtra("startUrl",startData.getString("url"));
-                intent.putExtra("startSecond",startData.getLong("second"));
-                intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
-                intent.putExtra("startContent",startData.getString("content"));
-                startActivity(intent);
-            }
-            // TODO 切换主题
-            if (themeType.equals("hospital1")){
-
-            }
-
-
-        }catch (JSONException e){
-            Log.e(TAG, "initStartVideoOrImg: ", e);
-        }
-    }
 
 
 

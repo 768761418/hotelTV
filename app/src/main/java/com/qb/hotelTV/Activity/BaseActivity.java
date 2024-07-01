@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.HttpUtil;
 import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Activity.Hospital.HospitalListActivity;
+import com.qb.hotelTV.Activity.Hospital.HospitalStartVideoActivity;
 import com.qb.hotelTV.Activity.Hospital.HospitalVideoActivity;
 import com.qb.hotelTV.Activity.Hospital.HospitalWebActivity;
 import com.qb.hotelTV.Data.CommonData;
@@ -158,8 +159,6 @@ public class BaseActivity extends Activity {
                 });
             }
         });
-
-
 //        请求天气
         LocationHttp.getInstance().getWeather(locationString, new LocationHttp.LocationHttpCallback() {
             @Override
@@ -393,7 +392,7 @@ public class BaseActivity extends Activity {
         intent.putExtra("id",id);
     }
     //    界面点击模块事件
-    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels){
+    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels,String theme){
         try {
             runOnUiThread(new Runnable() {
                 @Override
@@ -402,6 +401,8 @@ public class BaseActivity extends Activity {
                         Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getName());
                         Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getBackgroundUrl());
                         Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getPicUrl());
+                        Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getType());
+
                         //获取到每一个item的layout替换掉图片和文字和跳转地址
                         LinearLayout item = (LinearLayout)  layout.getChildAt(i);
 
@@ -414,17 +415,19 @@ public class BaseActivity extends Activity {
 
                         ((TextView)item.findViewById(R.id.item_text)).setText(hotelListModels.get(i).getName());
 
+                        if (theme.equals("hospital")){
+                            SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
+                                @Override
+                                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                    item.setBackground(resource);
+                                }
+                            };
+                            Glide.with((Activity) context)
+                                    .load(hotelListModels.get(i).getBackgroundUrl())
+                                    .error(R.color.white)
+                                    .into(simpleTarget);
+                        }
 
-                        SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
-                            @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                                item.setBackground(resource);
-                            }
-                        };
-                        Glide.with((Activity) context)
-                                .load(hotelListModels.get(i).getBackgroundUrl())
-                                .error(R.color.white)
-                                .into(simpleTarget);
                         int finalI  = i;
                         switch (hotelListModels.get(i).getType()){
                             case 10:
@@ -438,7 +441,7 @@ public class BaseActivity extends Activity {
                                 });
                                 break;
                             case 9:
-//                                            应用中心
+//                              应用中心
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -503,5 +506,42 @@ public class BaseActivity extends Activity {
     }
 
 
+    //    初始化启动图片或视频
+    public void initStartVideoOrImg(Context context,String serverAddress,String tenant,
+                                     ImageView logoView,ImageView bgView,PlayerView playerView){
+        try{
+            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            String themeType = "hospital1";
+            if (hotelMessageJson != null){
+                String logoUrl = hotelMessageJson.getString("iconUrl");;
+                String bgUrl = hotelMessageJson.getString("homepageBackground");
+                String videoUrl = hotelMessageJson.getString("resourceUrl");
+//                初始化背景和logo
+                initLogoAndBackGround(context,logoView,logoUrl,bgView,bgUrl);
+                initIndexVideo(context,playerView,videoUrl);
+
+                themeType = hotelMessageJson.getString("themeType");
+            }
+            JSONObject startData = hotelMessageJson.getJSONObject("startData");
+//           判断是否需要开机动画
+            if (startData.getInt("open") == 1){
+                Intent intent = new Intent(context  , HospitalStartVideoActivity.class);
+                intent.putExtra("startType",startData.getInt("type"));
+                intent.putExtra("startUrl",startData.getString("url"));
+                intent.putExtra("startSecond",startData.getLong("second"));
+                intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
+                intent.putExtra("startContent",startData.getString("content"));
+                startActivity(intent);
+            }
+            // TODO 切换主题
+            if (themeType.equals("hospital1")){
+
+            }
+
+
+        }catch (JSONException e){
+            Log.e(TAG, "initStartVideoOrImg: ", e);
+        }
+    }
 
 }
