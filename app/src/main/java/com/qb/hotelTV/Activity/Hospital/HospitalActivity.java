@@ -21,10 +21,12 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.AppActivity;
 import com.qb.hotelTV.Activity.BaseActivity;
+import com.qb.hotelTV.Activity.Hotel.IndexActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutHospitalBinding;
@@ -103,6 +105,7 @@ public class HospitalActivity extends BaseActivity {
     private void initUI(){
 //      获取天气和地址
         getGeoAndWeather(null,layoutHospitalBinding.hospitalTop.weather());
+
 //        请求接口获取数据
         try {
             getDataFromHttp();
@@ -157,6 +160,7 @@ public class HospitalActivity extends BaseActivity {
     private void getDataFromHttp()  {
 //        登录获取token
         login(serverAddress,roomNumber,tenant);
+        checkTheme();
 //        获取配置信息
         initStartVideoOrImg(HospitalActivity.this,
                 serverAddress,tenant,
@@ -172,7 +176,7 @@ public class HospitalActivity extends BaseActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,"hospital1");
+                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,ApplicationSetting.THEME_HOSPITAL_ONE);
                 }
             }
         }).start();
@@ -186,19 +190,34 @@ public class HospitalActivity extends BaseActivity {
             @Override
             public void run() {
                 getAnnouncements(serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
-                handler.postDelayed(this, 5*1000);
+                handler.postDelayed(this, 30*1000);
             }
         };
         handler.post(startUpdateTvTextTask);
     }
 
+    private void checkTheme(){
+        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+        String themeType;
+        try{
+            themeType = hotelMessageJson.getString("themeType");
+            if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
+                Intent intent = new Intent(HospitalActivity.this, IndexActivity.class);
+                startActivityForResult(intent,ApplicationSetting.CLOSE_CODE);
+            }
+        }catch (JSONException e){
+            Log.e(TAG, "checkTheme: ", e);
+        }
+
+    }
 
 
-
-
-
-
-
-
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        如果使用其他主体则在其他主体返回的时候关闭这个界面
+        if (requestCode == ApplicationSetting.CLOSE_CODE ){
+            finish();
+        }
+    }
 }

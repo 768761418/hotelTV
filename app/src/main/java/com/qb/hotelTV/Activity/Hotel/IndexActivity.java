@@ -36,6 +36,7 @@ import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Http.LocationHttp;
+import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Setting.ProgressDialogSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
@@ -77,6 +78,12 @@ public class IndexActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        setResult(ApplicationSetting.CLOSE_CODE);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -104,52 +111,7 @@ public class IndexActivity extends BaseActivity {
         layoutIndexBinding.inputRoomNumber.setText(roomNumber);
 //        组件动画
         focusChange();
-//        openClick();
     }
-
-    private void openClick(){
-        layoutIndexBinding.apk1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(IndexActivity.this, MainActivity.class);
-//                startActivity(intent);
-            }
-        });
-
-        layoutIndexBinding.apk2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        layoutIndexBinding.apk3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        layoutIndexBinding.apk4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(IndexActivity.this, VideoActivity.class);
-//                intent.putExtra("bg",strHotelBg);
-//                intent.putExtra("serverAddress",serverAddress);
-//                intent.putExtra("tenant",tenant);
-//                Log.d(TAG, "strVideoUrl: " +strVideoUrl);
-//                intent.putExtra("videoUrl",strVideoUrl);
-//                startActivity(intent);
-            }
-        });
-    }
-
-
-
-
-
-
-
     private void initUI(){
 //        获取时间
         startUpdateTask();
@@ -211,7 +173,7 @@ public class IndexActivity extends BaseActivity {
 //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
         //        登录获取token
-        login(serverAddress,roomNumber,tenant);
+//        login(serverAddress,roomNumber,tenant);
         //        获取配置信息
         initStartVideoOrImg(IndexActivity.this,
                 serverAddress,tenant,
@@ -229,6 +191,7 @@ public class IndexActivity extends BaseActivity {
                 if (!hotelListModels.isEmpty()){
                     indexListOnclick(IndexActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"");
                 }
+//                获取房间信息
                 JSONObject roomData = BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant);
                 if (roomData != null){
                     runOnUiThread(new Runnable() {

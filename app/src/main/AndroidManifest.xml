@@ -59,12 +59,7 @@
             android:name=".Activity.Hotel.IndexActivity"
             android:exported="true"
             android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.HOME" />
-            </intent-filter>
+
         </activity>
 
         <activity android:name=".Activity.SocketNoticeActivity" android:exported="true"/>
@@ -73,7 +68,12 @@
 
         <activity android:name=".Activity.Hospital.HospitalActivity"
             android:exported="true">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
         </activity>
         <activity android:name=".Activity.Hospital.HospitalVideoActivity" android:exported="true"/>
 

@@ -56,11 +56,6 @@ public class BackstageHttp {
     private String token = null;
 
 
-    public interface RoomMessageCallback{
-        void onRoomMessageResponse(int id,String roomName,String wifiPassword,String frontDeskPhone);
-        void onRoomMessageFailure(int code,String msg);
-    }
-
     public interface TvTextCallback{
         void onTvTextResponse(String tvText,String tvTextColor,int code);
         void onTvTextFailure(int code,String msg);
@@ -76,7 +71,7 @@ public class BackstageHttp {
         return token;
     }
 
-//    登录函数
+//  同步  登录函数
     public void loginSystem(String serverAddress,String roomNumber,String tenant) {
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
@@ -133,7 +128,7 @@ public class BackstageHttp {
 
 
 
-//    获取房间信息
+//   同步 获取房间信息
     public JSONObject getRoomMessage(String serverAddress,String roomNumber,String tenant){
 //       设置路径
             String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
@@ -153,6 +148,7 @@ public class BackstageHttp {
             try {
                 Response response = call.execute();
                 String responseData = response.body().string();
+                Log.d(TAG, "获取房间信息: " + responseData);
                 if (response.isSuccessful()){
                     JSONObject jsonObject = new JSONObject(responseData);
                     int code = jsonObject.getInt("code");
@@ -164,42 +160,6 @@ public class BackstageHttp {
                 Log.e(TAG, "请求房间信息错误: ", e);
             }
             return  data;
-
-//            call.enqueue(new Callback() {
-//                @Override
-//                public void onFailure(@NonNull Call call, @NonNull IOException e) {
-//                    Log.e(TAG, "onRoomMessageFailure" + url,e);
-//                    String msg = "请输入正确的服务器";
-//                    int code = -1;
-//                    callback.onRoomMessageFailure(code,msg);
-//                }
-//
-//                @Override
-//                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-//                    if(response.isSuccessful()){
-//                        String responseData = response.body().string();
-//                        Log.d(TAG, "请求结果0" + responseData);
-//                        try {
-//                            BaseResponseModel<RoomMessageModel> roomMessage = gson.fromJson(responseData,new TypeToken<BaseResponseModel<RoomMessageModel>>(){}.getType());
-//                            Integer code = roomMessage.getCode();
-//                            Log.d(TAG, "roomMessage：" + code);
-//                            if (code != 0 || roomMessage.getData() == null) {
-//                                callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
-//                            }else{
-//                                // 从 JsonObject 中提取所需的字段
-//                                Integer id = roomMessage.getData().getId();
-//                                String roomName = roomMessage.getData().getRoomName();
-//                                String wifiPassword = roomMessage.getData().getWifiPassword();
-//                                String frontDeskPhone = roomMessage.getData().getFrontDeskPhone();
-//                                callback.onRoomMessageResponse(id,roomName,wifiPassword,frontDeskPhone);
-//                            }
-//                        }catch (Exception e){
-//                            Log.e(TAG, "errorHttp",e );
-//                            callback.onRoomMessageResponse(0,"","该房间不存在","该房间不存在");
-//                        }
-//                    }
-//                }
-//            });
     }
 
 

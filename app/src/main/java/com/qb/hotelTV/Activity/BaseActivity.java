@@ -43,6 +43,7 @@ import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
@@ -267,6 +268,7 @@ public class BaseActivity extends Activity {
                         JSONObject configData = contentObject.getJSONObject("configData");
                         int webType = configData.getInt("type");
                         long webSecond = configData.getLong("second");
+                        Log.d(TAG, "onMessageCallback: " + webSecond + "??" + type);
                         Intent intent = new Intent(context, SocketNoticeActivity.class);
                         intent.putExtra("url",content);
                         intent.putExtra("type",webType);
@@ -415,7 +417,7 @@ public class BaseActivity extends Activity {
 
                         ((TextView)item.findViewById(R.id.item_text)).setText(hotelListModels.get(i).getName());
 
-                        if (theme.equals("hospital")){
+                        if (theme.equals(ApplicationSetting.THEME_HOSPITAL_ONE)){
                             SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                                 @Override
                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
@@ -511,16 +513,14 @@ public class BaseActivity extends Activity {
                                      ImageView logoView,ImageView bgView,PlayerView playerView){
         try{
             JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            String themeType = "hospital1";
             if (hotelMessageJson != null){
                 String logoUrl = hotelMessageJson.getString("iconUrl");;
                 String bgUrl = hotelMessageJson.getString("homepageBackground");
                 String videoUrl = hotelMessageJson.getString("resourceUrl");
+                Log.d(TAG, "initStartVideoOrImg: " + videoUrl);
 //                初始化背景和logo
                 initLogoAndBackGround(context,logoView,logoUrl,bgView,bgUrl);
                 initIndexVideo(context,playerView,videoUrl);
-
-                themeType = hotelMessageJson.getString("themeType");
             }
             JSONObject startData = hotelMessageJson.getJSONObject("startData");
 //           判断是否需要开机动画
@@ -532,10 +532,6 @@ public class BaseActivity extends Activity {
                 intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
                 intent.putExtra("startContent",startData.getString("content"));
                 startActivity(intent);
-            }
-            // TODO 切换主题
-            if (themeType.equals("hospital1")){
-
             }
 
 

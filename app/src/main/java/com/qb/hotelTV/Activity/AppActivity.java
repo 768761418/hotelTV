@@ -54,15 +54,8 @@ public class AppActivity extends BaseActivity {
         serverAddress = data[0];
         tenant =data[1];
 
-
-        int type = getIntent().getIntExtra("type",0);
-        if (type == 1){
-            layoutAppBinding.bottomBar.setVisibility(View.GONE);
-        }
-
         try {
             JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            String themeType = "hospital1";
             if (hotelMessageJson != null){
                 String logoUrl = hotelMessageJson.getString("iconUrl");;
                 String bgUrl = hotelMessageJson.getString("homepageBackground");
