@@ -45,6 +45,7 @@ import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
 import org.json.JSONException;
@@ -61,6 +62,7 @@ public class BaseActivity extends Activity {
     private Handler handler = new Handler();
     private boolean isGetToken = true;
     private Player player;
+    private SharedPreferencesUtils sharedPreferencesUtils;
 
     @Override
     protected void onPause() {
@@ -297,29 +299,37 @@ public class BaseActivity extends Activity {
     }
 
 //    获取公告并修改组件
-    public void getAnnouncements(String serverAddress,String tenant,MarqueeTextView view){
+    public void getAnnouncements(Context context,String serverAddress,String tenant,MarqueeTextView view){
         BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
             @Override
             public void onTvTextResponse(String tvText, String tvTextColor,int code) {
                 Log.d(TAG, "onTvTextResponse: " + tvText );
                 Log.d(TAG, "onTvTextResponse: " +tvTextColor );
-//                主线程修改公告
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (tvText == null || tvText.equals("")){
-                            view.setVisibility(View.GONE);
-                        }else {
-                            view.setVisibility(View.VISIBLE);
-                            view.setText(tvText);
-                            if (tvTextColor!= null){
-                                int color = Color.parseColor(tvTextColor);
-                                view.setTextColor(color);
+                if(code == 0){
+                    //主线程修改公告
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (tvText == null || tvText.equals("")){
+                                view.setVisibility(View.GONE);
+                            }else {
+                                view.setVisibility(View.VISIBLE);
+                                view.setText(tvText);
+                                if (tvTextColor!= null){
+                                    int color = Color.parseColor(tvTextColor);
+                                    view.setTextColor(color);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }else{
 
+                    commonData.clearData();
+//                    TODO 退出的时候暂停视频
+                    if (player != null){
+                        player = null;
+                    }
+                }
             }
 
             @Override

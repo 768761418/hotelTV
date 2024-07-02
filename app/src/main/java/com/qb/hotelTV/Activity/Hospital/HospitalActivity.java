@@ -45,6 +45,7 @@ public class HospitalActivity extends BaseActivity {
     private String serverAddress,roomNumber,tenant;
     private WebSocketClient webSocketClient;
     private SharedPreferencesUtils sharedPreferencesUtils;
+    private boolean isStartUpdateTask = false;
 
 
 
@@ -169,7 +170,7 @@ public class HospitalActivity extends BaseActivity {
                 layoutHospitalBinding.hospitalTv
         );
 //      请求滚动栏公告
-        getAnnouncements(serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
+        getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
 //        获取界面列表
         new Thread(new Runnable() {
             @Override
@@ -189,8 +190,21 @@ public class HospitalActivity extends BaseActivity {
         Runnable startUpdateTvTextTask = new Runnable() {
             @Override
             public void run() {
-                getAnnouncements(serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
-                handler.postDelayed(this, 30*1000);
+                getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
+                String[] data = commonData.getData();
+                serverAddress = data[0];
+                tenant =data[1];
+                roomNumber = data[2];
+                Log.d(TAG, "run: "+serverAddress);
+                Log.d(TAG, "run: " + tenant);
+                Log.d(TAG, "run: " + roomNumber);
+                if (serverAddress == null || tenant == null || roomNumber == null){
+
+                    showInputDialog();
+                }else {
+                    handler.postDelayed(this, 30*1000);
+                }
+
             }
         };
         handler.post(startUpdateTvTextTask);

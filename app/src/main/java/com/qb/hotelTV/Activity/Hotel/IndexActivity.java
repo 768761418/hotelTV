@@ -182,7 +182,7 @@ public class IndexActivity extends BaseActivity {
                 layoutIndexBinding.indexTv
         );
         //      请求滚动栏公告
-        getAnnouncements(serverAddress, tenant,layoutIndexBinding.indexTvText);
+        getAnnouncements(IndexActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
 //        获取界面列表
         new Thread(new Runnable() {
             @Override
