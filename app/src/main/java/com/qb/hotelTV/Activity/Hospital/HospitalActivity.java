@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.AppActivity;
 import com.qb.hotelTV.Activity.BaseActivity;
+import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.Activity.Hotel.IndexActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HospitalActivity extends BaseActivity {
+public class HospitalActivity extends HomeActivity {
     private  String TAG = "HospitalActivity";
     LayoutHospitalBinding layoutHospitalBinding;
     private Handler handler = new Handler();
@@ -199,8 +200,8 @@ public class HospitalActivity extends BaseActivity {
                 Log.d(TAG, "run: " + tenant);
                 Log.d(TAG, "run: " + roomNumber);
                 if (serverAddress == null || tenant == null || roomNumber == null){
-
                     showInputDialog();
+                    indexListUnableOnclick(layoutHospitalBinding.hospitalMainBottomLayout,6);
                 }else {
                     handler.postDelayed(this, 30*1000);
                 }

@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.AppActivity;
 import com.qb.hotelTV.Activity.BaseActivity;
+import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Const;
@@ -51,7 +52,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class IndexActivity extends BaseActivity {
+public class IndexActivity extends HomeActivity {
     private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
     private final String  TAG = IndexActivity.class.getSimpleName();
