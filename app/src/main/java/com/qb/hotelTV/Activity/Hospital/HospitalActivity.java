@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -23,6 +25,7 @@ import com.qb.hotelTV.Activity.AppActivity;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.Activity.Hotel.IndexActivity;
+import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
@@ -32,6 +35,8 @@ import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutHospitalBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
+import com.qb.hotelTV.module.InputMessageDialog;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -44,28 +49,13 @@ public class HospitalActivity extends HomeActivity {
     private Handler handler = new Handler();
 //    请求接口的请求头
     private String serverAddress,roomNumber,tenant;
+//    websocket用的
     private WebSocketClient webSocketClient;
+//    获取数据用的
     private SharedPreferencesUtils sharedPreferencesUtils;
-    private boolean isStartUpdateTask = false;
+//    输入配置的dialog
+    private InputMessageDialog inputMessageDialog;
 
-
-
-    //    请求权限
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionUtils.REQUEST_CODE){
-            for (int i = 0; i < grantResults.length; i++) {
-//                如果没请求成功，在这写
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                    Log.d(TAG, "onRequestPermissionsResult: "+permissions[i] +":111");
-                }
-//                如果请求成功在这写
-                else {
-                    Log.d(TAG, "onRequestPermissionsResult: " + permissions[i] );
-                }
-            }
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -80,10 +70,11 @@ public class HospitalActivity extends HomeActivity {
         super.onCreate(savedInstanceState);
         layoutHospitalBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital);
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
+        inputMessageDialog = new InputMessageDialog(HospitalActivity.this);
+
         boolean isFirstRun = sharedPreferencesUtils.loadIsFirstRun();
         if (isFirstRun) {
-            // 如果是第一次进入，则显示输入对话框
-            showInputDialog();
+            showInputDialog(true);
         } else {
             // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
             serverAddress = sharedPreferencesUtils.loadServerAddress();
@@ -125,26 +116,6 @@ public class HospitalActivity extends HomeActivity {
         startUpdateTvTextTask();
     }
 
-
-    private void showInputDialog() {
-        layoutHospitalBinding.indexInput.setVisibility(View.VISIBLE);
-        layoutHospitalBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                serverAddress = layoutHospitalBinding.inputServerAddress.getText().toString();
-                roomNumber = layoutHospitalBinding.inputRoomNumber.getText().toString();
-                tenant = layoutHospitalBinding.inputTenant.getText().toString();
-//                将数据保存到内存共享，让其他Activity也可用
-                commonData.setData(serverAddress,tenant,roomNumber);
-                // 保存服务器地址和房间号到 SharedPreferences中
-                sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
-                initUI();
-                layoutHospitalBinding.indexInput.setVisibility(View.GONE);
-            }
-        });
-    }
-
-
 //    焦点切换动画
     private void focusChange(){
         layoutHospitalBinding.hospitalModule0.requestFocus();
@@ -163,13 +134,7 @@ public class HospitalActivity extends HomeActivity {
 //        登录获取token
         login(serverAddress,roomNumber,tenant);
         checkTheme();
-//        获取配置信息
-        initStartVideoOrImg(HospitalActivity.this,
-                serverAddress,tenant,
-                layoutHospitalBinding.hospitalTop.logo(),
-                layoutHospitalBinding.hospitalBackground,
-                layoutHospitalBinding.hospitalTv
-        );
+
 //      请求滚动栏公告
         getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
 //        获取界面列表
@@ -192,18 +157,15 @@ public class HospitalActivity extends HomeActivity {
             @Override
             public void run() {
                 getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
-                String[] data = commonData.getData();
-                serverAddress = data[0];
-                tenant =data[1];
-                roomNumber = data[2];
-                Log.d(TAG, "run: "+serverAddress);
-                Log.d(TAG, "run: " + tenant);
-                Log.d(TAG, "run: " + roomNumber);
-                if (serverAddress == null || tenant == null || roomNumber == null){
-                    showInputDialog();
+                boolean isLogin = CommonData.getInstance().getIsLogin();
+                Log.d(TAG, "run: " + isLogin);
+                if (!isLogin){
+                    showInputDialog(false);
+                    Toast.makeText(HospitalActivity.this,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
                     indexListUnableOnclick(layoutHospitalBinding.hospitalMainBottomLayout,6);
+                    sharedPreferencesUtils.clearData();
                 }else {
-                    handler.postDelayed(this, 30*1000);
+                    handler.postDelayed(this, 15*1000);
                 }
 
             }
@@ -219,6 +181,14 @@ public class HospitalActivity extends HomeActivity {
             if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
                 Intent intent = new Intent(HospitalActivity.this, IndexActivity.class);
                 startActivityForResult(intent,ApplicationSetting.CLOSE_CODE);
+            }else {
+                //        获取配置信息
+                initStartVideoOrImg(HospitalActivity.this,
+                        serverAddress,tenant,
+                        layoutHospitalBinding.hospitalTop.logo(),
+                        layoutHospitalBinding.hospitalBackground,
+                        layoutHospitalBinding.hospitalTv
+                );
             }
         }catch (JSONException e){
             Log.e(TAG, "checkTheme: ", e);
@@ -226,6 +196,28 @@ public class HospitalActivity extends HomeActivity {
 
     }
 
+    private void showInputDialog(boolean isFirst){
+        if (!isFirst){
+            inputMessageDialog.setMessage(serverAddress,roomNumber,tenant);
+        }
+        inputMessageDialog.show();
+        inputMessageDialog.setSubmitCallback(new InputMessageDialog.SubmitCallback() {
+            @Override
+            public void onSubmitCallBack(String inputsServerAddress,String inputRoomNumber,String inputTenant) {
+                serverAddress = inputsServerAddress;
+                roomNumber = inputRoomNumber;
+                tenant = inputTenant;
+//                commonData.setData(serverAddress,tenant,roomNumber);
+//                // 保存服务器地址和房间号到 SharedPreferences中
+//                sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
+                Log.d(TAG, "onSubmitCallBack: " + serverAddress);
+                Log.d(TAG, "onSubmitCallBack: " + roomNumber);
+                Log.d(TAG, "onSubmitCallBack: " + tenant);
+                initUI();
+            }
+        });
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

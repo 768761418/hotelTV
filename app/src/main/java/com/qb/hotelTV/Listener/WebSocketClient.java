@@ -1,6 +1,10 @@
 package com.qb.hotelTV.Listener;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+
+import java.io.EOFException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -14,12 +18,12 @@ public class WebSocketClient extends WebSocketListener {
     private WebSocket webSocket;
     private MessageCallback messageCallback;
     private boolean isConnect = true;
+    private String url;
 
     public WebSocketClient(String url) {
         client = new OkHttpClient();
-        Request request = new Request.Builder().url(url).build();
-        webSocket = client.newWebSocket(request, this);
-        client.dispatcher().executorService().shutdown();
+        this.url = url;
+        connectWebSocket();
     }
 
     public interface MessageCallback{
@@ -70,6 +74,10 @@ public class WebSocketClient extends WebSocketListener {
         super.onFailure(webSocket, t, response);
         isConnect = false;
         t.printStackTrace();
+        if (t instanceof EOFException) {
+            System.out.println("WebSocket Failure: EOFException, trying to reconnect...");
+            reconnectWebSocket();
+        }
         System.out.println("WebSocket Failure: " + t.getMessage());
     }
 
@@ -78,11 +86,31 @@ public class WebSocketClient extends WebSocketListener {
     }
 
     public void close() {
-        webSocket.close(1000, "Goodbye!");
+        if (webSocket != null) {
+            webSocket.close(1000, "Goodbye");
+        }
+        if (client != null){
+            client.dispatcher().executorService().shutdown();
+        }
     }
 
     public void setMessageCallback(MessageCallback messageCallback){
         this.messageCallback = messageCallback;
+    }
+
+    private void reconnectWebSocket() {
+        // Optionally add delay before reconnecting
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                connectWebSocket();
+            }
+        }, 3000);  // 3 seconds delay
+    }
+
+    private void connectWebSocket(){
+        Request request = new Request.Builder().url(url).build();
+        webSocket = client.newWebSocket(request, this);
     }
 
 }

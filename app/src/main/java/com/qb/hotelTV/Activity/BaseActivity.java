@@ -74,9 +74,7 @@ public class BaseActivity extends Activity {
         // 闪退日志
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(this);
-        //请求权限
-        PermissionUtils permissionUtils = new PermissionUtils();
-        permissionUtils.checkPermission(this);
+
     }
 
     //    获取经纬度

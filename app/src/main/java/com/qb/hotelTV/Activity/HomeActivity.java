@@ -3,8 +3,10 @@ package com.qb.hotelTV.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
+import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.PlayerUtils;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
@@ -47,6 +50,24 @@ public class HomeActivity extends BaseActivity {
     private String TAG = "HomeActivity";
     private Player player;
     private PlayerUtils playerUtils = new PlayerUtils();
+
+
+    //    请求权限
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionUtils.REQUEST_CODE){
+            for (int i = 0; i < grantResults.length; i++) {
+//                如果没请求成功，在这写
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                    Log.d(TAG, "onRequestPermissionsResult: "+permissions[i] +":111");
+                }
+//                如果请求成功在这写
+                else {
+                    Log.d(TAG, "onRequestPermissionsResult: " + permissions[i] );
+                }
+            }
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -77,6 +98,13 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //请求权限
+        PermissionUtils permissionUtils = new PermissionUtils();
+        permissionUtils.checkPermission(this);
+    }
 
     //    登录
     public void login(String serverAddress,String roomNumber,String tenant){
@@ -187,7 +215,7 @@ public class HomeActivity extends BaseActivity {
                             }
                         }
                     });
-                }else{
+                } else if (code == 401) {
 
                     commonData.clearData();
                     runOnUiThread(new Runnable() {

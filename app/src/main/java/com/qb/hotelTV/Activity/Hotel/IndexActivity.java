@@ -29,6 +29,7 @@ import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
 import com.qb.hotelTV.Adaptor.common.CommonAdapter;
 import com.qb.hotelTV.Const;
+import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
@@ -43,6 +44,7 @@ import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
 import com.qb.hotelTV.huibuTv.MainActivity;
+import com.qb.hotelTV.module.InputMessageDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +61,8 @@ public class IndexActivity extends HomeActivity {
 //    从SharedPreferences中获取的数据
     private String serverAddress,tenant,roomNumber;
     private SharedPreferencesUtils sharedPreferencesUtils;
+    //    输入配置的dialog
+    private InputMessageDialog inputMessageDialog;
 
 
     //    请求权限
@@ -87,29 +91,19 @@ public class IndexActivity extends HomeActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+//        初始化
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
-
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
-        boolean isFirstRun = sharedPreferencesUtils.loadIsFirstRun();
-        if (isFirstRun) {
-            // 如果是第一次进入，则显示输入对话框
-            showInputDialog();
-        } else {
-            // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
-            serverAddress = sharedPreferencesUtils.loadServerAddress();
-            roomNumber = sharedPreferencesUtils.loadRoomNumber();
-            tenant  = sharedPreferencesUtils.loadTenant();
-            commonData.setData(serverAddress,tenant,roomNumber);
-            Log.d(TAG, "serverAddress: " +serverAddress);
-            Log.d(TAG, "roomNumber: " + roomNumber);
-            Log.d(TAG, "tenant: " +tenant);
-            // 使用服务器地址和房间号
-            // ...
-            initUI();
-        }
-//        显示房间号
-        layoutIndexBinding.inputRoomNumber.setText(roomNumber);
+        inputMessageDialog = new InputMessageDialog(IndexActivity.this);
+//        获取数据
+        String[] data = commonData.getData();
+        serverAddress = data[0];
+        tenant =data[1];
+        roomNumber = data[2];
+        initUI();
+        Log.d(TAG, "onCreate: " + serverAddress);
+        Log.d(TAG, "onCreate: " + tenant);
+        Log.d(TAG, "onCreate: " + roomNumber);
 //        组件动画
         focusChange();
     }
@@ -123,9 +117,8 @@ public class IndexActivity extends HomeActivity {
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
         }
-
-
-
+        //        启动定时更新公告任务
+        startUpdateTvTextTask();
     }
 
 
@@ -158,8 +151,6 @@ public class IndexActivity extends HomeActivity {
 
 //    焦点切换动画
     private void focusChange(){
-//        layoutIndexBinding.tvImage.requestFocus();
-//        layoutIndexBinding.tvImage.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk1.requestFocus();
         layoutIndexBinding.apk1.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk2.setOnFocusChangeListener(focusScaleListener);
@@ -173,9 +164,7 @@ public class IndexActivity extends HomeActivity {
 
 //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
-        //        登录获取token
-//        login(serverAddress,roomNumber,tenant);
-        //        获取配置信息
+//        //        获取配置信息
         initStartVideoOrImg(IndexActivity.this,
                 serverAddress,tenant,
                 layoutIndexBinding.indexLogo,
@@ -213,39 +202,53 @@ public class IndexActivity extends HomeActivity {
 
             }
         }).start();
-
-
     }
 
-
-//    输入框
-    private void showInputDialog() {
-        layoutIndexBinding.indexInput.setVisibility(View.VISIBLE);
-//        layoutIndexBinding.tvImage.setEnabled(false);
-        layoutIndexBinding.inputSubmit.setOnClickListener(new View.OnClickListener() {
+//    显示dialog
+    private void showInputDialog(boolean isFirst){
+        if (!isFirst){
+            inputMessageDialog.setMessage(serverAddress,roomNumber,tenant);
+        }
+        // 如果是第一次进入，则显示初始信息
+        inputMessageDialog.show();
+        inputMessageDialog.setSubmitCallback(new InputMessageDialog.SubmitCallback() {
             @Override
-            public void onClick(View view) {
-                // 在点击事件中获取按下的按钮的 keycode
-                int keyCode; // 初始化为未知的 keycode
-                KeyEvent keyEvent = (KeyEvent) view.getTag(); // 从 view 的 tag 中获取 KeyEvent 对象
-                if (keyEvent != null) {
-                    keyCode = keyEvent.getKeyCode(); // 获取按下的按钮的 keycode
-                    Toast.makeText(IndexActivity.this, "!!!:" + keyCode, Toast.LENGTH_SHORT).show();
-                }
-                serverAddress = layoutIndexBinding.inputServerAddress.getText().toString();
-                roomNumber = layoutIndexBinding.inputRoomNumber.getText().toString();
-                tenant = layoutIndexBinding.inputTenant.getText().toString();
-                //                将数据保存到内存共享，让其他Activity也可用
-                commonData.setData(serverAddress,tenant,roomNumber);
-                // 保存服务器地址和房间号到 SharedPreferences中
-                sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
+            public void onSubmitCallBack(String inputsServerAddress,String inputRoomNumber,String inputTenant) {
+                serverAddress = inputsServerAddress;
+                roomNumber = inputRoomNumber;
+                tenant = inputTenant;
                 initUI();
-                layoutIndexBinding.indexInput.setVisibility(View.GONE);
-//                layoutIndexBinding.tvImage.setEnabled(true);
-
             }
         });
+
     }
+
+    private void startUpdateTvTextTask(){
+        Runnable startUpdateTvTextTask = new Runnable() {
+            @Override
+            public void run() {
+                getAnnouncements(IndexActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
+                boolean isLogin = CommonData.getInstance().getIsLogin();
+                Log.d(TAG, "run: " + isLogin);
+                if (!isLogin){
+//                    showInputDialog();
+
+                    showInputDialog(false);
+                    Toast.makeText(IndexActivity.this,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
+                    indexListUnableOnclick(layoutIndexBinding.apkLayout,4);
+                    sharedPreferencesUtils.clearData();
+                }else {
+                    handler.postDelayed(this, 15*1000);
+                }
+
+            }
+        };
+        handler.post(startUpdateTvTextTask);
+    }
+
+
+
+
 
 
 

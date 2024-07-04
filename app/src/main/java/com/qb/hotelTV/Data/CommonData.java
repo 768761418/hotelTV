@@ -4,6 +4,7 @@ public class CommonData {
     // 单例实例，延迟初始化
     private static CommonData instance;
 
+
     // 私有构造函数防止外部实例化
     private CommonData() {}
 
@@ -17,11 +18,13 @@ public class CommonData {
     private String serverAddress;
     private String tenant;
     private String roomNumber;
+    private boolean isLogin = false;
 
     public void setData(String serverAddress,String tenant,String roomNumber){
         this.roomNumber = roomNumber;
         this.serverAddress = serverAddress;
         this.tenant = tenant;
+        this.isLogin = true;
     }
 
     public String[] getData(){
@@ -36,6 +39,11 @@ public class CommonData {
         tenant = null;
         serverAddress = null;
         roomNumber = null;
+        isLogin = false;
+    }
+
+    public boolean getIsLogin(){
+        return isLogin;
     }
 
 
