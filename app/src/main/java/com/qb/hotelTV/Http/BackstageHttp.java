@@ -70,6 +70,9 @@ public class BackstageHttp {
     public String getToken(){
         return token;
     }
+    public void setToken(String token){
+        this.token = token;
+    }
 
 //  同步  登录函数
     public void loginSystem(String serverAddress,String roomNumber,String tenant) {
@@ -131,11 +134,13 @@ public class BackstageHttp {
 //   同步 获取房间信息
     public JSONObject getRoomMessage(String serverAddress,String roomNumber,String tenant){
 //       设置路径
-            String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
-            Log.d(TAG, "请求路径: " + url);
+        String url = serverAddress + ApiSetting.URL_GET_ROOM_MESSAGE;
+        Log.d(TAG, "请求路径: " + url);
 //        添加参数
-            HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
-            queryUrlBuilder.addQueryParameter("number", roomNumber);
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("number", roomNumber);
+        Log.d(TAG, "获取房间信息请求参数: " + tenant);
+
 //        构建请求体
             Request request = new Request.Builder()
                     .url(queryUrlBuilder.build())

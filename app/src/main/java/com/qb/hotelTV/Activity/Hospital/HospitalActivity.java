@@ -61,7 +61,9 @@ public class HospitalActivity extends HomeActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (webSocketClient != null){
+            Log.d(TAG, "onDestroy: 234" );
             webSocketClient.close();
+            webSocketClient = null;
         }
     }
 
@@ -96,6 +98,7 @@ public class HospitalActivity extends HomeActivity {
 
 
     private void initUI(){
+        layoutHospitalBinding.inputRoomNumber.setText(roomNumber);
 //      获取天气和地址
         getGeoAndWeather(null,layoutHospitalBinding.hospitalTop.weather());
 
@@ -108,7 +111,7 @@ public class HospitalActivity extends HomeActivity {
         String webSocketUrl = getWebSocketUrl(serverAddress);
         Log.d(TAG, "webSocketUrl: "+webSocketUrl);
         if (webSocketUrl != null){
-            initWebSocket(this,webSocketClient,webSocketUrl);
+            webSocketClient = initWebSocket(this,webSocketUrl);
         }
 //        焦点切换动画
         focusChange();
@@ -207,9 +210,6 @@ public class HospitalActivity extends HomeActivity {
                 serverAddress = inputsServerAddress;
                 roomNumber = inputRoomNumber;
                 tenant = inputTenant;
-//                commonData.setData(serverAddress,tenant,roomNumber);
-//                // 保存服务器地址和房间号到 SharedPreferences中
-//                sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);

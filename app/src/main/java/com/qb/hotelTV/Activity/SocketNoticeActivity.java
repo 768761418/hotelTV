@@ -2,6 +2,7 @@ package com.qb.hotelTV.Activity;
 
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -13,6 +14,8 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.qb.hotelTV.Activity.Hospital.HospitalStartVideoActivity;
 import com.qb.hotelTV.R;
@@ -65,6 +68,7 @@ public class SocketNoticeActivity extends BaseActivity{
     private void startEvent(){
         switch (type){
             case 1:
+            case 3:
                 showVideo();
                 break;
             case 2:
@@ -90,12 +94,21 @@ public class SocketNoticeActivity extends BaseActivity{
         playerView.setPlayer(player);
         // 隐藏控制面板
         playerView.setUseController(false);
+
+        if (url.startsWith("rtsp")){
+            // 创建 RTSP 媒体源
+            MediaSource mediaSource = new RtspMediaSource.Factory().createMediaSource(MediaItem.fromUri(url));
+            player.prepare(mediaSource);
+        }else {
+            //      加载视频，视频加载完成播放
+            MediaItem mediaItem = MediaItem.fromUri(url);
+            player.setMediaItem(mediaItem);
+            player.prepare();
+        }
 //                                设置循环播放
 //                          player.setRepeatMode(Player.REPEAT_MODE_ALL);
-//      加载视频，视频加载完成播放
-        MediaItem mediaItem = MediaItem.fromUri(url);
-        player.setMediaItem(mediaItem);
-        player.prepare();
+
+
         player.play();
     }
 

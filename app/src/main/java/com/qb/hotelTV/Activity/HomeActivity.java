@@ -136,8 +136,8 @@ public class HomeActivity extends BaseActivity {
     }
 
     //    初始化websocket
-    public void initWebSocket(Context context, WebSocketClient webSocketClient, String url){
-        webSocketClient = new WebSocketClient(url);
+    public WebSocketClient initWebSocket(Context context, String url){
+        WebSocketClient webSocketClient = new WebSocketClient(url);
         Log.d(TAG, "initWebSocket: " + url);
         if (webSocketClient.isConnected()){
             Toast.makeText(context,"已连接至服务器socket",Toast.LENGTH_SHORT).show();
@@ -176,6 +176,7 @@ public class HomeActivity extends BaseActivity {
             }
         });
         sendPingToServer(webSocketClient);
+        return webSocketClient;
     }
     //    持续发ping给服务器实现长连接
     private void sendPingToServer(WebSocketClient webSocketClient){
@@ -183,8 +184,6 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void run() {
                 webSocketClient.sendMessage("ping");
-                Log.d(TAG, "run: ping");
-
                 handler.postDelayed(this, 60*1000);
             }
         };

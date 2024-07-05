@@ -63,6 +63,7 @@ public class IndexActivity extends HomeActivity {
     private SharedPreferencesUtils sharedPreferencesUtils;
     //    输入配置的dialog
     private InputMessageDialog inputMessageDialog;
+    private String token;
 
 
     //    请求权限
@@ -108,6 +109,7 @@ public class IndexActivity extends HomeActivity {
         focusChange();
     }
     private void initUI(){
+        layoutIndexBinding.indexRoomName.setText(roomNumber);
 //        获取时间
         startUpdateTask();
 //        获取地址和天气
@@ -164,6 +166,10 @@ public class IndexActivity extends HomeActivity {
 
 //    从接口获取数据
     private void getDataFromHttp() throws JSONException {
+        if (token == null){
+            login(serverAddress,roomNumber,tenant);
+        }
+
 //        //        获取配置信息
         initStartVideoOrImg(IndexActivity.this,
                 serverAddress,tenant,
@@ -217,6 +223,7 @@ public class IndexActivity extends HomeActivity {
                 serverAddress = inputsServerAddress;
                 roomNumber = inputRoomNumber;
                 tenant = inputTenant;
+
                 initUI();
             }
         });
