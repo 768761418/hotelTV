@@ -12,6 +12,7 @@ import androidx.multidex.MultiDex;
 import com.cdnbye.core.p2p.P2pConfig;
 import com.cdnbye.core.utils.AnnounceLocation;
 import com.cdnbye.sdk.P2pEngine;
+import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
@@ -30,8 +31,7 @@ public class MyApplication extends Application {
     private static String authorizationStatus;
     private static String updateData;
     private static final String  TAG = "MyApplication";
-
-    public static SharedPreferences sharedPreferences;
+    public static CommonData commonData = CommonData.getInstance();
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
@@ -62,13 +62,12 @@ public class MyApplication extends Application {
     }
 
     public static void initVideoList(Context context){
-        sharedPreferences = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
-        Log.d(TAG, "isFirstRun: " + isFirstRun);
+        String[] data = commonData.getData();
+        String serverAddress = data[0];
+        String tenant =data[1];
+        String roomNumber = data[2];
+        Log.d(TAG, "initVideoList: " + serverAddress);
 
-
-        String serverAddress = sharedPreferences.getString(KEY_SERVER_ADDRESS, "");
-        String tenant  = sharedPreferences.getString(KEY_TENANT,"");
         if (!serverAddress.equals("")&&!tenant.equals("")){
             CountDownLatch latch = new CountDownLatch(1);
             new Thread(new Runnable() {
@@ -98,6 +97,7 @@ public class MyApplication extends Application {
 //        while (!getModel){
 //            initVideoList(context);
 //        }
+        Log.d(TAG, "getVideoList: 2222" + getModel);
         if (!getModel){
             initVideoList(context);
         }

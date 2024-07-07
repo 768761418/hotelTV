@@ -25,21 +25,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class HospitalListActivity extends BaseActivity {
-    private boolean GEO=false,WEATHER=false,HOTEL_MESSAGE=false;
-    private String geo,weather,locationString;
     private String serverAddress,tenant,roomNumber,title;
-    private String strHotelLogo,strHotelBg, strHtml;
     private Long id;
     private LayoutHospitalListBinding layoutHospitalListBinding;
-    private final String TAG = "HospitalVideoActivity";
+    private final String TAG = "HospitalListActivity";
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
-    private SimpleExoPlayer player ;
     private int currentPageNo = 1 ;
-    FocusScaleListener focusScaleListener = new FocusScaleListener();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,7 +150,7 @@ public class HospitalListActivity extends BaseActivity {
 
 
                             int finalI = i;
-                            item.setOnClickListener(new View.OnClickListener() {
+                            imageView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     Intent intent = new Intent(HospitalListActivity.this, HospitalWebActivity.class);

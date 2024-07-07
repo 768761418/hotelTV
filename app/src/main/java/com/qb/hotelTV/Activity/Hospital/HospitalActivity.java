@@ -83,7 +83,7 @@ public class HospitalActivity extends HomeActivity {
             roomNumber = sharedPreferencesUtils.loadRoomNumber();
             tenant  = sharedPreferencesUtils.loadTenant();
             commonData.setData(serverAddress,tenant,roomNumber);
-            Log.d(TAG, "serverAddress: " +serverAddress);
+             Log.d(TAG, "serverAddress: " +serverAddress);
             Log.d(TAG, "roomNumber: " + roomNumber);
             Log.d(TAG, "tenant: " +tenant);
             // 使用服务器地址和房间号

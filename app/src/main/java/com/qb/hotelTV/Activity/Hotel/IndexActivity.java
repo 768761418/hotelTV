@@ -65,24 +65,6 @@ public class IndexActivity extends HomeActivity {
     private InputMessageDialog inputMessageDialog;
     private String token;
 
-
-    //    请求权限
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PermissionUtils.REQUEST_CODE){
-            for (int i = 0; i < grantResults.length; i++) {
-//                如果没请求成功，在这写
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED){
-                    Log.d(TAG, "onRequestPermissionsResult: "+permissions[i] +":111");
-                }
-//                如果请求成功在这写
-                else {
-                    Log.d(TAG, "onRequestPermissionsResult: " + permissions[i] );
-                }
-            }
-        }
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -165,7 +147,7 @@ public class IndexActivity extends HomeActivity {
 
 
 //    从接口获取数据
-    private void getDataFromHttp() throws JSONException {
+    private void getDataFromHttp(){
         if (token == null){
             login(serverAddress,roomNumber,tenant);
         }

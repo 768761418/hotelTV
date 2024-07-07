@@ -318,7 +318,7 @@ public class BackstageHttp {
     public ArrayList<VideoModel> getTvChannel(String serverAddress,String tenant){
 //       设置路径
         String url =serverAddress + ApiSetting.URL_GET_TV_CHANNEL;
-        Log.d(TAG, "请求路径: " + url);
+        Log.d(TAG, "获取电视界面请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
@@ -335,9 +335,9 @@ public class BackstageHttp {
         ArrayList<VideoModel> videoModels = new ArrayList<>();
         try{
             Response response = call.execute();
+            String responseData = response.body().string();
+            Log.d(TAG, "获取电视界面：" + responseData);
             if (response.isSuccessful()){
-                String responseData = response.body().string();
-                Log.d(TAG, "请求结果5" + responseData);
                 BaseResponseModel<BaseListModel<VideoModel>> tvChannel = gson.fromJson(responseData,new TypeToken<BaseResponseModel<BaseListModel<VideoModel>>>(){}.getType());
                 int code = tvChannel.getCode();
                 if (code != 0) {

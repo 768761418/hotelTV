@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -169,6 +170,10 @@ public class HomeActivity extends BaseActivity {
                         intent.putExtra("type",webType);
                         intent.putExtra("second",webSecond);
                         startActivity(intent);
+                    }else if (type.equals("insert-notice-delete")) {
+                        Intent intent = new Intent("com.qb.hotel.ACTION_START_FINISH_ACTIVITY");
+                        Log.d(TAG, "initWebSocket:发送广播 ");
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     }
                 }catch (JSONException e){
                     Log.e(TAG, "onMessageCallback: " + data, e );
