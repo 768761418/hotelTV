@@ -14,6 +14,9 @@ public class SharedPreferencesUtils {
     private String KEY_IS_FIRST_RUN = "isFirstRun";
     private String PREFS_NAME = "Common";
 
+    private String KEY_TOKEN = "token";
+    private String KEY_AUTHORIZATION = "authorization";
+
 
     private SharedPreferencesUtils(Context context) {
         sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -43,6 +46,12 @@ public class SharedPreferencesUtils {
         editor.apply();
     }
 
+    public void saveToken(String token){
+        editor.putString(KEY_TOKEN,token);
+        editor.apply();
+    }
+
+
     public void saveInitData(String serverAddress,String roomNumber,String tenant){
         editor.putBoolean(KEY_IS_FIRST_RUN,false);
         editor.putString(KEY_SERVER_ADDRESS,serverAddress);
@@ -60,6 +69,10 @@ public class SharedPreferencesUtils {
     }
     public String loadTenant() {
         return sharedPreferences.getString(KEY_TENANT,"");
+    }
+
+    public String loadToken(){
+        return  sharedPreferences.getString(KEY_TOKEN,"");
     }
 
 
@@ -81,6 +94,7 @@ public class SharedPreferencesUtils {
         editor.remove(KEY_SERVER_ADDRESS);
         editor.remove(KEY_ROOM_NUMBER);
         editor.remove(KEY_TENANT);
+        editor.remove(KEY_TOKEN);
         editor.apply();
     }
 

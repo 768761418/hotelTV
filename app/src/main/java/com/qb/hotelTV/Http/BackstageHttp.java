@@ -74,14 +74,20 @@ public class BackstageHttp {
         this.token = token;
     }
 
+    public String getAuthorization(){return Authorization;}
+    public void setAuthorization(String authorization){
+        this.Authorization = authorization;
+    }
+
 //  同步  登录函数
-    public void loginSystem(String serverAddress,String roomNumber,String tenant) {
+    public String[] loginSystem(String serverAddress,String roomNumber,String tenant) {
 //       设置路径
         String url = serverAddress + ApiSetting.LOGIN_API;
         Log.d(TAG, "loginSystem: " + serverAddress);
         Log.d(TAG, "loginSystem: " + roomNumber);
         Log.d(TAG, "loginSystem: " + tenant);
         JSONObject json;
+        String[] result = new String[2];
         try{
             json = new JSONObject();
             json.put("username",roomNumber);
@@ -109,12 +115,15 @@ public class BackstageHttp {
                 if (response.isSuccessful()){
 
                     JSONObject jsonObject = new JSONObject(responseData);
-                    int code = jsonObject.getInt("code");
+                    long code = jsonObject.getLong("code");
                     Log.d(TAG, "loginSystem: " + responseData);
-                    if (code == 0){
-                        token = jsonObject.getJSONObject("data").getString("accessToken");
+                    if (code == 0L){
+                        result[0] = String.valueOf(code);
+                        result[1] = jsonObject.getJSONObject("data").getString("accessToken");
+                        token = result[1];
                     }else {
-                        Log.d(TAG, "loginSystem: 456");
+                        result[0] = String.valueOf(code);
+                        result[1] = jsonObject.getString("msg");
                     }
 
                 }
@@ -126,7 +135,7 @@ public class BackstageHttp {
             Authorization="Bearer " + token;
             Log.d(TAG, "loginSystem: " + Authorization);
         }
-
+        return  result;
     }
 
 

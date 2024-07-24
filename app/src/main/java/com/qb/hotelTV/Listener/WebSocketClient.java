@@ -44,9 +44,9 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, String text) {
         super.onMessage(webSocket, text);
-        System.out.println("Received message: " + text);
+        System.out.println("WebSocket message: " + text);
         if (text.equals("pong")){
-            System.out.println("Received message: " + text);
+            System.out.println("WebSocket message: " + text);
         }else {
             // 在这里处理接收到的文本消息
             if (messageCallback != null){
@@ -58,7 +58,7 @@ public class WebSocketClient extends WebSocketListener {
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
         super.onMessage(webSocket, bytes);
-        System.out.println("Received bytes: " + bytes.hex());
+        System.out.println("WebSocket bytes: " + bytes.hex());
         // 在这里处理接收到的字节消息
     }
 
@@ -87,7 +87,7 @@ public class WebSocketClient extends WebSocketListener {
 
     public void close() {
         if (webSocket != null) {
-            webSocket.close(1000, "Goodbye");
+            webSocket.close(1000, "WebSocket Goodbye");
         }
         if (client != null){
             client.dispatcher().executorService().shutdown();

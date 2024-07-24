@@ -38,6 +38,7 @@ import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.PlayerUtils;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.huibuTv.MainActivity;
 
 import org.json.JSONException;
@@ -51,6 +52,8 @@ public class HomeActivity extends BaseActivity {
     private String TAG = "HomeActivity";
     private Player player;
     private PlayerUtils playerUtils = new PlayerUtils();
+    public SharedPreferencesUtils sharedPreferencesUtils;
+
 
 
     //    请求权限
@@ -108,21 +111,51 @@ public class HomeActivity extends BaseActivity {
     }
 
     //    登录
-    public void login(String serverAddress,String roomNumber,String tenant){
-        CountDownLatch latch = new CountDownLatch(1);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BackstageHttp.getInstance().loginSystem(serverAddress,roomNumber,tenant);
-                latch.countDown();
-            }
-        }).start();
+    public void login(Context context,String serverAddress,String roomNumber,String tenant,boolean isFirst){
+        sharedPreferencesUtils = SharedPreferencesUtils.getInstance(context);
+//        如果是第一次就登录，如果不是就拿保存的token
+        if (isFirst){
+            CountDownLatch latch = new CountDownLatch(1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+//                    登录获取token
+//                    TODO 登录失败的处理
+                   String[] result =  BackstageHttp.getInstance().loginSystem(serverAddress,roomNumber,tenant);
+                   if (result[0].equals("0")){
+                       //                   保存下来方便后续使用
+                       sharedPreferencesUtils.saveToken(result[1]);
+                       Log.d(TAG, "daying: " + result[1]);
+                       latch.countDown();
+                   } else {
+                       runOnUiThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               Toast.makeText(context,result[1],Toast.LENGTH_SHORT).show();
+                           }
+                       });
+
+                   }
+
+                }
+            }).start();
 //
-        try {
-            latch.await(); // 等待请求完成
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            try {
+                latch.await(); // 等待请求完成
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else {
+//            拿取token
+            String token = sharedPreferencesUtils.loadToken();
+//            设置请求头
+            String authorization = "Bearer " + token;
+            BackstageHttp.getInstance().setToken(token);
+            BackstageHttp.getInstance().setAuthorization(authorization);
+            Log.d(TAG, "daying1: " + token);
+
         }
+
     }
 
     //    拼接websocket路径

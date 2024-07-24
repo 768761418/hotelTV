@@ -65,11 +65,15 @@ public class InputMessageDialog extends Dialog {
                 serverAddress = inputServerAddress.getText().toString();
                 roomNumber = inputRoomNumber.getText().toString();
                 tenant = inputTenant.getText().toString();
+                // 检查并去掉末尾的斜杠
+                if (serverAddress.endsWith("/")) {
+                    serverAddress = serverAddress.substring(0, serverAddress.length() - 1);
+                }
 //                将数据保存到内存共享，让其他Activity也可用
                 commonData.setData(serverAddress,tenant,roomNumber);
                 // 保存服务器地址和房间号到 SharedPreferences中
                 sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
-                dismiss();
+//                dismiss();
                 if (submitCallback != null){
                     submitCallback.onSubmitCallBack(serverAddress,roomNumber,tenant);
                 }

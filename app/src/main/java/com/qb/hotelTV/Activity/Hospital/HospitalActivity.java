@@ -83,11 +83,12 @@ public class HospitalActivity extends HomeActivity {
             roomNumber = sharedPreferencesUtils.loadRoomNumber();
             tenant  = sharedPreferencesUtils.loadTenant();
             commonData.setData(serverAddress,tenant,roomNumber);
-             Log.d(TAG, "serverAddress: " +serverAddress);
+            Log.d(TAG, "serverAddress: " +serverAddress);
             Log.d(TAG, "roomNumber: " + roomNumber);
             Log.d(TAG, "tenant: " +tenant);
             // 使用服务器地址和房间号
             // ...
+            login(HospitalActivity.this,serverAddress,roomNumber,tenant,false);
             initUI();
         }
 //        显示房间号
@@ -135,7 +136,6 @@ public class HospitalActivity extends HomeActivity {
     //    从接口获取数据
     private void getDataFromHttp()  {
 //        登录获取token
-        login(serverAddress,roomNumber,tenant);
         checkTheme();
 
 //      请求滚动栏公告
@@ -213,7 +213,9 @@ public class HospitalActivity extends HomeActivity {
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);
+                login(HospitalActivity.this,serverAddress,roomNumber,tenant,true);
                 initUI();
+                inputMessageDialog.dismiss();
             }
         });
 

@@ -148,9 +148,9 @@ public class IndexActivity extends HomeActivity {
 
 //    从接口获取数据
     private void getDataFromHttp(){
-        if (token == null){
-            login(serverAddress,roomNumber,tenant);
-        }
+//        if (token == null){
+//            login(serverAddress,roomNumber,tenant);
+//        }
 
 //        //        获取配置信息
         initStartVideoOrImg(IndexActivity.this,
@@ -205,8 +205,9 @@ public class IndexActivity extends HomeActivity {
                 serverAddress = inputsServerAddress;
                 roomNumber = inputRoomNumber;
                 tenant = inputTenant;
-
+                login(IndexActivity.this,serverAddress,roomNumber,tenant,true);
                 initUI();
+                inputMessageDialog.dismiss();
             }
         });
 
@@ -220,14 +221,14 @@ public class IndexActivity extends HomeActivity {
                 boolean isLogin = CommonData.getInstance().getIsLogin();
                 Log.d(TAG, "run: " + isLogin);
                 if (!isLogin){
-//                    showInputDialog();
-
+                    sharedPreferencesUtils.clearData();
                     showInputDialog(false);
                     Toast.makeText(IndexActivity.this,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
                     indexListUnableOnclick(layoutIndexBinding.apkLayout,4);
-                    sharedPreferencesUtils.clearData();
+
                 }else {
-                    handler.postDelayed(this, 15*1000);
+//                    initUI();
+                    handler.postDelayed(this, 30*1000);
                 }
 
             }
