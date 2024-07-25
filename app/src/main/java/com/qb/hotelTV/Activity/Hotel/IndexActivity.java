@@ -205,9 +205,7 @@ public class IndexActivity extends HomeActivity {
                 serverAddress = inputsServerAddress;
                 roomNumber = inputRoomNumber;
                 tenant = inputTenant;
-                login(IndexActivity.this,serverAddress,roomNumber,tenant,true);
                 initUI();
-                inputMessageDialog.dismiss();
             }
         });
 

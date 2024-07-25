@@ -2,16 +2,21 @@ package com.qb.hotelTV.module;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.qb.hotelTV.Data.CommonData;
+import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
+
+import java.util.concurrent.CountDownLatch;
 
 public class InputMessageDialog extends Dialog {
     private EditText inputServerAddress, inputRoomNumber, inputTenant;
@@ -21,6 +26,8 @@ public class InputMessageDialog extends Dialog {
     private SharedPreferencesUtils sharedPreferencesUtils;
     private Context context;
     private SubmitCallback submitCallback;
+    private String TAG = "InputMessageDialog";
+    String[] result;
 
     public interface SubmitCallback{
         void onSubmitCallBack(String inputsServerAddress,String inputRoomNumber,String inputTenant);
@@ -69,14 +76,45 @@ public class InputMessageDialog extends Dialog {
                 if (serverAddress.endsWith("/")) {
                     serverAddress = serverAddress.substring(0, serverAddress.length() - 1);
                 }
-//                将数据保存到内存共享，让其他Activity也可用
-                commonData.setData(serverAddress,tenant,roomNumber);
-                // 保存服务器地址和房间号到 SharedPreferences中
-                sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
-//                dismiss();
-                if (submitCallback != null){
-                    submitCallback.onSubmitCallBack(serverAddress,roomNumber,tenant);
+
+
+
+
+                CountDownLatch latch = new CountDownLatch(1);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+//                    登录获取token
+//                    TODO 登录失败的处理
+                        result =  BackstageHttp.getInstance().loginSystem(serverAddress,roomNumber,tenant);
+                        latch.countDown();
+                    }
+                }).start();
+//
+                try {
+                    latch.await(); // 等待请求完成
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+//                如果code为0
+                if (result[0].equals("0")){
+                    //保存下来方便后续使用
+                    sharedPreferencesUtils.saveToken(result[1]);
+                    Log.d(TAG, "daying: " + result[1]);
+                    //将数据保存到内存共享，让其他Activity也可用
+                    commonData.setData(serverAddress,tenant,roomNumber);
+                    // 保存服务器地址和房间号到 SharedPreferences中
+                    sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
+                    if (submitCallback != null){
+                        submitCallback.onSubmitCallBack(serverAddress,roomNumber,tenant);
+                    }
+                    dismiss();
+                } else {
+                    Toast.makeText(context,result[1],Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
     }

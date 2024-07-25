@@ -88,8 +88,13 @@ public class HospitalActivity extends HomeActivity {
             Log.d(TAG, "tenant: " +tenant);
             // 使用服务器地址和房间号
             // ...
-            login(HospitalActivity.this,serverAddress,roomNumber,tenant,false);
-            initUI();
+            boolean isGetToken = getLoginToken(HospitalActivity.this);
+            if (isGetToken){
+                initUI();
+            }else {
+                showInputDialog(true);
+            }
+
         }
 //        显示房间号
         layoutHospitalBinding.hospitalTop.setRoomNumber(roomNumber);
@@ -213,9 +218,7 @@ public class HospitalActivity extends HomeActivity {
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);
-                login(HospitalActivity.this,serverAddress,roomNumber,tenant,true);
                 initUI();
-                inputMessageDialog.dismiss();
             }
         });
 
