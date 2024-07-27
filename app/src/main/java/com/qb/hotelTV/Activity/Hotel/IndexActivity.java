@@ -136,6 +136,7 @@ public class IndexActivity extends HomeActivity {
 //    焦点切换动画
     private void focusChange(){
         layoutIndexBinding.apk1.requestFocus();
+        focusScaleListener.needBorder(true);
         layoutIndexBinding.apk1.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk2.setOnFocusChangeListener(focusScaleListener);
         layoutIndexBinding.apk3.setOnFocusChangeListener(focusScaleListener);
@@ -148,9 +149,6 @@ public class IndexActivity extends HomeActivity {
 
 //    从接口获取数据
     private void getDataFromHttp(){
-//        if (token == null){
-//            login(serverAddress,roomNumber,tenant);
-//        }
 
 //        //        获取配置信息
         initStartVideoOrImg(IndexActivity.this,

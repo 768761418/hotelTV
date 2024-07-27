@@ -128,6 +128,8 @@ public class HospitalActivity extends HomeActivity {
 //    焦点切换动画
     private void focusChange(){
         layoutHospitalBinding.hospitalModule0.requestFocus();
+//        设置不需要边框
+        focusScaleListener.needBorder(false);
         layoutHospitalBinding.hospitalModule1.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule2.setOnFocusChangeListener(focusScaleListener);
         layoutHospitalBinding.hospitalModule3.setOnFocusChangeListener(focusScaleListener);

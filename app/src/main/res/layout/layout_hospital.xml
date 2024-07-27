@@ -140,6 +140,8 @@
                 android:orientation="vertical"
                 android:focusable="true"
                 app:layout_constraintRight_toRightOf="parent"
+                android:nextFocusRight="@id/hospital_module_2"
+                android:nextFocusDown="@id/hospital_module_2"
                 app:layout_constraintTop_toTopOf="parent">
                     <include layout="@layout/item_module_type_one"></include>
 
@@ -155,6 +157,9 @@
                 android:focusable="true"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/hospital_module_1"
+                android:nextFocusDown="@id/hospital_module_6"
+                android:nextFocusRight="@id/hospital_module_3"
+                android:nextFocusUp="@id/hospital_module_1"
                 tools:ignore="MissingConstraints">
                     <include layout="@layout/item_module_type_one"></include>
             </LinearLayout>
@@ -167,7 +172,9 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:ignore="MissingConstraints"
                 android:gravity="center"
-                android:focusable="true">
+                android:focusable="true"
+                android:nextFocusLeft="@id/hospital_module_2"
+                android:nextFocusRight="@id/hospital_module_4">
                     <include layout="@layout/item_module_type_two"/>
             </LinearLayout>
 
@@ -181,7 +188,9 @@
                 app:layout_constraintLeft_toRightOf="@id/hospital_module_3"
                 android:gravity="center"
                 android:focusable="true"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:nextFocusLeft="@id/hospital_module_3"
+                android:nextFocusRight="@id/hospital_module_5">
                     <include layout="@layout/item_module_type_two"/>
             </LinearLayout>
 
@@ -195,7 +204,9 @@
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toRightOf="@id/hospital_module_4"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:nextFocusLeft="@id/hospital_module_4"
+                android:nextFocusRight="@id/hospital_module_6">
                     <include layout="@layout/item_module_type_two"/>
             </LinearLayout>
 
@@ -208,6 +219,8 @@
                 android:gravity="center"
                 android:focusable="true"
                 app:layout_constraintBottom_toBottomOf="parent"
+                android:nextFocusLeft="@id/hospital_module_5"
+                android:nextFocusUp="@id/hospital_module_2"
                 app:layout_constraintLeft_toRightOf="@id/hospital_module_5">
                     <include layout="@layout/item_module_type_two"/>
             </LinearLayout>

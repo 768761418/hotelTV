@@ -141,13 +141,6 @@ public class HomeActivity extends BaseActivity {
     public WebSocketClient initWebSocket(Context context, String url){
         WebSocketClient webSocketClient = new WebSocketClient(url);
         Log.d(TAG, "initWebSocket: " + url);
-        if (webSocketClient.isConnected()){
-            Toast.makeText(context,"已连接至服务器socket",Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(context,"请检查服务器是否正常",Toast.LENGTH_SHORT).show();
-
-        }
-
         webSocketClient.setMessageCallback(new WebSocketClient.MessageCallback() {
             @Override
             public void onMessageCallback(String data) {

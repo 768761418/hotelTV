@@ -45,9 +45,10 @@
                 <ImageView
                     android:id="@+id/index_logo"
                     android:layout_width="120dp"
-                    android:layout_height="65dp"
+                    android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:src="@drawable/img"
+                    android:layout_gravity="center"
                     android:padding="10dp"
                     />
 
@@ -161,7 +162,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/index_main_layout">
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -262,7 +263,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/index_top"
-            android:layout_marginTop="20dp">
+            >
             <com.google.android.exoplayer2.ui.PlayerView
                 android:id="@+id/index_tv"
                 android:layout_width="510dp"
@@ -287,38 +288,54 @@
                 tools:ignore="MissingConstraints">
                 <LinearLayout
                     android:id="@+id/apk1"
-                    android:layout_width="144dp"
-                    android:layout_height="144dp"
+                    android:layout_width="139dp"
+                    android:layout_height="139dp"
                     android:gravity="center"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent">
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:nextFocusRight="@id/apk2"
+                    android:nextFocusDown="@id/apk3"
+                    android:layout_marginTop="2.5dp"
+                    android:layout_marginLeft="2.5dp">
                     <include layout="@layout/item_module_type_two"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/apk2"
-                    android:layout_width="144dp"
-                    android:layout_height="144dp"
+                    android:layout_width="139dp"
+                    android:layout_height="139dp"
                     android:gravity="center"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toRightOf="parent">
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:nextFocusLeft="@id/apk1"
+                    android:nextFocusDown="@id/apk4"
+                    android:layout_marginTop="2.5dp"
+                    android:layout_marginRight="2.5dp">
                     <include layout="@layout/item_module_type_two"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/apk3"
-                    android:layout_width="144dp"
-                    android:layout_height="144dp"
+                    android:layout_width="139dp"
+                    android:layout_height="139dp"
                     android:gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent">
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:nextFocusUp="@id/apk1"
+                    android:nextFocusRight="@id/apk4"
+                    android:layout_marginLeft="2.5dp"
+                    android:layout_marginBottom="2.5dp">
                     <include layout="@layout/item_module_type_two"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/apk4"
-                    android:layout_width="144dp"
-                    android:layout_height="144dp"
+                    android:layout_width="139dp"
+                    android:layout_height="139dp"
                     android:gravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toRightOf="parent">
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:nextFocusUp="@id/apk2"
+                    android:nextFocusLeft="@id/apk3"
+                    android:layout_marginRight="2.5dp"
+                    android:layout_marginBottom="2.5dp">
                     <include layout="@layout/item_module_type_two"/>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
