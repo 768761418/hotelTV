@@ -175,7 +175,7 @@ public class IndexActivity extends HomeActivity {
                         public void run() {
                             try{
                                 layoutIndexBinding.indexRoomName.setText(roomData.getString("roomName"));
-                                layoutIndexBinding.indexWifiName.setText(roomData.getString("roomName") + "_" +roomNumber);
+                                layoutIndexBinding.indexWifiName.setText(roomData.getString("roomName"));
                                 layoutIndexBinding.indexWifiPassword.setText(roomData.getString("wifiPassword"));
                             }catch (JSONException e){
                                 Log.e(TAG, "解析信息错误：: ", e);

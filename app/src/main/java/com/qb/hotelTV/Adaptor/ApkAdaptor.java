@@ -43,6 +43,7 @@ public class ApkAdaptor extends RecyclerView.Adapter<ApkAdaptor.ApkViewHolder> {
         this.context = context;
         this.apkList = apkList;
         this.focusScaleListener = new FocusScaleListener(context);
+        this.focusScaleListener.needBorder(true);
     }
 
     @NonNull
