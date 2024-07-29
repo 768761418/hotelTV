@@ -132,8 +132,11 @@ public class HomeActivity extends BaseActivity {
         if (serverAddress.startsWith("http://")) {
             return serverAddress.replace("http://", "ws://") + "/infra/ws?token=" + token;
         } else if (serverAddress.startsWith("https://")) {
-            return serverAddress.replace("https://", "ws://") + "/infra/ws?token=" + token;
+            return serverAddress
+                    .replace("https://", "wss://")
+                    .replace("/prod-api","") + "/infra/ws?token=" + token;
         }
+
         return null;
     }
 

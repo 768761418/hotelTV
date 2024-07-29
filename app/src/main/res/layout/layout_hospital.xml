@@ -65,7 +65,6 @@
                 android:layout_marginLeft="10dp"
                 tools:ignore="MissingConstraints"
                 android:background="#57c3f6"
-                android:focusable="true"
                 android:orientation="horizontal">
                 
                 <LinearLayout

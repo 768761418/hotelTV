@@ -24,7 +24,6 @@ import org.w3c.dom.Text;
 public class TopBar extends LinearLayout {
     private HospitalModuleTopBarBinding hospitalModuleTopBarBinding;
     private Handler handler = new Handler();
-    private FocusScaleListener focusScaleListener = new FocusScaleListener();
 
     public TopBar(Context context) {
         super(context);

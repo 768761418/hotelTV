@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 public class HotelActivity extends BaseActivity {
     private LayoutHotelBinding layoutHotelBinding;
-    private FocusScaleListener focusScaleListener = new FocusScaleListener();
     private String strHtml,strTitle;
     private String serverAddress,tenant;
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();

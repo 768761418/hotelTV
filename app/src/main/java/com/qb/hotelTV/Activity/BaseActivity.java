@@ -56,7 +56,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 public class BaseActivity extends Activity {
-    public FocusScaleListener focusScaleListener = new FocusScaleListener();
+    public FocusScaleListener focusScaleListener = new FocusScaleListener(this);
     private JSONObject hotelMessage = null;
     public CommonData commonData = CommonData.getInstance();
     private String TAG = "BaseActivity";

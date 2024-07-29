@@ -17,7 +17,7 @@ import com.qb.hotelTV.databinding.HospitalModuleBottomBarBinding;
 
 public class BottomBar extends ConstraintLayout {
     private HospitalModuleBottomBarBinding hospitalModuleBottomBarBinding;
-    private FocusScaleListener focusScaleListener = new FocusScaleListener();
+    private FocusScaleListener focusScaleListener = new FocusScaleListener(getContext());
 
     IndexOnclickListener indexOnclickListener;
     ComebackOnclickListener comebackOnclickListener;

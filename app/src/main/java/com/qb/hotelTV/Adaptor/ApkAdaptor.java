@@ -35,13 +35,14 @@ import java.util.ArrayList;
 public class ApkAdaptor extends RecyclerView.Adapter<ApkAdaptor.ApkViewHolder> {
     Context context;
     ArrayList<ApkModel> apkList;
-    FocusScaleListener focusScaleListener = new FocusScaleListener();
+    FocusScaleListener focusScaleListener;
 
 
 
     public ApkAdaptor( Context context, ArrayList<ApkModel> apkList) {
         this.context = context;
         this.apkList = apkList;
+        this.focusScaleListener = new FocusScaleListener(context);
     }
 
     @NonNull

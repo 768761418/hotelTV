@@ -22,7 +22,7 @@ import com.qb.hotelTV.R;
 public class HospitalStartVideoActivity extends BaseActivity {
     private SimpleExoPlayer player ;
     private PlayerView playerView;
-    private ImageView imageView;
+    private ImageView imageView,imageBg;
     private LinearLayout nextBtn;
     private String url,startContent ;
     private int startType,startIsOpenTxt;
@@ -57,6 +57,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
         imageView = findViewById(R.id.hospital_start_img);
         nextBtn = findViewById(R.id.hospital_next_btn);
         webView = findViewById(R.id.hospital_web);
+        imageBg = findViewById(R.id.hospital_web_bg);
         onClickNextBtn();
 //        类型
         startType = getIntent().getIntExtra("startType",1);
@@ -159,7 +160,10 @@ public class HospitalStartVideoActivity extends BaseActivity {
 
         playerView.setVisibility(View.GONE);
         if (startIsOpenTxt == 1){
+            imageBg.setVisibility(View.VISIBLE);
             webView.setVisibility(View.VISIBLE);
+            webView.setBackgroundColor(0); // 背景透明
+            webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // 软渲染确保透明效果
             webView.loadData(startContent,"text/html","utf-8");
         }
 
