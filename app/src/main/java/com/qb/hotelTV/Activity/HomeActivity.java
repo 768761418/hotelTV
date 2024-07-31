@@ -36,6 +36,7 @@ import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
+import com.qb.hotelTV.Utils.DownLoadUtil;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.PlayerUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
@@ -53,6 +54,7 @@ public class HomeActivity extends BaseActivity {
     private Player player;
     private PlayerUtils playerUtils = new PlayerUtils();
     public SharedPreferencesUtils sharedPreferencesUtils;
+    public DownLoadUtil downLoadUtil;
 
 
 
@@ -402,6 +404,7 @@ public class HomeActivity extends BaseActivity {
     public void initStartVideoOrImg(Context context,String serverAddress,String tenant,
                                     ImageView logoView,ImageView bgView,PlayerView playerView){
         try{
+            downLoadUtil = new DownLoadUtil(context);
             JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
             if (hotelMessageJson != null){
                 String logoUrl = hotelMessageJson.getString("iconUrl");;
@@ -410,7 +413,14 @@ public class HomeActivity extends BaseActivity {
                 Log.d(TAG, "initStartVideoOrImg: " + videoUrl);
 //                初始化背景和logo
                 initLogoAndBackGround(context,logoView,logoUrl,bgView,bgUrl);
-                initIndexVideo(context,playerView,videoUrl);
+                downLoadUtil.inspectOrDownloadFile(videoUrl, new DownLoadUtil.FileDownloadCallback() {
+                    @Override
+                    public void onFileReady(String filePath) {
+                        initIndexVideo(context,playerView,filePath);
+                    }
+                });
+
+
             }
             JSONObject startData = hotelMessageJson.getJSONObject("startData");
 //           判断是否需要开机动画
