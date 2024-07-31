@@ -160,6 +160,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
                 Log.d(TAG, "createFragment: " + channel);
 //                return new WebViewFragment();
+//                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
                 ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
                 return exoPlayerFragment;
 //                return new GridFragment();

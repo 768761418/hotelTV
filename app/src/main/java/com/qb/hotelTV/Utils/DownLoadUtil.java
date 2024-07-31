@@ -89,7 +89,7 @@ public class DownLoadUtil {
                 e.printStackTrace();
                 // 在主线程上显示下载失败的Toast
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, "下载失败", Toast.LENGTH_SHORT).show();
                 });
             }
 
@@ -98,7 +98,7 @@ public class DownLoadUtil {
                 if (!response.isSuccessful()) {
                     // 在主线程上显示下载失败的Toast
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context, "下载失败: " + response.message(), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, "下载失败: " + response.message(), Toast.LENGTH_SHORT).show();
                         callback.onFileReady(null);
                     });
                     throw new IOException("Unexpected code " + response);
@@ -116,7 +116,7 @@ public class DownLoadUtil {
 
                     // 下载完成，回调文件路径
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context, "下载完成: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+//                        Toast.makeText(context, "下载完成: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
                         Log.d(TAG, "路径保存: "+file.getAbsolutePath());
                         callback.onFileReady(file.getAbsolutePath());
                     });

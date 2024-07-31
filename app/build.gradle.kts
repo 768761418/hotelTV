@@ -96,4 +96,13 @@ dependencies {
 
     implementation ("org.greenrobot:eventbus:3.2.0")
 
+
+//    引入ijkplayer
+    implementation ("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
+    implementation ("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
+    implementation ("tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8")
+    implementation ("tv.danmaku.ijk.media:ijkplayer-x86:0.8.8")
+    implementation ("tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8")
+//    implementation ("tv.danmaku.ijk.media:ijkplayer-media-ffmpeg:0.8.8")
+
 }

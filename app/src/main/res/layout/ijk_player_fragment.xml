@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -11,10 +12,15 @@
 
         android:focusable="true"
         android:gravity="center_horizontal" />
-    <com.google.android.exoplayer2.ui.StyledPlayerView
+    <SurfaceView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:use_controller="false"
-        app:resize_mode="fill"/>
+        tools:ignore="MissingClass" />
+<!--    <com.google.android.exoplayer2.ui.StyledPlayerView-->
+<!--        android:id="@+id/player_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:use_controller="false"-->
+<!--        app:resize_mode="fill"/>-->
 </FrameLayout>

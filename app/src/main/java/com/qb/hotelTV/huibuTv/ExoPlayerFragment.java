@@ -13,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.app.BrowseSupportFragment;
 import com.cdnbye.sdk.P2pEngine;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
@@ -71,8 +73,18 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
             }
         });
         StyledPlayerView playerView = view.findViewById(R.id.player_view);
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.CONTENT_TYPE_MOVIE)
+                .build();
+        mExoPlayer.setAudioAttributes(audioAttributes, true);
+
+
+
         playerView.setPlayer(mExoPlayer);
         Log.d(TAG, "onViewCreated: " + mContent.getStreamUrl() + "///" + mContent.getStreamName());
+
+
 
         playVideo(mContent.getStreamUrl());
 

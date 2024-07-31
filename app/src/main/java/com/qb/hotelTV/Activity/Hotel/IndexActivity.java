@@ -91,7 +91,6 @@ public class IndexActivity extends HomeActivity {
         focusChange();
     }
     private void initUI(){
-        layoutIndexBinding.indexRoomName.setText(roomNumber);
 //        获取时间
         startUpdateTask();
 //        获取地址和天气
@@ -174,7 +173,7 @@ public class IndexActivity extends HomeActivity {
                         @Override
                         public void run() {
                             try{
-                                layoutIndexBinding.indexRoomName.setText(roomData.getString("roomName"));
+                                layoutIndexBinding.indexRoomNumber.setText(roomData.getString("roomNumber"));
                                 layoutIndexBinding.indexWifiName.setText(roomData.getString("roomName"));
                                 layoutIndexBinding.indexWifiPassword.setText(roomData.getString("wifiPassword"));
                             }catch (JSONException e){

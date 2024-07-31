@@ -127,9 +127,7 @@ public class BackstageHttp {
                     }
 
                 }
-            }catch (IOException e){
-                Log.e(TAG, "loginSystem: ", e);
-            } catch (JSONException e){
+            }catch (Exception e){
                 Log.e(TAG, "loginSystem: ", e);
             }
             Authorization="Bearer " + token;
