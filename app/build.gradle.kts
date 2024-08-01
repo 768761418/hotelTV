@@ -78,7 +78,11 @@ dependencies {
     implementation ("androidx.leanback:leanback:1.0.0")
 
     implementation ("androidx.leanback:leanback:1.0.0")
-    implementation ("com.google.android.exoplayer:exoplayer:2.17.1")
+    implementation ("com.google.android.exoplayer:exoplayer:2.18.0")
+    implementation ("org.checkerframework:checker-qual:3.20.0")
+    //noinspection GradleDependency
+//    implementation ("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.17.1+1")
+
 //    implementation ("com.google.android.exoplayer:extension-rtsp:2.17.1")
     implementation ("androidx.appcompat:appcompat:1.3.0")
     implementation ("com.google.android.material:material:1.4.0")

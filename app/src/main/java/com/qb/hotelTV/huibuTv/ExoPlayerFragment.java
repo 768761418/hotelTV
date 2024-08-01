@@ -50,7 +50,9 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
 //            }
         DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(getContext())
                 .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-        mExoPlayer = new ExoPlayer.Builder(getContext(),renderersFactory).build();
+        mExoPlayer = new ExoPlayer
+                .Builder(getContext(),new FfmpegRenderersFactory(getContext()))
+                .build();
         getMainFragmentAdapter().getFragmentHost().notifyDataReady(getMainFragmentAdapter());
     }
 
