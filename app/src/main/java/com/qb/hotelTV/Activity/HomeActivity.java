@@ -237,7 +237,13 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onTvTextFailure(int code, String msg) {
-                view.setVisibility(View.GONE);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.setVisibility(View.GONE);
+                    }
+                });
+
             }
         });
     }

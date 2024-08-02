@@ -191,4 +191,13 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         getView().requestFocus();
     }
 
+    public void numberChangeChannel(int number){
+        if (getAdapter().size() != 0 && getAdapter().size() >= number){
+            setSelectedPosition(number-1);
+        }else {
+
+        }
+        getView().requestFocus();
+    }
+
 }

@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.ConnectionPool;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -47,10 +48,15 @@ public class BackstageHttp {
     }
     // 设置5秒超时
     static OkHttpClient client = new OkHttpClient.Builder()
+//            连接超时时间为5 秒钟
             .connectTimeout(5, TimeUnit.SECONDS)
+//            设置了读取超时时间
             .readTimeout(5, TimeUnit.SECONDS)
+//            设置了写入超时时间
             .writeTimeout(5, TimeUnit.SECONDS)
+            .addInterceptor(new RetryInterceptor(3))
             .build();
+
     Gson gson = new Gson();
     private String Authorization;
     private String token = null;

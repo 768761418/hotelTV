@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 
 import com.qb.hotelTV.R;
 
+import java.security.Key;
 import java.util.Date;
 
 public class MainActivity extends FragmentActivity {
@@ -128,6 +129,10 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+
+
+
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
                 pageAndListRowFragment.toggleChannel(false);
@@ -162,6 +167,22 @@ public class MainActivity extends FragmentActivity {
             case KeyEvent.KEYCODE_ENTER:
                 Log.d(TAG, "onKeyDown: 回车");
                 // 添加回车键的处理逻辑
+                break;
+            default:
+                // 处理数字键 1 到 9
+                for (int i = KeyEvent.KEYCODE_1; i <= KeyEvent.KEYCODE_9; i++) {
+                    if (keyCode == i) {
+                        pageAndListRowFragment.numberChangeChannel(i - KeyEvent.KEYCODE_1 + 1);
+                        return true;
+                    }
+                }
+                // 处理小键盘数字键 1 到 9
+                for (int i = KeyEvent.KEYCODE_NUMPAD_1; i <= KeyEvent.KEYCODE_NUMPAD_9; i++) {
+                    if (keyCode == i) {
+                        pageAndListRowFragment.numberChangeChannel(i - KeyEvent.KEYCODE_NUMPAD_1 + 1);
+                        return true;
+                    }
+                }
                 break;
         }
 //        return true;

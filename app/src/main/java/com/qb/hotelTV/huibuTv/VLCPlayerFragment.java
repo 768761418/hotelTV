@@ -59,7 +59,6 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
         mLibVLC = new LibVLC(getContext(),options);
 
         mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mLibVLC);
-        mMediaPlayer.setScale(0);//这行必须加，为了让视图填满布局
         getMainFragmentAdapter().getFragmentHost().notifyDataReady(getMainFragmentAdapter());
     }
 

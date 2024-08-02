@@ -91,6 +91,7 @@ public class HospitalActivity extends HomeActivity {
             boolean isGetToken = getLoginToken(HospitalActivity.this);
             if (isGetToken){
                 initUI();
+
             }else {
                 showInputDialog(true);
             }
@@ -200,7 +201,10 @@ public class HospitalActivity extends HomeActivity {
                         layoutHospitalBinding.hospitalTv
                 );
             }
+            layoutHospitalBinding.configBg.setVisibility(View.GONE);
         }catch (JSONException e){
+            Log.e(TAG, "checkTheme: ", e);
+        }catch (NullPointerException e){
             Log.e(TAG, "checkTheme: ", e);
         }
 
@@ -220,6 +224,7 @@ public class HospitalActivity extends HomeActivity {
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);
+
                 initUI();
             }
         });
