@@ -161,7 +161,8 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
                 Log.d(TAG, "createFragment: " + channel);
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+//                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                VLCPlayerFragment exoPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
                 return exoPlayerFragment;
 //                return new GridFragment();
             }

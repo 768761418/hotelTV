@@ -100,6 +100,8 @@ dependencies {
 
     implementation ("org.greenrobot:eventbus:3.2.0")
 
+    implementation ("org.videolan.android:libvlc-all:3.1.12")
+
 
 //    引入ijkplayer
     implementation ("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
