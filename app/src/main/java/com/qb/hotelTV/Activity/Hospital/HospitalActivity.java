@@ -30,6 +30,7 @@ import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Service.WebSocketService;
 import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
@@ -49,22 +50,17 @@ public class HospitalActivity extends HomeActivity {
     private Handler handler = new Handler();
 //    请求接口的请求头
     private String serverAddress,roomNumber,tenant;
-//    websocket用的
-    private WebSocketClient webSocketClient;
 //    获取数据用的
     private SharedPreferencesUtils sharedPreferencesUtils;
 //    输入配置的dialog
     private InputMessageDialog inputMessageDialog;
+    private Intent websocketService;
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (webSocketClient != null){
-            Log.d(TAG, "onDestroy: 234" );
-            webSocketClient.close();
-            webSocketClient = null;
-        }
+        stopService(websocketService);
     }
 
     @Override
@@ -74,29 +70,13 @@ public class HospitalActivity extends HomeActivity {
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
         inputMessageDialog = new InputMessageDialog(HospitalActivity.this);
 
-        boolean isFirstRun = sharedPreferencesUtils.loadIsFirstRun();
-        if (isFirstRun) {
-            showInputDialog(true);
-        } else {
-            // 如果不是第一次进入，则直接使用保存的服务器地址和房间号
-            serverAddress = sharedPreferencesUtils.loadServerAddress();
-            roomNumber = sharedPreferencesUtils.loadRoomNumber();
-            tenant  = sharedPreferencesUtils.loadTenant();
-            commonData.setData(serverAddress,tenant,roomNumber);
-            Log.d(TAG, "serverAddress: " +serverAddress);
-            Log.d(TAG, "roomNumber: " + roomNumber);
-            Log.d(TAG, "tenant: " +tenant);
-            // 使用服务器地址和房间号
-            // ...
-            boolean isGetToken = getLoginToken(HospitalActivity.this);
-            if (isGetToken){
-                initUI();
-
-            }else {
-                showInputDialog(true);
-            }
-
-        }
+        String[] data = commonData.getData();
+        serverAddress = data[0];
+        tenant =data[1];
+        roomNumber = data[2];
+        websocketService = new Intent(this, WebSocketService.class);
+        startService(websocketService);
+        initUI();
 //        显示房间号
         layoutHospitalBinding.hospitalTop.setRoomNumber(roomNumber);
 
@@ -114,11 +94,6 @@ public class HospitalActivity extends HomeActivity {
             getDataFromHttp();
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
-        }
-        String webSocketUrl = getWebSocketUrl(serverAddress);
-        Log.d(TAG, "webSocketUrl: "+webSocketUrl);
-        if (webSocketUrl != null){
-            webSocketClient = initWebSocket(this,webSocketUrl);
         }
 //        焦点切换动画
         focusChange();
@@ -201,7 +176,6 @@ public class HospitalActivity extends HomeActivity {
                         layoutHospitalBinding.hospitalTv
                 );
             }
-            layoutHospitalBinding.configBg.setVisibility(View.GONE);
         }catch (JSONException e){
             Log.e(TAG, "checkTheme: ", e);
         }catch (NullPointerException e){

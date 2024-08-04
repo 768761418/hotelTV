@@ -35,6 +35,10 @@ public class CommonData {
         return data;
     }
 
+    public String getServerAddress(){
+        return this.serverAddress;
+    }
+
     public void clearData(){
         tenant = null;
         serverAddress = null;

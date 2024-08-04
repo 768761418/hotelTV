@@ -96,23 +96,28 @@ public class InputMessageDialog extends Dialog {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-//                如果code为0
-                if (result[0].equals("0")){
-                    //保存下来方便后续使用
-                    sharedPreferencesUtils.saveToken(result[1]);
-                    Log.d(TAG, "daying: " + result[1]);
-                    //将数据保存到内存共享，让其他Activity也可用
-                    commonData.setData(serverAddress,tenant,roomNumber);
-                    // 保存服务器地址和房间号到 SharedPreferences中
-                    sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
-                    if (submitCallback != null){
-                        submitCallback.onSubmitCallBack(serverAddress,roomNumber,tenant);
+                Log.d(TAG, "onClick: " + result.length);
+                if (result[0]!=null){
+                    //                如果code为0
+                    if (result[0].equals("0")){
+                        //保存下来方便后续使用
+                        sharedPreferencesUtils.saveToken(result[1]);
+                        Log.d(TAG, "daying: " + result[1]);
+                        //将数据保存到内存共享，让其他Activity也可用
+                        commonData.setData(serverAddress,tenant,roomNumber);
+                        // 保存服务器地址和房间号到 SharedPreferences中
+                        sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
+                        if (submitCallback != null){
+                            submitCallback.onSubmitCallBack(serverAddress,roomNumber,tenant);
+                        }
+                        dismiss();
+                    } else {
+                        Toast.makeText(context,result[1],Toast.LENGTH_SHORT).show();
                     }
-                    dismiss();
-                } else {
-                    Toast.makeText(context,result[1],Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context,"请检查输入的信息是否正确",Toast.LENGTH_SHORT).show();
                 }
+
 
 
             }

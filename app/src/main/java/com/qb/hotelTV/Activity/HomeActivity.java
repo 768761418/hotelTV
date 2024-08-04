@@ -116,83 +116,21 @@ public class HomeActivity extends BaseActivity {
     public boolean getLoginToken(Context context){
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(context);
 //            拿取token
-            String token = sharedPreferencesUtils.loadToken();
-            if (token == null){
-                return false;
-            }
-//            设置请求头
-            String authorization = "Bearer " + token;
-            BackstageHttp.getInstance().setToken(token);
-            BackstageHttp.getInstance().setAuthorization(authorization);
-            Log.d(TAG, "daying1: " + token);
-            return true;
-    }
-
-    //    拼接websocket路径
-    public String getWebSocketUrl(String serverAddress){
-        String token = BackstageHttp.getInstance().getToken();
-        if (serverAddress.startsWith("http://")) {
-            return serverAddress.replace("http://", "ws://") + "/infra/ws?token=" + token;
-        } else if (serverAddress.startsWith("https://")) {
-            return serverAddress
-                    .replace("https://", "wss://")
-                    .replace("/prod-api","") + "/infra/ws?token=" + token;
+        String token = sharedPreferencesUtils.loadToken();
+        if (token == null){
+            return false;
         }
-
-        return null;
+//            设置请求头
+        String authorization = "Bearer " + token;
+        BackstageHttp.getInstance().setToken(token);
+        BackstageHttp.getInstance().setAuthorization(authorization);
+        Log.d(TAG, "daying1: " + token);
+        return true;
     }
 
-    //    初始化websocket
-    public WebSocketClient initWebSocket(Context context, String url){
-        WebSocketClient webSocketClient = new WebSocketClient(url);
-        Log.d(TAG, "initWebSocket: " + url);
-        webSocketClient.setMessageCallback(new WebSocketClient.MessageCallback() {
-            @Override
-            public void onMessageCallback(String data) {
-                try{
-                    Log.d(TAG, "initWebSocket: " + data);
-                    JSONObject jsonObject = new JSONObject(data);
-                    String type = jsonObject.getString("type");
-                    if (type.equals("insert-notice")){
-//                        由于websocket二级是字符串所以先拿字符串然后转成json
-                        String strContent = jsonObject.getString("content");
-                        JSONObject contentObject = new JSONObject(strContent);
-//                        获取播放信息
-                        String content= contentObject.getString("content");
-//                        配置信息
-                        JSONObject configData = contentObject.getJSONObject("configData");
-                        int webType = configData.getInt("type");
-                        long webSecond = configData.getLong("second");
-                        Log.d(TAG, "onMessageCallback: " + webSecond + "??" + type);
-                        Intent intent = new Intent(context, SocketNoticeActivity.class);
-                        intent.putExtra("url",content);
-                        intent.putExtra("type",webType);
-                        intent.putExtra("second",webSecond);
-                        startActivity(intent);
-                    }else if (type.equals("insert-notice-delete")) {
-                        Intent intent = new Intent("com.qb.hotel.ACTION_START_FINISH_ACTIVITY");
-                        Log.d(TAG, "initWebSocket:发送广播 ");
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                    }
-                }catch (JSONException e){
-                    Log.e(TAG, "onMessageCallback: " + data, e );
-                }
-            }
-        });
-        sendPingToServer(webSocketClient);
-        return webSocketClient;
-    }
-    //    持续发ping给服务器实现长连接
-    private void sendPingToServer(WebSocketClient webSocketClient){
-        Runnable sendMessageToServer = new Runnable() {
-            @Override
-            public void run() {
-                webSocketClient.sendMessage("ping");
-                handler.postDelayed(this, 60*1000);
-            }
-        };
-        handler.post(sendMessageToServer);
-    }
+
+
+
 
     //    获取公告并修改组件
     public void getAnnouncements(Context context, String serverAddress, String tenant, MarqueeTextView view){
