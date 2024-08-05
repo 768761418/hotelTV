@@ -15,6 +15,8 @@ import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutStartupBinding;
 import com.qb.hotelTV.module.InputMessageDialog;
 
+import org.json.JSONObject;
+
 
 /***
     开机启动页
@@ -105,6 +107,16 @@ public class StartupActivity extends HomeActivity{
                 finish();
             }
         });
+
+    }
+
+   /**
+    判断主题和是否需要开机界面
+    1.如果需要开机界面，就将主题传递给开机界面，让开机界面去判断
+    2.如果不需要开机界面就判断需要打开哪个界面，然后把logo，视频,bg 传递过去
+    **/
+    private void checkTheme(){
+        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
 
     }
 }

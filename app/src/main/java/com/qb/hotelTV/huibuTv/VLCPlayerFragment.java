@@ -8,6 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,7 +32,10 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     private BrowseSupportFragment.MainFragmentAdapter mMainFragmentAdapter = new BrowseSupportFragment.MainFragmentAdapter(this);
     private LibVLC mLibVLC;
     private MediaPlayer mMediaPlayer;
+    private  Media media;
     private int channelIndex = 0;
+
+    private EditText editText;
 
     public static VLCPlayerFragment newInstance(VideoModel content, int channelIndex) {
         VLCPlayerFragment fragment = new VLCPlayerFragment();
@@ -54,8 +58,6 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
         //args.add("--sub-source=marq{marquee=\"%Y-%m-%d,%H:%M:%S\",position=10,color=0xFF0000,size=40}");//这行是可以再vlc窗口右下角添加当前时间的
         options.add("-vvv");
 
-
-
         mLibVLC = new LibVLC(getContext(),options);
 
         mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mLibVLC);
@@ -64,6 +66,7 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.vlc_player_fragment, container, false);
     }
 
@@ -71,6 +74,8 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         TextView fullScreen = view.findViewById(R.id.full_screen);
+        editText = view.findViewById(R.id.vlc_video_editText);
+
         fullScreen.setOnClickListener(v -> {
             fullScreen.setVisibility(View.GONE);
             // Handle full screen click if needed
@@ -84,15 +89,28 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
                 //        mMediaPlayer.attachViews(videoLayout, null, false, true);
                 mMediaPlayer.getVLCVout().setVideoView(videoLayout);
                 mMediaPlayer.getVLCVout().attachViews();
-//                获取surface尺寸，将视频自适应
-                int videoWidth = videoLayout.getWidth();
-                int videoHeight = videoLayout.getHeight();
-                mMediaPlayer.getVLCVout().setWindowSize(videoWidth, videoHeight);
-                // 设置视频的宽高比为填充模式，aspectRatio为null表示填充SurfaceView
-                mMediaPlayer.setAspectRatio(videoWidth + ":" + videoHeight);
-                mMediaPlayer.setScale(0); // 设置为0表示自动缩放以填充SurfaceView
 
-                playVideo(mContent.getStreamUrl());
+                // 延迟播放，确保 SurfaceView 准备就绪
+                videoLayout.postDelayed(() -> {
+                    playVideo(mContent.getStreamUrl());
+                    int videoWidth = videoLayout.getWidth();
+                    int videoHeight = videoLayout.getHeight();
+                    mMediaPlayer.getVLCVout().setWindowSize(videoWidth, videoHeight);
+                    mMediaPlayer.setAspectRatio(videoWidth + ":" + videoHeight);
+                    mMediaPlayer.setScale(0);
+                }, 1000); // 100毫秒延迟播放
+
+//                // 延迟播放，确保 SurfaceView 准备就绪
+//                videoLayout.postDelayed(() -> playVideo(mContent.getStreamUrl()), 100);
+////                获取surface尺寸，将视频自适应
+//                int videoWidth = videoLayout.getWidth();
+//                int videoHeight = videoLayout.getHeight();
+//                mMediaPlayer.getVLCVout().setWindowSize(videoWidth, videoHeight);
+//                // 设置视频的宽高比为填充模式，aspectRatio为null表示填充SurfaceView
+//                mMediaPlayer.setAspectRatio(videoWidth + ":" + videoHeight);
+//                mMediaPlayer.setScale(0); // 设置为0表示自动缩放以填充SurfaceView
+//
+//                playVideo(mContent.getStreamUrl());
             }
 
             @Override
@@ -102,7 +120,7 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
 
             @Override
             public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
-                mMediaPlayer.getVLCVout().detachViews();
+                releasePlayer();
             }
         });
 
@@ -110,11 +128,21 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
         getMainFragmentAdapter().getFragmentHost().notifyViewCreated(mMainFragmentAdapter);
     }
 
-    private void playVideo(String url) {
-        if (mMediaPlayer.isPlaying()) {
+    private void releasePlayer() {
+        if (mMediaPlayer.isPlaying()&& mMediaPlayer!= null) {
             mMediaPlayer.stop();
+            mMediaPlayer.release();
+            if (media != null) {
+                media.release();
+            }
+            mMediaPlayer.getVLCVout().detachViews();
         }
-        Media media = new Media(mLibVLC, Uri.parse(url));
+
+    }
+
+
+    private void playVideo(String url) {
+        media= new Media(mLibVLC, Uri.parse(url));
         int cache =10;
 
         media.addOption(":network-caching=" + cache);
@@ -154,6 +182,17 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     @Override
     public BrowseSupportFragment.MainFragmentAdapter getMainFragmentAdapter() {
         return mMainFragmentAdapter;
+    }
+
+    public void showEdit(boolean isShow,String data){
+        if (isShow){
+            editText.setVisibility(View.VISIBLE);
+            if (data != null){
+                editText.setText(data);
+            }
+        }else {
+            editText.setVisibility(View.GONE);
+        }
     }
 }
 

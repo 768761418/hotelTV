@@ -70,13 +70,11 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
         setAdapter(mRowsAdapter);
-        Log.d(TAG, "loadData2: ");
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 createRows();
                 startEntranceTransition();
-                Log.d(TAG, "loadData3: ");
             }
         }, 2000);
 
@@ -158,12 +156,11 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 //                根据ID获取对象
 //                Channel channel = MyApplication.getChannelsList().get((int) row.getHeaderItem().getId());
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
-                Log.d(TAG, "createFragment: " + channel);
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
 //                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                VLCPlayerFragment exoPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                return exoPlayerFragment;
+                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                return vlcPlayerFragment;
 //                return new GridFragment();
             }
             throw new IllegalArgumentException(String.format("Invalid row %s", rowObj));
@@ -198,6 +195,11 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
         }
         getView().requestFocus();
+    }
+
+    public void showTvEdit(){
+        VLCPlayerFragment vlcPlayerFragment = (VLCPlayerFragment) getParentFragmentManager().findFragmentById(R.id.main_browse_fragment);
+        vlcPlayerFragment.showEdit(true,"000");
     }
 
 }

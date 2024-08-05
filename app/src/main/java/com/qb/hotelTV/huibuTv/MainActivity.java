@@ -6,8 +6,11 @@ import androidx.fragment.app.FragmentActivity;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.EditText;
 
 import com.qb.hotelTV.R;
 
@@ -31,10 +34,30 @@ public class MainActivity extends FragmentActivity {
     private Handler mHandler01 = new Handler();
     private Handler mHandler02 = new Handler();
     PageAndListRowFragment pageAndListRowFragment;
+
+
+    // 声明一个成员变量，用于保存用户输入的数字
+    private StringBuilder inputBuffer = new StringBuilder();
+
+    // 声明一个Handler，用于处理输入超时的情况
+    private Handler inputTimeoutHandler = new Handler(Looper.getMainLooper());
+
+    // 定义一个延迟任务，用于在超时后执行输入处理
+    private Runnable inputTimeoutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            processInputBuffer();
+        }
+    };
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
@@ -129,10 +152,6 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-
-
-
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
                 pageAndListRowFragment.toggleChannel(false);
@@ -169,19 +188,27 @@ public class MainActivity extends FragmentActivity {
                 // 添加回车键的处理逻辑
                 break;
             default:
-                // 处理数字键 1 到 9
-                for (int i = KeyEvent.KEYCODE_1; i <= KeyEvent.KEYCODE_9; i++) {
-                    if (keyCode == i) {
-                        pageAndListRowFragment.numberChangeChannel(i - KeyEvent.KEYCODE_1 + 1);
-                        return true;
+                // 处理数字键
+                if ((keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) ||
+                        (keyCode >= KeyEvent.KEYCODE_NUMPAD_0 && keyCode <= KeyEvent.KEYCODE_NUMPAD_9)) {
+//                    pageAndListRowFragment.showTvEdit();
+                    // 取消之前的超时任务
+                    inputTimeoutHandler.removeCallbacks(inputTimeoutRunnable);
+
+                    // 获取按键对应的数字并添加到缓冲区
+                    int number = (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) ?
+                            keyCode - KeyEvent.KEYCODE_0 : keyCode - KeyEvent.KEYCODE_NUMPAD_0;
+                    // 根据需求，处理用户输入的 "001" 或 "012" 类似的情况
+                    inputBuffer.append(number);
+                    // 如果输入已经达到3个数字，立即处理
+                    if (inputBuffer.length() == 3) {
+                        processInputBuffer();
+                    } else {
+                        // 启动3秒超时任务
+                        inputTimeoutHandler.postDelayed(inputTimeoutRunnable, 3000);
                     }
-                }
-                // 处理小键盘数字键 1 到 9
-                for (int i = KeyEvent.KEYCODE_NUMPAD_1; i <= KeyEvent.KEYCODE_NUMPAD_9; i++) {
-                    if (keyCode == i) {
-                        pageAndListRowFragment.numberChangeChannel(i - KeyEvent.KEYCODE_NUMPAD_1 + 1);
-                        return true;
-                    }
+
+                    return true;
                 }
                 break;
         }
@@ -215,5 +242,15 @@ public class MainActivity extends FragmentActivity {
         super.onPause();
     }
 
+    // 处理输入缓冲区的方法
+    private void processInputBuffer() {
+        // 移除输入缓冲区中数字前导的零
+        String input = inputBuffer.toString().replaceFirst("^0+(?!$)", "");
+        // 将输入缓冲区转换为整数，并执行频道切换
+        int channelNumber = Integer.parseInt(input);
+        pageAndListRowFragment.numberChangeChannel(channelNumber);
+        // 清空缓冲区
+        inputBuffer.setLength(0);
+    }
 
 }
