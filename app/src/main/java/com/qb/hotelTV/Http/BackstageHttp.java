@@ -92,6 +92,8 @@ public class BackstageHttp {
         Log.d(TAG, "loginSystem: " + serverAddress);
         Log.d(TAG, "loginSystem: " + roomNumber);
         Log.d(TAG, "loginSystem: " + tenant);
+        Log.d(TAG, "loginSystem: " + url);
+
         JSONObject json;
         String[] result = new String[2];
         try{
@@ -423,6 +425,7 @@ public class BackstageHttp {
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
         queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
         queryUrlBuilder.addQueryParameter("categoryId", String.valueOf(id));
+        queryUrlBuilder.addQueryParameter("status","0");
 
 //        构建请求体
         Request request = new Request.Builder()
@@ -536,6 +539,44 @@ public class BackstageHttp {
                 }
             }
         });
+    }
+
+    public String[] getAppMessage(String serverAddress,String tenant,Long id){
+        String[] result = new String[2];
+        result[0] = null;
+        result[1] = null;
+
+        String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;
+        Log.d(TAG, "请求路径: " + url);
+//        添加参数
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
+        queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
+        queryUrlBuilder.addQueryParameter("categoryId", String.valueOf(id));
+        queryUrlBuilder.addQueryParameter("status","0");
+
+//        构建请求体
+        Request request = new Request.Builder()
+                .url(queryUrlBuilder.build())
+                .addHeader("tenant-id", tenant) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
+                .build();
+//        接受回调
+        Call call = client.newCall(request);
+        try {
+            Response response = call.execute();
+            String responseData = response.body().string();
+            if (response.isSuccessful()){
+                BaseResponseModel<BaseListModel<CmsMessageModel>> cmsMessage = gson.fromJson(responseData, new TypeToken<BaseResponseModel<BaseListModel<CmsMessageModel>>>() {
+                }.getType());
+                ArrayList<CmsMessageModel> cmsMessageModels = cmsMessage.getData().getList();
+                result[0] = cmsMessageModels.get(0).getVar1();
+                result[1] = cmsMessageModels.get(0).getContent();
+            }
+        }catch (IOException e){
+            Log.e(TAG, "getAppMessage: ", e);
+        }
+        return result;
     }
 
 

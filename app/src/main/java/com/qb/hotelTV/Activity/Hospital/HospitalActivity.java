@@ -129,7 +129,7 @@ public class HospitalActivity extends HomeActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,ApplicationSetting.THEME_HOSPITAL_ONE);
+                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,ApplicationSetting.THEME_HOSPITAL_ONE,serverAddress,tenant);
                 }
             }
         }).start();

@@ -164,7 +164,7 @@ public class IndexActivity extends HomeActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,4);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(IndexActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"");
+                    indexListOnclick(IndexActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"",serverAddress,tenant);
                 }
 //                获取房间信息
                 JSONObject roomData = BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant);

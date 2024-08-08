@@ -9,6 +9,7 @@ public class HotelListModel {
     private String backgroundUrl;
     private Long status;
 
+
     public Long getId() {
         return id;
     }

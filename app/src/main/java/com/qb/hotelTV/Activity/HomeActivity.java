@@ -58,6 +58,7 @@ public class HomeActivity extends BaseActivity {
 
 
 
+
     //    请求权限
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -192,16 +193,18 @@ public class HomeActivity extends BaseActivity {
         intent.putExtra("id",id);
     }
     //    界面点击模块事件
-    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels, String theme){
+    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels, String theme,String serverAddress,String tenant){
         try {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     for (int i = 0; i < hotelListModels.size(); i++) {
-                        Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getName());
-                        Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getBackgroundUrl());
-                        Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getPicUrl());
-                        Log.d(TAG, "onApkResponse: " + hotelListModels.get(i).getType());
+                        Log.d(TAG, i + "onApkResponse: " + hotelListModels.get(i).getName());
+                        Log.d(TAG, i +"onApkResponse: " + hotelListModels.get(i).getBackgroundUrl());
+                        Log.d(TAG, i +"onApkResponse: " + hotelListModels.get(i).getPicUrl());
+                        Log.d(TAG, i +"onApkResponse: " + hotelListModels.get(i).getType());
+
+
 
                         //获取到每一个item的layout替换掉图片和文字和跳转地址
                         LinearLayout item = (LinearLayout)  layout.getChildAt(i);
@@ -294,7 +297,36 @@ public class HomeActivity extends BaseActivity {
                                     }
                                 });
                                 break;
+                            case 4:
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                            new Thread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    String[] result = BackstageHttp.getInstance().getAppMessage(serverAddress,tenant,hotelListModels.get(finalI).getId());
+                                                    Log.d(TAG, "lanmu: " + result[0]);
+                                                    Log.d(TAG, "lanmu: " + result[1]);
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (result[1] == null || result[1].equals("")){
+                                                                downLoadUtil.gotoOtherApp(result[0],"");
+                                                            }else {
+                                                                downLoadUtil.gotoOtherApp(result[0],result[1]);
+                                                            }
+                                                        }
+                                                    });
 
+
+                                                }
+                                            }).start();
+
+
+
+                                    }
+                                });
+                                break;
 
                         }
 

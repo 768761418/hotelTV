@@ -8,6 +8,15 @@ public class CmsMessageModel {
     private Long  categoryId;
 
     private String picUrl;
+    private String var1;
+
+    public String getVar1() {
+        return var1;
+    }
+
+    public void setVar1(String var1) {
+        this.var1 = var1;
+    }
 
     public String getPicUrl() {
         return picUrl;
