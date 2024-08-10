@@ -2,6 +2,7 @@ package com.qb.hotelTV.huibuTv;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -18,6 +19,7 @@ class FfmpegRenderersFactory extends DefaultRenderersFactory {
     public FfmpegRenderersFactory(Context context) {
         super(context);
         setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER);
+        Log.d("FfmpegAudioRenderer", "Custom FfmpegAudioRenderer is being used");
     }
 
     @Override
@@ -28,7 +30,7 @@ class FfmpegRenderersFactory extends DefaultRenderersFactory {
                                        AudioSink audioSink, Handler eventHandler,
                                        AudioRendererEventListener eventListener,
                                        ArrayList<Renderer> out) {
-        out.add(new FfmpegAudioRenderer());
+        out.add(new FfmpegAudioRenderer(eventHandler, eventListener, audioSink));
 
         super.buildAudioRenderers(
                 context,

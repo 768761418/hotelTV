@@ -77,7 +77,7 @@ public class ExoPlayerFragment extends androidx.fragment.app.Fragment implements
         StyledPlayerView playerView = view.findViewById(R.id.player_view);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MOVIE)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MOVIE)
                 .build();
         mExoPlayer.setAudioAttributes(audioAttributes, true);
 

@@ -158,9 +158,9 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-//                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                return vlcPlayerFragment;
+                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+//                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                return exoPlayerFragment;
 //                return new GridFragment();
             }
             throw new IllegalArgumentException(String.format("Invalid row %s", rowObj));

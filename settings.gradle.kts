@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        include(":ffmpeg")
         maven { setUrl("https://jitpack.io") }
         maven { setUrl("https://maven.aliyun.com/repository/central") }
         maven { setUrl("https://maven.aliyun.com/repository/jcenter") }
@@ -16,6 +17,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        include(":ffmpeg")
+
         maven { setUrl("https://jitpack.io") }
         maven { setUrl("https://maven.aliyun.com/repository/central") }
         maven { setUrl("https://maven.aliyun.com/repository/jcenter") }

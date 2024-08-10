@@ -48,7 +48,7 @@ android {
 }
 
 dependencies {
-
+    implementation ("com.kingja.loadsir:loadsir:1.3.8")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -79,6 +79,8 @@ dependencies {
 
     implementation ("androidx.leanback:leanback:1.0.0")
     implementation ("com.google.android.exoplayer:exoplayer:2.18.0")
+//    implementation(project(":ffmpeg"))
+
     implementation ("org.checkerframework:checker-qual:3.20.0")
     //noinspection GradleDependency
 //    implementation ("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.17.1+1")
