@@ -14,11 +14,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -26,13 +24,11 @@ import com.bumptech.glide.request.transition.Transition;
 import com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.qb.hotelTV.Activity.BaseActivity;
-import com.qb.hotelTV.Activity.Hospital.HospitalListActivity;
-import com.qb.hotelTV.Activity.Hospital.HospitalStartVideoActivity;
-import com.qb.hotelTV.Activity.Hospital.HospitalVideoActivity;
-import com.qb.hotelTV.Activity.Hospital.HospitalWebActivity;
+import com.qb.hotelTV.Activity.CommonActivity.AppActivity;
+import com.qb.hotelTV.Activity.CommonActivity.ListActivity;
+import com.qb.hotelTV.Activity.CommonActivity.VideoActivity;
+import com.qb.hotelTV.Activity.CommonActivity.WebActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
-import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
@@ -46,7 +42,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 public class HomeActivity extends BaseActivity {
     private Handler handler = new Handler();
@@ -261,7 +256,7 @@ public class HomeActivity extends BaseActivity {
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent intent = new Intent(context, HospitalWebActivity.class);
+                                        Intent intent = new Intent(context, WebActivity.class);
                                         String title = hotelListModels.get(finalI).getName();
                                         Long id = hotelListModels.get(finalI).getId();
                                         defaultPutIntent(intent,title,id);
@@ -275,7 +270,7 @@ public class HomeActivity extends BaseActivity {
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent intent = new Intent(context, HospitalListActivity.class);
+                                        Intent intent = new Intent(context, ListActivity.class);
                                         String title = hotelListModels.get(finalI).getName();
                                         Long id = hotelListModels.get(finalI).getId();
                                         defaultPutIntent(intent,title,id);
@@ -289,7 +284,7 @@ public class HomeActivity extends BaseActivity {
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        Intent intent = new Intent(context, HospitalVideoActivity.class);
+                                        Intent intent = new Intent(context, VideoActivity.class);
                                         String title = hotelListModels.get(finalI).getName();
                                         Long id = hotelListModels.get(finalI).getId();
                                         defaultPutIntent(intent,title,id);
@@ -398,21 +393,12 @@ public class HomeActivity extends BaseActivity {
 
 
             }
-            JSONObject startData = hotelMessageJson.getJSONObject("startData");
-//           判断是否需要开机动画
-            if (startData.getInt("open") == 1){
-                Intent intent = new Intent(context  , HospitalStartVideoActivity.class);
-                intent.putExtra("startType",startData.getInt("type"));
-                intent.putExtra("startUrl",startData.getString("url"));
-                intent.putExtra("startSecond",startData.getLong("second"));
-                intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
-                intent.putExtra("startContent",startData.getString("content"));
-                startActivity(intent);
-            }
-
 
         }catch (JSONException e){
             Log.e(TAG, "initStartVideoOrImg: ", e);
         }
     }
+
+
+
 }

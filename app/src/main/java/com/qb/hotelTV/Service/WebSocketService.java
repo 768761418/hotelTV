@@ -3,7 +3,6 @@ package com.qb.hotelTV.Service;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -11,7 +10,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.qb.hotelTV.Activity.SocketNoticeActivity;
+import com.qb.hotelTV.Activity.CommonActivity.SocketNoticeActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;

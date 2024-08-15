@@ -43,6 +43,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     private ArrayObjectAdapter mRowsAdapter;
     private boolean authorized = false;
     private static final  String TAG = "PageAndListRowFragment";
+    private static VLCPlayerFragment vlcPlayerFragment;
 
     static Context mContext;
     @Override
@@ -158,9 +159,15 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+//                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                if (vlcPlayerFragment == null || !vlcPlayerFragment.isAdded()) {
+                    vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                } else {
+                    vlcPlayerFragment.playVideo(channel.getStreamUrl(),(int) row.getHeaderItem().getId());
+                }
+
 //                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                return exoPlayerFragment;
+                return vlcPlayerFragment;
 //                return new GridFragment();
             }
             throw new IllegalArgumentException(String.format("Invalid row %s", rowObj));

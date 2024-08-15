@@ -1,4 +1,4 @@
-package com.qb.hotelTV.Activity.Hospital;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,12 +6,10 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
-import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHospitalVideoBinding;
@@ -20,17 +18,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class HospitalVideoActivity extends BaseActivity {
+public class VideoActivity extends BaseActivity {
     private boolean GEO=false,WEATHER=false,HOTEL_MESSAGE=false;
     private String geo,weather,locationString;
     private String serverAddress,tenant,roomNumber,title;
     private String strHotelLogo,strHotelBg, strHtml;
     private Long id;
     private LayoutHospitalVideoBinding layoutHospitalVideoBinding;
-    private final String TAG = "HospitalVideoActivity";
+    private final String TAG = "VideoActivity";
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
     private SimpleExoPlayer player ;
 
@@ -99,7 +95,7 @@ public class HospitalVideoActivity extends BaseActivity {
             String logoUrl = hotelMessageJson.getString("iconUrl");;
             String bgUrl = hotelMessageJson.getString("homepageBackground");
 //                初始化背景和logo
-            initLogoAndBackGround(HospitalVideoActivity.this,layoutHospitalVideoBinding.hospitalTop.logo(),logoUrl,layoutHospitalVideoBinding.hospitalBackground,bgUrl);
+            initLogoAndBackGround(VideoActivity.this,layoutHospitalVideoBinding.hospitalTop.logo(),logoUrl,layoutHospitalVideoBinding.hospitalBackground,bgUrl);
         }
 
         BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, new BackstageHttp.CmsMessageCallBack() {
@@ -112,7 +108,7 @@ public class HospitalVideoActivity extends BaseActivity {
                     @Override
                     public void run() {
                         if (url != null && !url.equals("")){
-                            player = new SimpleExoPlayer.Builder(HospitalVideoActivity.this).build();
+                            player = new SimpleExoPlayer.Builder(VideoActivity.this).build();
 //                                绑定player
                             layoutHospitalVideoBinding.hospitalVideo.setPlayer(player);
                             // 隐藏控制面板

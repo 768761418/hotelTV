@@ -1,20 +1,22 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
+import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutStartupBinding;
 import com.qb.hotelTV.module.InputMessageDialog;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 
@@ -25,7 +27,7 @@ import org.json.JSONObject;
     如果不通就弹出选择框，
     如果通过就看需不需要开机动画
  ***/
-public class StartupActivity extends HomeActivity{
+public class StartupActivity extends HomeActivity {
     private LayoutStartupBinding layoutStartupBinding;
     private SharedPreferencesUtils sharedPreferencesUtils;
     private InputMessageDialog inputMessageDialog;
@@ -76,9 +78,7 @@ public class StartupActivity extends HomeActivity{
                     @Override
                     public void run() {
                         // 延迟3秒后执行
-                        Intent intent = new Intent(StartupActivity.this, HospitalActivity.class);
-                        startActivity(intent);
-                        finish(); // 关闭当前Activity
+                        checkConfig();
                     }
                 }, 3000); // 延迟时间，单位毫秒
             }else {
@@ -102,9 +102,7 @@ public class StartupActivity extends HomeActivity{
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);
-                Intent intent = new Intent(StartupActivity.this,HospitalActivity.class);
-                startActivity(intent);
-                finish();
+                checkConfig();
             }
         });
 
@@ -115,8 +113,41 @@ public class StartupActivity extends HomeActivity{
     1.如果需要开机界面，就将主题传递给开机界面，让开机界面去判断
     2.如果不需要开机界面就判断需要打开哪个界面，然后把logo，视频,bg 传递过去
     **/
-    private void checkTheme(){
-        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+   private void checkConfig(){
+       JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
 
-    }
+       try{
+           JSONObject startData = hotelMessageJson.getJSONObject("startData");
+           String themeType = hotelMessageJson.getString("themeType");
+//           判断是否需要开机动画
+           if (startData.getInt("open") == 1){
+               Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);
+               intent.putExtra("startType",startData.getInt("type"));
+               intent.putExtra("startUrl",startData.getString("url"));
+               intent.putExtra("startSecond",startData.getLong("second"));
+               intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
+               intent.putExtra("startContent",startData.getString("content"));
+               intent.putExtra("theme",themeType);
+               startActivity(intent);
+               finish();
+           }else {
+//               判断是否切换主题
+               if (checkTheme(StartupActivity.this,themeType)){
+                   finish();
+               }else {
+                   Toast.makeText(StartupActivity.this,"请联系管理员配置正确的主题",Toast.LENGTH_SHORT).show();
+               }
+           }
+
+
+
+
+
+       }catch (JSONException e){
+           Log.e(TAG, "checkTheme: ", e);
+       }catch (NullPointerException e){
+           Log.e(TAG, "checkTheme: ", e);
+       }
+
+   }
 }

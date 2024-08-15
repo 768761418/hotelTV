@@ -34,6 +34,7 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     private MediaPlayer mMediaPlayer;
     private  Media media;
     private int channelIndex = 0;
+    private int videoWidth ,videoHeight ;
 
     private EditText editText;
 
@@ -50,17 +51,13 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
 //        设置
         ArrayList<String> options = new ArrayList<>();
         options.add("--rtsp-tcp");//强制rtsp-tcp，加快加载视频速度
-
         options.add("--aout=opensles");
-
         options.add("--audio-time-stretch");
-
-        //args.add("--sub-source=marq{marquee=\"%Y-%m-%d,%H:%M:%S\",position=10,color=0xFF0000,size=40}");//这行是可以再vlc窗口右下角添加当前时间的
         options.add("-vvv");
-
+//        初始化
         mLibVLC = new LibVLC(getContext(),options);
 
-        mMediaPlayer = new org.videolan.libvlc.MediaPlayer(mLibVLC);
+        mMediaPlayer = new MediaPlayer(mLibVLC);
         getMainFragmentAdapter().getFragmentHost().notifyDataReady(getMainFragmentAdapter());
     }
 
@@ -89,16 +86,17 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
                 //        mMediaPlayer.attachViews(videoLayout, null, false, true);
                 mMediaPlayer.getVLCVout().setVideoView(videoLayout);
                 mMediaPlayer.getVLCVout().attachViews();
+//                获取播放尺寸
+                videoWidth = videoLayout.getWidth();
+                videoHeight = videoLayout.getHeight();
+                playVideo(mContent.getStreamUrl(),channelIndex);
 
                 // 延迟播放，确保 SurfaceView 准备就绪
-                videoLayout.postDelayed(() -> {
-                    playVideo(mContent.getStreamUrl());
-                    int videoWidth = videoLayout.getWidth();
-                    int videoHeight = videoLayout.getHeight();
-                    mMediaPlayer.getVLCVout().setWindowSize(videoWidth, videoHeight);
-                    mMediaPlayer.setAspectRatio(videoWidth + ":" + videoHeight);
-                    mMediaPlayer.setScale(0);
-                }, 1000); // 100毫秒延迟播放
+//                videoLayout.postDelayed(() -> {
+//
+//
+//
+//                }, 1000); // 100毫秒延迟播放
 
 //                // 延迟播放，确保 SurfaceView 准备就绪
 //                videoLayout.postDelayed(() -> playVideo(mContent.getStreamUrl()), 100);
@@ -129,22 +127,31 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     }
 
     private void releasePlayer() {
-        if (mMediaPlayer.isPlaying()&& mMediaPlayer!= null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()){
+                mMediaPlayer.stop();
+            }
+
             if (media != null) {
                 media.release();
+                media = null;
             }
-            mMediaPlayer.getVLCVout().detachViews();
         }
+//            if (mMediaPlayer != null) {
+//                mMediaPlayer.stop();
+//                mMediaPlayer.getVLCVout().detachViews();
+//                mMediaPlayer.release();
+//                mMediaPlayer = null;
+//            }
 
     }
 
 
-    private void playVideo(String url) {
+    public void playVideo(String url,int index) {
+//        释放资源
+        releasePlayer();
         media= new Media(mLibVLC, Uri.parse(url));
         int cache =10;
-
         media.addOption(":network-caching=" + cache);
         media.addOption(":file-caching=" + cache);
         media.addOption(":live-cacheing=" + cache);
@@ -153,7 +160,11 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
 
         mMediaPlayer.setMedia(media);
         mMediaPlayer.play();
-        MyApplication.setChannelIndex(channelIndex);
+//        设置自适应拉伸
+        mMediaPlayer.getVLCVout().setWindowSize(videoWidth, videoHeight);
+        mMediaPlayer.setAspectRatio(videoWidth + ":" + videoHeight);
+        mMediaPlayer.setScale(0);
+        MyApplication.setChannelIndex(index);
     }
 
     @Override

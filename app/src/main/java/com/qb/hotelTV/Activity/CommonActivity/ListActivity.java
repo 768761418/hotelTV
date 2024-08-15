@@ -1,4 +1,4 @@
-package com.qb.hotelTV.Activity.Hospital;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Http.BackstageHttp;
-import com.qb.hotelTV.Http.LocationHttp;
-import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.databinding.LayoutHospitalListBinding;
@@ -26,11 +23,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class HospitalListActivity extends BaseActivity {
+public class ListActivity extends BaseActivity {
     private String serverAddress,tenant,roomNumber,title;
     private Long id;
     private LayoutHospitalListBinding layoutHospitalListBinding;
-    private final String TAG = "HospitalListActivity";
+    private final String TAG = "ListActivity";
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
     private int currentPageNo = 1 ;
 
@@ -104,7 +101,7 @@ public class HospitalListActivity extends BaseActivity {
             String logoUrl = hotelMessageJson.getString("iconUrl");;
             String bgUrl = hotelMessageJson.getString("homepageBackground");
 //                初始化背景和logo
-            initLogoAndBackGround(HospitalListActivity.this,layoutHospitalListBinding.hospitalTop.logo(),logoUrl,layoutHospitalListBinding.hospitalBackground,bgUrl);
+            initLogoAndBackGround(ListActivity.this,layoutHospitalListBinding.hospitalTop.logo(),logoUrl,layoutHospitalListBinding.hospitalBackground,bgUrl);
         }
     }
 
@@ -143,7 +140,7 @@ public class HospitalListActivity extends BaseActivity {
                             imageView.setVisibility(View.VISIBLE);
                             imageView.setOnFocusChangeListener(focusScaleListener);
 //                            加载图片
-                            Glide.with(HospitalListActivity.this)
+                            Glide.with(ListActivity.this)
                                     .load(cms.get(i).getPicUrl())
                                     .error(R.color.white)
                                     .into((imageView));
@@ -153,7 +150,7 @@ public class HospitalListActivity extends BaseActivity {
                             imageView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Intent intent = new Intent(HospitalListActivity.this, HospitalWebActivity.class);
+                                    Intent intent = new Intent(ListActivity.this, WebActivity.class);
                                     String content = cms.get(finalI).getContent();
                                     Long imgId = cms.get(finalI).getCategoryId();
                                     intent.putExtra("serverAddress",serverAddress);
@@ -183,14 +180,14 @@ public class HospitalListActivity extends BaseActivity {
 
     }
 
-    // 处理从 HospitalWebActivity 返回的结果
+    // 处理从 WebActivity 返回的结果
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: " +requestCode);
         Log.d(TAG, "onActivityResult: " + resultCode);
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // 关闭 HospitalListActivity
+            // 关闭 ListActivity
             finish();
         }
     }

@@ -1,4 +1,4 @@
-package com.qb.hotelTV.Activity.Hospital;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,17 +19,17 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.R;
 
-public class HospitalStartVideoActivity extends BaseActivity {
+public class StartVideoActivity extends BaseActivity {
     private SimpleExoPlayer player ;
     private PlayerView playerView;
     private ImageView imageView,imageBg;
     private LinearLayout nextBtn;
-    private String url,startContent ;
+    private String url,startContent,theme ;
     private int startType,startIsOpenTxt;
     private long startSecond = 10;
     private WebView webView;
     private Handler handler = new Handler();
-    private  String TAG = "HospitalStartVideoActivity";
+    private  String TAG = "StartVideoActivity";
     private boolean isShow = false;
 
     @Override
@@ -68,7 +68,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
 //        是否渲染web
         startIsOpenTxt = getIntent().getIntExtra("startIsOpenTxt",0);
         startContent = getIntent().getStringExtra("startContent");
-
+        theme = getIntent().getStringExtra("theme");
 
 
         Log.d(TAG, "initUI: " +startType);
@@ -124,7 +124,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
 
         imageView.setVisibility(View.GONE);
         playerView.setVisibility(View.VISIBLE);
-        player = new SimpleExoPlayer.Builder(HospitalStartVideoActivity.this).build();
+        player = new SimpleExoPlayer.Builder(StartVideoActivity.this).build();
 //                                绑定player
         playerView.setPlayer(player);
         // 隐藏控制面板
@@ -151,6 +151,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
     }
 
     private void closeThisActivity(){
+        checkTheme(StartVideoActivity.this,theme);
         finish();
     }
 
@@ -168,7 +169,7 @@ public class HospitalStartVideoActivity extends BaseActivity {
         }
 
         showNextBtn();
-        Glide.with(HospitalStartVideoActivity.this)
+        Glide.with(StartVideoActivity.this)
                 .load(url)
                 .error(R.drawable.app_bg)
                 .into(imageView);

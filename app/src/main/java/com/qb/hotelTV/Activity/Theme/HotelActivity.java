@@ -1,63 +1,33 @@
-package com.qb.hotelTV.Activity.Hotel;
-import static com.qb.hotelTV.Utils.LoadUtils.dismissProgressDialog;
-import static com.qb.hotelTV.Utils.LoadUtils.showProgressDialog;
+package com.qb.hotelTV.Activity.Theme;
 import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
-import androidx.annotation.NonNull;
+
 import androidx.databinding.DataBindingUtil;
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.qb.hotelTV.Activity.AppActivity;
-import com.qb.hotelTV.Activity.BaseActivity;
+
 import com.qb.hotelTV.Activity.HomeActivity;
-import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
-import com.qb.hotelTV.Adaptor.common.CommonAdapter;
-import com.qb.hotelTV.Const;
 import com.qb.hotelTV.Data.CommonData;
-import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
-import com.qb.hotelTV.Listener.FocusScaleListener;
-import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.Model.HotelListModel;
-import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
-import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Setting.ApplicationSetting;
-import com.qb.hotelTV.Setting.ProgressDialogSetting;
-import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
-import com.qb.hotelTV.huibuTv.MainActivity;
 import com.qb.hotelTV.module.InputMessageDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
-public class IndexActivity extends HomeActivity {
+public class HotelActivity extends HomeActivity {
     private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
-    private final String  TAG = IndexActivity.class.getSimpleName();
+    private final String  TAG = HotelActivity.class.getSimpleName();
 //    从SharedPreferences中获取的数据
     private String serverAddress,tenant,roomNumber;
     private SharedPreferencesUtils sharedPreferencesUtils;
@@ -77,7 +47,7 @@ public class IndexActivity extends HomeActivity {
 //        初始化
         layoutIndexBinding = DataBindingUtil.setContentView(this, R.layout.layout_index);
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
-        inputMessageDialog = new InputMessageDialog(IndexActivity.this);
+        inputMessageDialog = new InputMessageDialog(HotelActivity.this);
 //        获取数据
         String[] data = commonData.getData();
         serverAddress = data[0];
@@ -150,21 +120,21 @@ public class IndexActivity extends HomeActivity {
     private void getDataFromHttp(){
 
 //        //        获取配置信息
-        initStartVideoOrImg(IndexActivity.this,
+        initStartVideoOrImg(HotelActivity.this,
                 serverAddress,tenant,
                 layoutIndexBinding.indexLogo,
                 layoutIndexBinding.indexBackground,
                 layoutIndexBinding.indexTv
         );
         //      请求滚动栏公告
-        getAnnouncements(IndexActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
+        getAnnouncements(HotelActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
 //        获取界面列表
         new Thread(new Runnable() {
             @Override
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,4);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(IndexActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"",serverAddress,tenant);
+                    indexListOnclick(HotelActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"",serverAddress,tenant);
                 }
 //                获取房间信息
                 JSONObject roomData = BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant);
@@ -212,13 +182,13 @@ public class IndexActivity extends HomeActivity {
         Runnable startUpdateTvTextTask = new Runnable() {
             @Override
             public void run() {
-                getAnnouncements(IndexActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
+                getAnnouncements(HotelActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
                 boolean isLogin = CommonData.getInstance().getIsLogin();
                 Log.d(TAG, "run: " + isLogin);
                 if (!isLogin){
                     sharedPreferencesUtils.clearData();
                     showInputDialog(false);
-                    Toast.makeText(IndexActivity.this,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HotelActivity.this,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
                     indexListUnableOnclick(layoutIndexBinding.apkLayout,4);
 
                 }else {

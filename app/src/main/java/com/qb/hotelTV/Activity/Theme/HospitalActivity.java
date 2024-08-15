@@ -1,48 +1,28 @@
-package com.qb.hotelTV.Activity.Hospital;
+package com.qb.hotelTV.Activity.Theme;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.qb.hotelTV.Activity.AppActivity;
-import com.qb.hotelTV.Activity.BaseActivity;
+
 import com.qb.hotelTV.Activity.HomeActivity;
-import com.qb.hotelTV.Activity.Hotel.IndexActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
-import com.qb.hotelTV.Listener.WebSocketClient;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Service.WebSocketService;
 import com.qb.hotelTV.Setting.ApplicationSetting;
-import com.qb.hotelTV.Utils.PermissionUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutHospitalBinding;
-import com.qb.hotelTV.huibuTv.MainActivity;
 import com.qb.hotelTV.module.InputMessageDialog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class HospitalActivity extends HomeActivity {
     private  String TAG = "HospitalActivity";
@@ -74,6 +54,7 @@ public class HospitalActivity extends HomeActivity {
         serverAddress = data[0];
         tenant =data[1];
         roomNumber = data[2];
+//        启动WebSocket配置的service
         websocketService = new Intent(this, WebSocketService.class);
         startService(websocketService);
         initUI();
@@ -165,7 +146,7 @@ public class HospitalActivity extends HomeActivity {
         try{
             themeType = hotelMessageJson.getString("themeType");
             if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
-                Intent intent = new Intent(HospitalActivity.this, IndexActivity.class);
+                Intent intent = new Intent(HospitalActivity.this, HotelActivity.class);
                 startActivityForResult(intent,ApplicationSetting.CLOSE_CODE);
             }else {
                 //        获取配置信息

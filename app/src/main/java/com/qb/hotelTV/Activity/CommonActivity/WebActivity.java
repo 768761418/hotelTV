@@ -1,4 +1,4 @@
-package com.qb.hotelTV.Activity.Hospital;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HospitalWebActivity extends BaseActivity {
-    private final String TAG = "HospitalWebActivity";
+public class WebActivity extends BaseActivity {
+    private final String TAG = "WebActivity";
     private boolean GEO=false,WEATHER=false,HOTEL_MESSAGE=false,WEB= false;
     private String geo,weather,locationString;
     private LayoutHospitalWebBinding layoutHospitalWebBinding;
@@ -94,7 +94,7 @@ public class HospitalWebActivity extends BaseActivity {
 
                             // 设置背景
                             if (strHotelBg != null){
-                                Glide.with(HospitalWebActivity.this)
+                                Glide.with(WebActivity.this)
                                         .load(strHotelBg)
                                         .error(R.drawable.app_bg)
                                         .into(layoutHospitalWebBinding.hospitalBackground);
@@ -161,7 +161,7 @@ public class HospitalWebActivity extends BaseActivity {
             String logoUrl = hotelMessageJson.getString("iconUrl");;
             String bgUrl = hotelMessageJson.getString("homepageBackground");
 //                初始化背景和logo
-            initLogoAndBackGround(HospitalWebActivity.this,layoutHospitalWebBinding.hospitalTop.logo(),logoUrl,layoutHospitalWebBinding.hospitalBackground,bgUrl);
+            initLogoAndBackGround(WebActivity.this,layoutHospitalWebBinding.hospitalTop.logo(),logoUrl,layoutHospitalWebBinding.hospitalBackground,bgUrl);
         }
 
 

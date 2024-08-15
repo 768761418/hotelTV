@@ -45,6 +45,10 @@ public final class FfmpegLibrary {
         @Override
         protected void loadLibrary(String name) {
           System.loadLibrary(name);
+          // 打印库的系统映射名称
+          String libraryFileName = System.mapLibraryName("ffmpegJNI");
+          Log.d("LibraryLoader", "Library file name: " + libraryFileName);
+
         }
       };
 

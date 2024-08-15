@@ -1,34 +1,20 @@
 package com.qb.hotelTV.Adaptor;
 
-import static com.qb.hotelTV.Utils.LoadUtils.dismissProgressDialog;
-import static com.qb.hotelTV.Utils.LoadUtils.showProgressDialog;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-import com.maning.updatelibrary.InstallUtils;
-import com.qb.hotelTV.Activity.AppActivity;
-import com.qb.hotelTV.Const;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.Model.ApkModel;
 import com.qb.hotelTV.R;
-import com.qb.hotelTV.Setting.DownloadSetting;
-import com.qb.hotelTV.Setting.ProgressDialogSetting;
 import com.qb.hotelTV.Utils.DownLoadUtil;
 
 

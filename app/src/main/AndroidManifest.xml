@@ -57,7 +57,7 @@
 
         <service android:name=".Service.WebSocketService"/>
 
-        <activity android:name=".Activity.StartupActivity"
+        <activity android:name=".Activity.CommonActivity.StartupActivity"
             android:exported="true"
             android:attributionTags="启动页">
             <intent-filter>
@@ -68,21 +68,22 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Activity.Hotel.IndexActivity" android:exported="true" android:attributionTags="酒店初始页" />
-        <activity android:name=".Activity.SocketNoticeActivity" android:exported="true" android:attributionTags="插播页"/>
-        <activity android:name=".Activity.Hospital.HospitalStartVideoActivity" android:exported="true" android:attributionTags="开始动画"/>
-        <activity android:name=".Activity.Hospital.HospitalActivity" android:exported="true"></activity>
-        <activity android:name=".Activity.Hospital.HospitalVideoActivity" android:exported="true"/>
 
-        <activity android:name=".Activity.Hospital.HospitalWebActivity" android:exported="true"/>
-        <activity android:name=".Activity.Hospital.HospitalListActivity" android:exported="true"/>
+        <activity android:name=".Activity.CommonActivity.SocketNoticeActivity" android:exported="true" android:attributionTags="插播页"/>
+        <activity android:name=".Activity.CommonActivity.StartVideoActivity" android:exported="true" android:attributionTags="开始动画"/>
+        <activity android:name=".Activity.Theme.HotelActivity" android:exported="true" android:attributionTags="酒店1" />
+        <activity android:name=".Activity.Theme.HospitalActivity" android:exported="true" android:attributionTags="医院1"/>
+        <activity android:name=".Activity.CommonActivity.AppActivity" android:exported="true" android:attributionTags="apk列表"/>
+
+        <activity android:name=".Activity.CommonActivity.VideoActivity" android:exported="true"/>
+        <activity android:name=".Activity.CommonActivity.WebActivity" android:exported="true"/>
+        <activity android:name=".Activity.CommonActivity.ListActivity" android:exported="true"/>
 
 
-        <activity android:name=".huibuTv.MainActivity"
-            android:exported="false"/>
-        <activity android:name=".Activity.AppActivity" android:exported="true"/>
-        <activity android:name=".Activity.Hotel.HotelActivity" android:exported="true"/>
-        <activity android:name=".Activity.Hotel.VideoActivity" android:exported="true"/>
+        <activity android:name=".huibuTv.MainActivity" android:exported="false" android:attributionTags="直播"/>
+
+
+
         <receiver
             android:name=".receiver.TvBootReceiver"
             android:enabled="true"

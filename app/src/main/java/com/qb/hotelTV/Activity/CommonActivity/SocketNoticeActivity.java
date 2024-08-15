@@ -1,12 +1,10 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 
-import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -22,10 +20,10 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.rtsp.RtspMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.qb.hotelTV.Activity.Hospital.HospitalStartVideoActivity;
+import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.R;
 
-public class SocketNoticeActivity extends BaseActivity{
+public class SocketNoticeActivity extends BaseActivity {
 
     private ImageView imageView;
     private SimpleExoPlayer player ;

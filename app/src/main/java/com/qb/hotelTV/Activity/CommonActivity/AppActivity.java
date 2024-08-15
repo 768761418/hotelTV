@@ -1,15 +1,13 @@
-package com.qb.hotelTV.Activity;
+package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 
-import com.bumptech.glide.Glide;
-import com.qb.hotelTV.Activity.Hospital.HospitalActivity;
+import com.qb.hotelTV.Activity.BaseActivity;
 import com.qb.hotelTV.Adaptor.ApkAdaptor;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.ApkModel;
