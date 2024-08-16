@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
-public class HospitalActivity extends HomeActivity {
+public class HospitalActivity extends ThemeActivity {
     private  String TAG = "HospitalActivity";
     LayoutHospitalBinding layoutHospitalBinding;
     private Handler handler = new Handler();

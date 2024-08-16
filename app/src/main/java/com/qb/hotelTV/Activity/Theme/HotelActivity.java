@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class HotelActivity extends HomeActivity {
+public class HotelActivity extends ThemeActivity {
     private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
     private final String  TAG = HotelActivity.class.getSimpleName();

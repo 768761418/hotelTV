@@ -292,6 +292,14 @@ public class HomeActivity extends BaseActivity {
                                     }
                                 });
                                 break;
+                            case 3:
+                                item.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        // TODO 视频列表
+                                    }
+                                });
+                                break;
                             case 4:
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override

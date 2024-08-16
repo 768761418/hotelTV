@@ -39,12 +39,14 @@ public class BaseActivity extends Activity {
     private boolean isGetToken = true;
 
 
+//    避免Autosize设置的尺寸失效
     @Override
     public Resources getResources() {
         AutoSizeCompat.autoConvertDensityOfGlobal((super.getResources()));
         return super.getResources();
     }
 
+//    为所有的添加日志
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
