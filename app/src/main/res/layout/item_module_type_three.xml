@@ -8,7 +8,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp"
         android:gravity="center"
         tools:ignore="MissingConstraints">
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,9 +16,8 @@
             android:background="@drawable/item_three_bg">
             <ImageView
                 android:id="@+id/item_img"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -30,8 +28,12 @@
             android:id="@+id/item_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:layout_marginTop="5dp"
+            android:textSize="14sp"
+            android:text="---"
+            android:alpha="1"
+            android:fontFamily="Source Han Sans CN"
+            android:textColor="#ffFFFFFF"
+            android:layout_marginTop="12dp"
             tools:ignore="MissingConstraints" />
     </LinearLayout>
 

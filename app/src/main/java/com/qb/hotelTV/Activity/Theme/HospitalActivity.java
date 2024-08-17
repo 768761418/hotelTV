@@ -34,14 +34,10 @@ public class HospitalActivity extends ThemeActivity {
     private SharedPreferencesUtils sharedPreferencesUtils;
 //    输入配置的dialog
     private InputMessageDialog inputMessageDialog;
-    private Intent websocketService;
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(websocketService);
-    }
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +53,7 @@ public class HospitalActivity extends ThemeActivity {
 //        启动WebSocket配置的service
         websocketService = new Intent(this, WebSocketService.class);
         startService(websocketService);
+
         initUI();
 //        显示房间号
         layoutHospitalBinding.hospitalTop.setRoomNumber(roomNumber);
@@ -66,7 +63,6 @@ public class HospitalActivity extends ThemeActivity {
 
 
     private void initUI(){
-        layoutHospitalBinding.inputRoomNumber.setText(roomNumber);
 //      获取天气和地址
         getGeoAndWeather(null,layoutHospitalBinding.hospitalTop.weather());
 
@@ -99,8 +95,12 @@ public class HospitalActivity extends ThemeActivity {
 
     //    从接口获取数据
     private void getDataFromHttp()  {
-//        登录获取token
-        checkTheme();
+
+        initStartVideoOrImg(HospitalActivity.this,
+                serverAddress,tenant,
+                layoutHospitalBinding.hospitalTop.logo(),
+                layoutHospitalBinding.hospitalBackground,
+                layoutHospitalBinding.hospitalTv);
 
 //      请求滚动栏公告
         getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
@@ -110,7 +110,7 @@ public class HospitalActivity extends ThemeActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,ApplicationSetting.THEME_HOSPITAL_ONE,serverAddress,tenant);
+                    indexListOnclick(HospitalActivity.this,layoutHospitalBinding.hospitalMainBottomLayout,hotelListModels,true,serverAddress,tenant,7);
                 }
             }
         }).start();
@@ -140,30 +140,6 @@ public class HospitalActivity extends ThemeActivity {
         handler.post(startUpdateTvTextTask);
     }
 
-    private void checkTheme(){
-        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-        String themeType;
-        try{
-            themeType = hotelMessageJson.getString("themeType");
-            if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
-                Intent intent = new Intent(HospitalActivity.this, HotelActivity.class);
-                startActivityForResult(intent,ApplicationSetting.CLOSE_CODE);
-            }else {
-                //        获取配置信息
-                initStartVideoOrImg(HospitalActivity.this,
-                        serverAddress,tenant,
-                        layoutHospitalBinding.hospitalTop.logo(),
-                        layoutHospitalBinding.hospitalBackground,
-                        layoutHospitalBinding.hospitalTv
-                );
-            }
-        }catch (JSONException e){
-            Log.e(TAG, "checkTheme: ", e);
-        }catch (NullPointerException e){
-            Log.e(TAG, "checkTheme: ", e);
-        }
-
-    }
 
     private void showInputDialog(boolean isFirst){
         if (!isFirst){
@@ -186,12 +162,5 @@ public class HospitalActivity extends ThemeActivity {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        如果使用其他主体则在其他主体返回的时候关闭这个界面
-        if (requestCode == ApplicationSetting.CLOSE_CODE ){
-            finish();
-        }
-    }
+
 }

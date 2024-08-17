@@ -14,11 +14,11 @@ import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 
 import java.util.ArrayList;
 
-class FfmpegRenderersFactory extends DefaultRenderersFactory {
+public class FfmpegRenderersFactory extends DefaultRenderersFactory {
 
     public FfmpegRenderersFactory(Context context) {
         super(context);
-        setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER);
+        setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON);
         Log.d("FfmpegAudioRenderer", "Custom FfmpegAudioRenderer is being used");
     }
 

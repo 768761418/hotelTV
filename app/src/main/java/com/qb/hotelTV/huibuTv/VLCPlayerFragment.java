@@ -171,7 +171,7 @@ public class VLCPlayerFragment extends androidx.fragment.app.Fragment implements
     public void onPause() {
         super.onPause();
         if (mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
+            mMediaPlayer.stop();
         }
     }
 

@@ -188,12 +188,12 @@ public class HomeActivity extends BaseActivity {
         intent.putExtra("id",id);
     }
     //    界面点击模块事件
-    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels, String theme,String serverAddress,String tenant){
+    public  <T extends ViewGroup> void indexListOnclick(Context context, T layout, ArrayList<HotelListModel> hotelListModels, boolean needBg,String serverAddress,String tenant,int max){
         try {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    for (int i = 0; i < hotelListModels.size(); i++) {
+                    for (int i = 0; i < Math.min(hotelListModels.size(), max); i++) {
                         Log.d(TAG, i + "onApkResponse: " + hotelListModels.get(i).getName());
                         Log.d(TAG, i +"onApkResponse: " + hotelListModels.get(i).getBackgroundUrl());
                         Log.d(TAG, i +"onApkResponse: " + hotelListModels.get(i).getPicUrl());
@@ -203,6 +203,7 @@ public class HomeActivity extends BaseActivity {
 
                         //获取到每一个item的layout替换掉图片和文字和跳转地址
                         LinearLayout item = (LinearLayout)  layout.getChildAt(i);
+                        item.setVisibility(View.VISIBLE);
 
                         ImageView img  = item.findViewById(R.id.item_img);
 
@@ -215,7 +216,7 @@ public class HomeActivity extends BaseActivity {
                         item.setTouchscreenBlocksFocus(true);
                         item.setFocusable(true);
 
-                        if (theme.equals(ApplicationSetting.THEME_HOSPITAL_ONE)){
+                        if (needBg){
                             SimpleTarget<Drawable> simpleTarget = new SimpleTarget<Drawable>() {
                                 @Override
                                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {

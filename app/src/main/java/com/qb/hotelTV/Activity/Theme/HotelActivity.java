@@ -3,6 +3,7 @@ import static com.qb.hotelTV.Utils.TimeUtil.getCurrentDateTime;
 
 import androidx.databinding.DataBindingUtil;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +14,7 @@ import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Service.WebSocketService;
 import com.qb.hotelTV.Setting.ApplicationSetting;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutIndexBinding;
@@ -25,21 +27,10 @@ import java.util.ArrayList;
 
 
 public class HotelActivity extends ThemeActivity {
-    private Handler handler = new Handler();
     LayoutIndexBinding layoutIndexBinding;
     private final String  TAG = HotelActivity.class.getSimpleName();
-//    从SharedPreferences中获取的数据
-    private String serverAddress,tenant,roomNumber;
-    private SharedPreferencesUtils sharedPreferencesUtils;
-    //    输入配置的dialog
-    private InputMessageDialog inputMessageDialog;
-    private String token;
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        setResult(ApplicationSetting.CLOSE_CODE);
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +44,10 @@ public class HotelActivity extends ThemeActivity {
         serverAddress = data[0];
         tenant =data[1];
         roomNumber = data[2];
+        //        启动WebSocket配置的service
+        websocketService = new Intent(this, WebSocketService.class);
+        startService(websocketService);
+
         initUI();
         Log.d(TAG, "onCreate: " + serverAddress);
         Log.d(TAG, "onCreate: " + tenant);
@@ -62,7 +57,7 @@ public class HotelActivity extends ThemeActivity {
     }
     private void initUI(){
 //        获取时间
-        startUpdateTask();
+        startUpdateTask(layoutIndexBinding.indexDate, layoutIndexBinding.indexTime);
 //        获取地址和天气
         getGeoAndWeather(layoutIndexBinding.indexGeo,layoutIndexBinding.indexWeather);
         try {
@@ -75,29 +70,6 @@ public class HotelActivity extends ThemeActivity {
     }
 
 
-    // 创建一个新的 Runnable 对象，用于更新日期和时间
-    private void startUpdateTask() {
-        Runnable updateTask = new Runnable() {
-            @Override
-            public void run() {
-                // 获取当前日期和时间
-                String currentDateTimeString = getCurrentDateTime();
-                // 分割日期和时间
-                String[] parts = currentDateTimeString.split(" ");
-                String datePart = parts[0];
-                String timePart = parts[1];
-                // 更新 TextView 的文本内容为当前日期和时间的各部分
-                layoutIndexBinding.indexDate.setText(datePart);
-                layoutIndexBinding.indexTime.setText(timePart);
-
-                // 间隔一段时间后再次执行任务（这里设置为每秒更新一次）
-                handler.postDelayed(this, 1000);
-            }
-        };
-
-        // 执行第一次任务
-        handler.post(updateTask);
-    }
 
 
 
@@ -121,11 +93,13 @@ public class HotelActivity extends ThemeActivity {
 
 //        //        获取配置信息
         initStartVideoOrImg(HotelActivity.this,
-                serverAddress,tenant,
+                serverAddress,
+                tenant,
                 layoutIndexBinding.indexLogo,
                 layoutIndexBinding.indexBackground,
                 layoutIndexBinding.indexTv
         );
+
         //      请求滚动栏公告
         getAnnouncements(HotelActivity.this,serverAddress, tenant,layoutIndexBinding.indexTvText);
 //        获取界面列表
@@ -134,7 +108,7 @@ public class HotelActivity extends ThemeActivity {
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,4);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HotelActivity.this,layoutIndexBinding.apkLayout,hotelListModels,"",serverAddress,tenant);
+                    indexListOnclick(HotelActivity.this,layoutIndexBinding.apkLayout,hotelListModels,false,serverAddress,tenant,4);
                 }
 //                获取房间信息
                 JSONObject roomData = BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant);

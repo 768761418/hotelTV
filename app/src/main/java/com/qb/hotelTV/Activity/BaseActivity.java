@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Activity.Theme.HospitalActivity;
 import com.qb.hotelTV.Activity.Theme.HotelActivity;
+import com.qb.hotelTV.Activity.Theme.HotelTwoActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
@@ -203,7 +204,7 @@ public class BaseActivity extends Activity {
         }
 //           酒店2
         else if (themeType.equals(ApplicationSetting.THEME_HOTEL_TWO)){
-            Intent intent = new Intent(context, HotelActivity.class);
+            Intent intent = new Intent(context, HotelTwoActivity.class);
             startActivity(intent);
         }
 //           医院1

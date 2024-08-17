@@ -15,6 +15,10 @@ android {
         versionCode = 3
         versionName = "1.3.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            // 限制APK中包含的ABI
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
     }
 
     android.applicationVariants.all {
@@ -83,7 +87,7 @@ dependencies {
 
     implementation ("org.checkerframework:checker-qual:3.20.0")
     //noinspection GradleDependency
-//    implementation ("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.17.1+1")
+//    implementation ("org.jellyfin.exoplayer:exoplayer-ffmpeg-extension:2.18.0+1")
 
 //    implementation ("com.google.android.exoplayer:extension-rtsp:2.17.1")
     implementation ("androidx.appcompat:appcompat:1.3.0")

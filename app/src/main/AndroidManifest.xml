@@ -72,6 +72,7 @@
         <activity android:name=".Activity.CommonActivity.SocketNoticeActivity" android:exported="true" android:attributionTags="插播页"/>
         <activity android:name=".Activity.CommonActivity.StartVideoActivity" android:exported="true" android:attributionTags="开始动画"/>
         <activity android:name=".Activity.Theme.HotelActivity" android:exported="true" android:attributionTags="酒店1" />
+        <activity android:name=".Activity.Theme.HotelTwoActivity" android:exported="true" android:attributionTags="酒店2" />
         <activity android:name=".Activity.Theme.HospitalActivity" android:exported="true" android:attributionTags="医院1"/>
         <activity android:name=".Activity.CommonActivity.AppActivity" android:exported="true" android:attributionTags="apk列表"/>
 

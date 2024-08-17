@@ -125,12 +125,14 @@ public final class FfmpegLibrary {
    */
   @Nullable
   /* package */ static String getCodecName(String mimeType) {
+    android.util.Log.d(TAG, "getCodecName: " + mimeType);
     switch (mimeType) {
       case MimeTypes.AUDIO_AAC:
         return "aac";
       case MimeTypes.AUDIO_MPEG:
       case MimeTypes.AUDIO_MPEG_L1:
       case MimeTypes.AUDIO_MPEG_L2:
+      case "audio/mpeg-L1/2":
         return "mp3";
       case MimeTypes.AUDIO_AC3:
         return "ac3";
