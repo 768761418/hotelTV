@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.qb.hotelTV.R;
 
@@ -34,6 +35,7 @@ public class MainActivity extends FragmentActivity {
     private Handler mHandler01 = new Handler();
     private Handler mHandler02 = new Handler();
     PageAndListRowFragment pageAndListRowFragment;
+    private TextView channel;
 
 
     // 声明一个成员变量，用于保存用户输入的数字
@@ -57,7 +59,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        channel = findViewById(R.id.channel);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
@@ -200,6 +202,8 @@ public class MainActivity extends FragmentActivity {
                             keyCode - KeyEvent.KEYCODE_0 : keyCode - KeyEvent.KEYCODE_NUMPAD_0;
                     // 根据需求，处理用户输入的 "001" 或 "012" 类似的情况
                     inputBuffer.append(number);
+                    channel.setVisibility(View.VISIBLE);
+                    channel.setText(inputBuffer.toString());
                     // 如果输入已经达到3个数字，立即处理
                     if (inputBuffer.length() == 3) {
                         processInputBuffer();
@@ -251,6 +255,7 @@ public class MainActivity extends FragmentActivity {
         pageAndListRowFragment.numberChangeChannel(channelNumber);
         // 清空缓冲区
         inputBuffer.setLength(0);
+        channel.setVisibility(View.GONE);
     }
 
 }

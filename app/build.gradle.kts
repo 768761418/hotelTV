@@ -104,17 +104,15 @@ dependencies {
     implementation ("androidx.multidex:multidex:2.0.1")
 
 
-    implementation ("org.greenrobot:eventbus:3.2.0")
+//    implementation ("org.videolan.android:libvlc-all:3.1.12")
 
-    implementation ("org.videolan.android:libvlc-all:3.1.12")
+    implementation ("xyz.doikki.android.dkplayer:dkplayer-java:3.3.7")
+//    # 可选，使用exoplayer进行解码
+    implementation ("xyz.doikki.android.dkplayer:player-exo:3.3.7")
 
+    implementation ("xyz.doikki.android.dkplayer:dkplayer-ui:3.3.7")
+//    # 可选，使用ijkplayer进行解码
+    implementation ("xyz.doikki.android.dkplayer:player-ijk:3.3.7")
 
-//    引入ijkplayer
-    implementation ("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
-    implementation ("tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8")
-    implementation ("tv.danmaku.ijk.media:ijkplayer-arm64:0.8.8")
-    implementation ("tv.danmaku.ijk.media:ijkplayer-x86:0.8.8")
-    implementation ("tv.danmaku.ijk.media:ijkplayer-x86_64:0.8.8")
-//    implementation ("tv.danmaku.ijk.media:ijkplayer-media-ffmpeg:0.8.8")
-
+    implementation ("com.github.mafanwei:libvlc:0.0.5")
 }

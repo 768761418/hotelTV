@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
+import com.qb.hotelTV.Listener.HotelTwoFocusScaleListener;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Service.WebSocketService;
@@ -28,6 +29,7 @@ public class HotelTwoActivity extends ThemeActivity{
     private LayoutHotelTwoBinding layoutHotelTwoBinding;
     private String TAG = "HotelTwoActivity";
 
+    private HotelTwoFocusScaleListener hotelTwoFocusScaleListener;
 
 
 
@@ -41,6 +43,7 @@ public class HotelTwoActivity extends ThemeActivity{
         layoutHotelTwoBinding = DataBindingUtil.setContentView(HotelTwoActivity.this, R.layout.layout_hotel_two);
         sharedPreferencesUtils = SharedPreferencesUtils.getInstance(this);
         inputMessageDialog = new InputMessageDialog(HotelTwoActivity.this);
+        hotelTwoFocusScaleListener = new HotelTwoFocusScaleListener(this);
 //        获取数据
         String[] data = commonData.getData();
         serverAddress = data[0];
@@ -53,6 +56,7 @@ public class HotelTwoActivity extends ThemeActivity{
         Log.d(TAG, "onCreate: " + tenant);
         Log.d(TAG, "onCreate: " + roomNumber);
         initUI();
+        focusChange();
     }
 
 
@@ -66,8 +70,19 @@ public class HotelTwoActivity extends ThemeActivity{
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
         }
+
         //        启动定时更新公告任务
         startUpdateTvTextTask();
+    }
+
+    private void focusChange(){
+        layoutHotelTwoBinding.item1.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item2.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item3.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item4.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item5.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item6.setOnFocusChangeListener(hotelTwoFocusScaleListener);
+        layoutHotelTwoBinding.item6.requestFocus();
     }
 
     private void getDataFromHttp(){

@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main_browse_fragment">
-</FrameLayout>
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_browse_fragment">
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/channel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="60sp"
+        android:textColor="@color/white"
+        android:text="----"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="50dp"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:fontFamily="Source Han Sans CN"
+        android:layout_marginTop="60dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

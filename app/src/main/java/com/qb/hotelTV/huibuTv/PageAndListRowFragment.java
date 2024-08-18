@@ -46,24 +46,35 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     private static VLCPlayerFragment vlcPlayerFragment;
 
     static Context mContext;
+    private ArrayList<VideoModel> channelsList;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        加载header的函数
         setupUi();
+//        加载header数据的函数
         loadData();
+
         mBackgroundManager = BackgroundManager.getInstance(getActivity());
         mBackgroundManager.attach(getActivity().getWindow());
+
+
         getMainFragmentRegistry().registerFragment(PageRow.class,
                 new PageRowFragmentFactory(mBackgroundManager));
+
         mContext = getContext();
 //        getView().requestFocus();
 //        getView().setOnFocusChangeListener(focusScaleListener);
     }
 
     private void setupUi() {
+//        启用header
         setHeadersState(HEADERS_ENABLED);
+//        设置动画效果
         setHeadersTransitionOnBackEnabled(true);
+//        设置header背景
         setBrandColor(getResources().getColor(R.color.fastlane_background));
+//        入口过渡动画
         prepareEntranceTransition();
     }
 
@@ -74,7 +85,9 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+//                创建header列表数据
                 createRows();
+//                过度动画
                 startEntranceTransition();
             }
         }, 2000);
@@ -84,59 +97,16 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
 
     private void createRows() {
-//        获取本机mac地址
-//        String mac = GetMAC.getDeviceMacAddress();
-//      向服务器验证mac地址
-//        String status= GetMAC.checkMacAddress(mac);
-        String status = "2";
-//        结果0：不存在，1：存在但过期，2：可用
-        switch (status){
-            case "2":
-//                if(AutoUpdate.checkUpdate()){
-//                    AutoUpdate.showUpdateDialog(getActivity());
-//                }
-                boolean addThing = true;
-                Log.d(TAG, "createRows: " +addThing);
-                if(addThing){
-//                    ArrayList<Channel> channelsList = MyApplication.getChannelsList();
-                    Context context = getContext();
-                    ArrayList<VideoModel> channelsList = MyApplication.getVideoList(context);
-                    for (int i = 0; i < channelsList.size(); i++) {
+        Context context = getContext();
+//        网络请求获的数据
+        channelsList = MyApplication.getVideoList(context);
+        for (int i = 0; i < channelsList.size(); i++) {
 //                        Channel channel = channelsList.get(i);
-//                        获取数据
-                        VideoModel channel = channelsList.get(i);
-                        mRowsAdapter.add(new PageRow(new HeaderItem(i, (i+1)+" "+channel.getStreamName())));
-                    }
-//                    授权
-                    authorized = true;
-                }
-                else {
-                    String message3="获取频道列表失败，请检查网络连接";
-                    AlertDialog dialog3 = new AlertDialog.Builder(getActivity(), com.google.android.material.R.style.Theme_AppCompat_DayNight_Dialog_Alert)
-                            .setIcon(R.mipmap.ic_launcher)//设置标题的图片
-                            .setTitle(getString(R.string.app_name))//设置对话框的标题
-                            .setMessage(message3)//设置对话框的内容
-                            //设置对话框的按钮
-                            .setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    getActivity().finish();
-                                }
-                            })
-                            .setPositiveButton("重试", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-//                                重试加载
-                                    dialog.dismiss();
-                                    createRows();
-                                }
-                            }).create();
-                    dialog3.show();
-                }
-
-                break;
-
+            VideoModel channel = channelsList.get(i);
+            mRowsAdapter.add(new PageRow(new HeaderItem(i, (i+1)+" "+channel.getStreamName())));
         }
+//                    授权
+        authorized = true;
     }
 
 
@@ -155,20 +125,20 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
             mBackgroundManager.setDrawable(null);
             if (row.getHeaderItem().getId() < MyApplication.getVideoList(mContext).size()) {
 //                根据ID获取对象
-//                Channel channel = MyApplication.getChannelsList().get((int) row.getHeaderItem().getId());
                 VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
 //                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                if (vlcPlayerFragment == null || !vlcPlayerFragment.isAdded()) {
-                    vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                } else {
-                    vlcPlayerFragment.playVideo(channel.getStreamUrl(),(int) row.getHeaderItem().getId());
-                }
-
+//                if (vlcPlayerFragment == null || !vlcPlayerFragment.isAdded()) {
+//                    vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+//                } else {
+//                    vlcPlayerFragment.playVideo(channel.getStreamUrl(),(int) row.getHeaderItem().getId());
+//                }
+                Log.d(TAG, "直播路径: " + channel.getStreamUrl());
+                VideoPlayerFragment videoPlayerFragment = VideoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                TagPlayerFragment tagPlayerFragment = TagPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
 //                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                return vlcPlayerFragment;
-//                return new GridFragment();
+                return videoPlayerFragment;
             }
             throw new IllegalArgumentException(String.format("Invalid row %s", rowObj));
         }
@@ -195,18 +165,12 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         getView().requestFocus();
     }
 
+//    输入数字跳转到对应的台
     public void numberChangeChannel(int number){
         if (getAdapter().size() != 0 && getAdapter().size() >= number){
             setSelectedPosition(number-1);
-        }else {
-
         }
         getView().requestFocus();
-    }
-
-    public void showTvEdit(){
-        VLCPlayerFragment vlcPlayerFragment = (VLCPlayerFragment) getParentFragmentManager().findFragmentById(R.id.main_browse_fragment);
-        vlcPlayerFragment.showEdit(true,"000");
     }
 
 }
