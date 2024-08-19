@@ -27,11 +27,11 @@ public class PlayerUtils {
         return player;
     }
 
-    public static void startPlayer(Context context,VideoView videoView,String url){
+    public static void startPlayer(Context context,VideoView videoView,String url,boolean isLive){
         videoView.setPlayerFactory(ExoMediaPlayerFactory.create());
         videoView.setUrl(url); //设置视频地址
         StandardVideoController controller = new StandardVideoController(context);
-        controller.addDefaultControlComponent("标题", false);
+        controller.addDefaultControlComponent("标题", isLive);
         videoView.setVideoController(controller); //设置控制器
         videoView.start(); //开始播放，不调用则不自动播放
     }

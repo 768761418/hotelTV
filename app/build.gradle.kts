@@ -114,5 +114,12 @@ dependencies {
 //    # 可选，使用ijkplayer进行解码
     implementation ("xyz.doikki.android.dkplayer:player-ijk:3.3.7")
 
+
+
+//    # 必选，可兼容市面上绝大部分设备
+    implementation ("com.github.dueeeke.dkplayer:dkplayer-java:2.5.3")
+    implementation ("com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.3")
+//    # 可选，里面包含StandardVideoController的实现
+    implementation ("com.github.dueeeke.dkplayer:dkplayer-ui:2.5.3")
     implementation ("com.github.mafanwei:libvlc:0.0.5")
 }
