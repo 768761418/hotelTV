@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Activity.HomeActivity;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Utils.NetworkUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutStartupBinding;
 import com.qb.hotelTV.module.InputMessageDialog;
@@ -38,6 +39,14 @@ public class StartupActivity extends HomeActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            // 网络良好，可以继续加载数据或执行网络操作
+            Toast.makeText(this, "网络连接正常", Toast.LENGTH_SHORT).show();
+        } else {
+            // 网络不良好，提示用户检查网络
+            Toast.makeText(this, "网络不可用，请检查网络设置", Toast.LENGTH_SHORT).show();
+        }
+
         initUI();
     }
 

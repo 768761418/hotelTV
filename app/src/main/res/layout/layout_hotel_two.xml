@@ -220,7 +220,7 @@
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/apk_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -228,6 +228,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            android:gravity="center"
             android:layout_marginBottom="13dp">
 
 
@@ -236,12 +237,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                app:layout_constraintLeft_toRightOf="@id/item_3"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="43dp"
-                android:nextFocusLeft="@id/item_3"
+                android:nextFocusLeft="@id/item_6"
                 android:nextFocusRight="@id/item_2"
-                android:visibility="invisible">
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
@@ -249,12 +247,10 @@
                 android:id="@+id/item_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintRight_toLeftOf="@id/item_4"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginRight="43dp"
+                android:layout_marginLeft="43dp"
                 android:nextFocusLeft="@id/item_1"
-                android:nextFocusRight="@id/item_4"
-                android:visibility="invisible">
+                android:nextFocusRight="@id/item_3"
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
@@ -263,12 +259,10 @@
                 android:id="@+id/item_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toRightOf="@id/item_5"
-                app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginLeft="43dp"
-                android:nextFocusLeft="@id/item_5"
-                android:nextFocusRight="@id/item_1"
-                android:visibility="invisible">
+                android:nextFocusLeft="@id/item_2"
+                android:nextFocusRight="@id/item_4"
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
@@ -276,12 +270,10 @@
                 android:id="@+id/item_4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintRight_toLeftOf="@id/item_6"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginRight="43dp"
-                android:nextFocusLeft="@id/item_2"
-                android:nextFocusRight="@id/item_6"
-                android:visibility="invisible">
+                android:layout_marginLeft="43dp"
+                android:nextFocusLeft="@id/item_3"
+                android:nextFocusRight="@id/item_5"
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
@@ -291,12 +283,10 @@
                 android:id="@+id/item_5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginLeft="80dp"
-                android:nextFocusLeft="@id/item_6"
-                android:nextFocusRight="@id/item_3"
-                android:visibility="invisible">
+                android:layout_marginLeft="43dp"
+                android:nextFocusLeft="@id/item_4"
+                android:nextFocusRight="@id/item_6"
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
@@ -304,16 +294,14 @@
                 android:id="@+id/item_6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginRight="80dp"
-                android:nextFocusLeft="@id/item_4"
-                android:nextFocusRight="@id/item_5"
-                android:visibility="invisible">
+                android:layout_marginLeft="43dp"
+                android:nextFocusLeft="@id/item_5"
+                android:nextFocusRight="@id/item_1"
+                android:visibility="gone">
                 <include layout="@layout/item_module_type_three"/>
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

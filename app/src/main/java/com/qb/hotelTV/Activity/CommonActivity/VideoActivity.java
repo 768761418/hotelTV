@@ -81,8 +81,6 @@ public class VideoActivity extends BaseActivity {
         }catch (Exception e){
             Log.e(TAG, "initUI: ", e);
         }
-
-
     }
 
 

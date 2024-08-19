@@ -103,7 +103,7 @@ public class HotelTwoActivity extends ThemeActivity{
             public void run() {
                 ArrayList<HotelListModel> hotelListModels = BackstageHttp.getInstance().getHotelList(serverAddress, tenant,6);
                 if (!hotelListModels.isEmpty()){
-                    indexListOnclick(HotelTwoActivity.this,layoutHotelTwoBinding.apkLayout,hotelListModels,false,serverAddress,tenant,4);
+                    indexListOnclick(HotelTwoActivity.this,layoutHotelTwoBinding.apkLayout,hotelListModels,false,serverAddress,tenant,6);
                 }
 //                获取房间信息
                 JSONObject roomData = BackstageHttp.getInstance().getRoomMessage(serverAddress, roomNumber, tenant);
