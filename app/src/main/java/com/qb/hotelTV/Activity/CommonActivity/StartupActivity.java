@@ -125,7 +125,6 @@ public class StartupActivity extends HomeActivity {
    private void checkConfig(){
        checkVersion();
        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-
        try{
            if (hotelMessageJson != null){
                JSONObject startData = hotelMessageJson.getJSONObject("startData");
@@ -154,9 +153,11 @@ public class StartupActivity extends HomeActivity {
                Toast.makeText(StartupActivity.this,hotelMessageJson.getString("msg"),Toast.LENGTH_SHORT).show();
            }
        }catch (JSONException e){
-           Log.e(TAG, "checkTheme: ", e);
+           showInputDialog(true);
+           Toast.makeText(StartupActivity.this,"请联系管理员检查后台配置",Toast.LENGTH_SHORT).show();
        }catch (NullPointerException e){
-           Log.e(TAG, "checkTheme: ", e);
+           showInputDialog(true);
+           Toast.makeText(StartupActivity.this,"请联系管理员检查后台配置",Toast.LENGTH_SHORT).show();
        }
 
    }
@@ -192,7 +193,7 @@ public class StartupActivity extends HomeActivity {
                            manager.download();
                        }
                    } catch (JSONException e) {
-                       throw new RuntimeException(e);
+
                    }
 
            }

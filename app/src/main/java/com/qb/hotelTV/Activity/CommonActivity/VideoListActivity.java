@@ -18,31 +18,31 @@ public class VideoListActivity extends BaseActivity {
     private LayoutCommonVideoListBinding layoutCommonVideoListBinding;
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        layoutCommonVideoListBinding.playerView.pause();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        layoutCommonVideoListBinding.playerView.resume();
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        layoutCommonVideoListBinding.playerView.release();
-//    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        layoutCommonVideoListBinding.playerView.pause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        layoutCommonVideoListBinding.playerView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        layoutCommonVideoListBinding.playerView.release();
+    }
 
 
-//    @Override
-//    public void onBackPressed() {
-//        if (!layoutCommonVideoListBinding.playerView.onBackPressed()) {
-//            super.onBackPressed();
-//        }
-//    }
+    @Override
+    public void onBackPressed() {
+        if (!layoutCommonVideoListBinding.playerView.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

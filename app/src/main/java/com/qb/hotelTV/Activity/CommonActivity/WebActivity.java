@@ -1,6 +1,7 @@
 package com.qb.hotelTV.Activity.CommonActivity;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -69,6 +70,10 @@ public class WebActivity extends BaseActivity {
                     setResult(RESULT_OK);
                 }
             });
+//        layoutHospitalWebBinding.hospitalWebContact.setBackgroundColor(0); // 背景透明
+        layoutHospitalWebBinding.hospitalWebContact.setBackgroundColor(0); // 背景透明
+        layoutHospitalWebBinding.hospitalWebContact.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // 软渲染确保透明效果
+        layoutHospitalWebBinding.hospitalWebContact.getBackground().setAlpha(0); // 设置填充透明度 范围：0-255
 
 
 //      获取天气和地址
@@ -81,81 +86,42 @@ public class WebActivity extends BaseActivity {
         }
 
 
-        Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                if (GEO&&WEATHER&&HOTEL_MESSAGE){
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.d(TAG, "run: xxxxxs" );
-                            if (strHotelLogo!= null){
-                                layoutHospitalWebBinding.hospitalTop.initOrUpdateTopBar(strHotelLogo,roomNumber,weather);
-                            }
-
-                            // 设置背景
-                            if (strHotelBg != null){
-                                Glide.with(WebActivity.this)
-                                        .load(strHotelBg)
-                                        .error(R.drawable.app_bg)
-                                        .into(layoutHospitalWebBinding.hospitalBackground);
-
-                            }
-                            layoutHospitalWebBinding.bottomBar.setTitle(title);
-                        }
-                    });
-
-
-                    timer.cancel();
-                }
-            }
-        };
-
-        timer.schedule(timerTask,0,1000);
+//        Timer timer = new Timer();
+//        TimerTask timerTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//                if (GEO&&WEATHER&&HOTEL_MESSAGE){
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Log.d(TAG, "run: xxxxxs" );
+//                            if (strHotelLogo!= null){
+//                                layoutHospitalWebBinding.hospitalTop.initOrUpdateTopBar(strHotelLogo,roomNumber,weather);
+//                            }
+//
+//                            // 设置背景
+//                            if (strHotelBg != null){
+//                                Glide.with(WebActivity.this)
+//                                        .load(strHotelBg)
+//                                        .error(R.drawable.app_bg)
+//                                        .into(layoutHospitalWebBinding.hospitalBackground);
+//
+//                            }
+//                            layoutHospitalWebBinding.bottomBar.setTitle(title);
+//                        }
+//                    });
+//
+//
+//                    timer.cancel();
+//                }
+//            }
+//        };
+//
+//        timer.schedule(timerTask,0,1000);
 
     }
 
 
-
-    //    获取坐标
-
-    //    请求天气和温度
-    private  void getGeoAndWeather(String locationString){
-//        请求地址
-        if (!GEO){
-            LocationHttp.getInstance().getGeo(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    geo = responseData;
-                    GEO = true;
-                }
-
-                @Override
-                public void onFailure(String failName) {
-                    geo = "";
-                    GEO = true;
-                }
-            });
-        }
-
-//        请求天气
-        if (!WEATHER){
-            LocationHttp.getInstance().getWeather(locationString, new LocationHttp.LocationHttpCallback() {
-                @Override
-                public void onResponse(String responseData) {
-                    weather = responseData;
-                    WEATHER = true;
-                }
-
-                @Override
-                public void onFailure(String failName) {
-                    weather = "";
-                    WEATHER = true;
-                }
-            });
-        }
-    }
 
     private void getData() throws JSONException {
         JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
@@ -165,8 +131,6 @@ public class WebActivity extends BaseActivity {
 //                初始化背景和logo
             initLogoAndBackGround(WebActivity.this,layoutHospitalWebBinding.hospitalTop.logo(),logoUrl,layoutHospitalWebBinding.hospitalBackground,bgUrl);
         }
-
-
         if (strHtml != null && !strHtml.equals("")){
 
             Log.d(TAG, "getData: " +strHtml);
@@ -203,8 +167,6 @@ public class WebActivity extends BaseActivity {
     }
 
     private void webViewAction(String html){
-        layoutHospitalWebBinding.hospitalWebContact.setBackgroundColor(0); // 背景透明
-        layoutHospitalWebBinding.hospitalWebContact.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // 软渲染确保透明效果
 
         layoutHospitalWebBinding.hospitalWebContact.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
         layoutHospitalWebBinding.hospitalWebContact.requestFocus();
@@ -221,12 +183,5 @@ public class WebActivity extends BaseActivity {
     }
 
 
-    private String getHtmlData(String bodyHTML) {
-        String head = "<head>" +
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"> " +
-                "<style>img{max-width: 100%; width:auto; height:auto!important;}</style>" +
-                "</head>";
-        return "<html>" + head + "<body>" + bodyHTML + "</body></html>";
-    }
 
 }

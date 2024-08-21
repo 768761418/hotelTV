@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -151,6 +152,8 @@ public class BaseActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "获取酒店配置: " +serverAddress);
+                Log.d(TAG, "获取酒店配置: " +tenant);
                 hotelMessage = BackstageHttp.getInstance().getHotelMessage(serverAddress, tenant);
                 latch.countDown();
             }
