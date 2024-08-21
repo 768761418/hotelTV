@@ -579,5 +579,14 @@ public class BackstageHttp {
         return result;
     }
 
+    //    检查版本
+    public Call getAppVersion(String serverAddress){
+        String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        Call call = client.newCall(request);
+        return call;
+    }
 
 }

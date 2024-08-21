@@ -6,13 +6,15 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.multidex.BuildConfig;
 
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Activity.HomeActivity;
+import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.R;
-import com.qb.hotelTV.Utils.NetworkUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.databinding.LayoutStartupBinding;
 import com.qb.hotelTV.module.InputMessageDialog;
@@ -20,6 +22,12 @@ import com.qb.hotelTV.module.InputMessageDialog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+import com.azhon.appupdate.manager.DownloadManager;
 
 /***
     开机启动页
@@ -39,14 +47,6 @@ public class StartupActivity extends HomeActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (NetworkUtils.isNetworkAvailable(this)) {
-            // 网络良好，可以继续加载数据或执行网络操作
-            Toast.makeText(this, "网络连接正常", Toast.LENGTH_SHORT).show();
-        } else {
-            // 网络不良好，提示用户检查网络
-            Toast.makeText(this, "网络不可用，请检查网络设置", Toast.LENGTH_SHORT).show();
-        }
-
         initUI();
     }
 
@@ -123,6 +123,7 @@ public class StartupActivity extends HomeActivity {
     2.如果不需要开机界面就判断需要打开哪个界面，然后把logo，视频,bg 传递过去
     **/
    private void checkConfig(){
+       checkVersion();
        JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
 
        try{
@@ -152,12 +153,6 @@ public class StartupActivity extends HomeActivity {
                showInputDialog(true);
                Toast.makeText(StartupActivity.this,hotelMessageJson.getString("msg"),Toast.LENGTH_SHORT).show();
            }
-
-
-
-
-
-
        }catch (JSONException e){
            Log.e(TAG, "checkTheme: ", e);
        }catch (NullPointerException e){
@@ -165,4 +160,46 @@ public class StartupActivity extends HomeActivity {
        }
 
    }
+
+   private void checkVersion(){
+       Call call = BackstageHttp.getInstance().getAppVersion(serverAddress);
+       call.enqueue(new Callback() {
+           @Override
+           public void onFailure(@NonNull Call call, @NonNull IOException e) {
+
+           }
+
+           @Override
+           public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+               if (response.isSuccessful()){
+                   String responseStr = response.body().string();
+                   try {
+                       JSONObject jsonObject = new JSONObject(responseStr);
+                       //如果version code大於當前版本號，且version_name不一樣的時候，啟動更新
+                       if(jsonObject.getInt("apk_code")>= BuildConfig.VERSION_CODE &&!jsonObject.getString("apk_name").equals(BuildConfig.VERSION_NAME)){
+                           //获取本地版本号
+                           DownloadManager manager = new DownloadManager.Builder(StartupActivity.this)
+                                   .apkUrl(""+jsonObject.getString("apk_url"))
+                                   .apkName("hyzj.apk")
+                                   .smallIcon(R.mipmap.ic_launcher)
+                                   //设置了此参数，那么内部会自动判断是否需要显示更新对话框，否则需要自己判断是否需要更新
+                                   .apkVersionCode(jsonObject.getInt("apk_code"))
+                                   //同时下面三个参数也必须要设置
+                                   .apkVersionName("v"+jsonObject.getString("apk_name"))
+                                   .apkDescription("更新描述信息")
+                                   //省略一些非必须参数...
+                                   .build();
+                           manager.download();
+                       }
+                   } catch (JSONException e) {
+                       throw new RuntimeException(e);
+                   }
+
+           }
+       }
+
+       });
+   }
+
+
 }

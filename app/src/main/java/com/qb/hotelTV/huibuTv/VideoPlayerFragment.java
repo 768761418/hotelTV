@@ -16,11 +16,9 @@ import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.PlayerUtils;
 
-import xyz.doikki.videocontroller.StandardVideoController;
-import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
-import xyz.doikki.videoplayer.player.AndroidMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.VideoView;
+
 
 public class VideoPlayerFragment extends androidx.fragment.app.Fragment implements BrowseSupportFragment.MainFragmentAdapterProvider{
     private String TAG = "VideoPlayerFragment";

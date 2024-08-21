@@ -27,7 +27,7 @@ import com.qb.hotelTV.Activity.CommonActivity.ListActivity;
 import com.qb.hotelTV.Activity.CommonActivity.VideoActivity;
 import com.qb.hotelTV.Activity.CommonActivity.WebActivity;
 import com.qb.hotelTV.Activity.HomeActivity;
-import com.qb.hotelTV.Data.CommonData;
+import com.qb.hotelTV.Data.ThemeType;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
@@ -128,7 +128,7 @@ public class ThemeActivity extends HomeActivity {
 
                         int finalI  = i;
                         switch (hotelListModels.get(i).getType()){
-                            case 10:
+                            case ThemeType.TV:
 //                              电视界面
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -138,7 +138,7 @@ public class ThemeActivity extends HomeActivity {
                                     }
                                 });
                                 break;
-                            case 9:
+                            case ThemeType.APP_LIST:
 //                              应用中心
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -149,7 +149,7 @@ public class ThemeActivity extends HomeActivity {
                                     }
                                 });
                                 break;
-                            case 0:
+                            case ThemeType.WEB:
 //                              WEB图文
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -163,7 +163,7 @@ public class ThemeActivity extends HomeActivity {
                                     }
                                 });
                                 break;
-                            case 1:
+                            case ThemeType.WEB_LIST:
                                 // 图文列表
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -172,12 +172,13 @@ public class ThemeActivity extends HomeActivity {
                                         String title = hotelListModels.get(finalI).getName();
                                         Long id = hotelListModels.get(finalI).getId();
                                         defaultPutIntent(intent,title,id);
+
                                         Log.d(TAG, "onClick: " + title);
                                         startActivity(intent);
                                     }
                                 });
                                 break;
-                            case 2:
+                            case ThemeType.VIDEO:
 //                              视频
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -190,7 +191,7 @@ public class ThemeActivity extends HomeActivity {
                                     }
                                 });
                                 break;
-                            case 3:
+                            case ThemeType.VIDEO_LIST:
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -198,7 +199,7 @@ public class ThemeActivity extends HomeActivity {
                                     }
                                 });
                                 break;
-                            case 4:
+                            case ThemeType.APP:
                                 item.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {

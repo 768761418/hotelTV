@@ -8,10 +8,14 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.qb.hotelTV.huibuTv.FfmpegRenderersFactory;
 
-
 import xyz.doikki.videocontroller.StandardVideoController;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
 import xyz.doikki.videoplayer.player.VideoView;
+
+
+//import xyz.doikki.videocontroller.StandardVideoController;
+//import xyz.doikki.videoplayer.exo.ExoMediaPlayerFactory;
+//import xyz.doikki.videoplayer.player.VideoView;
 
 public class PlayerUtils {
     public Player getStartPlayer(Context context, String url){
@@ -27,7 +31,7 @@ public class PlayerUtils {
         return player;
     }
 
-    public static void startPlayer(Context context,VideoView videoView,String url,boolean isLive){
+    public static void startPlayer(Context context, VideoView videoView, String url, boolean isLive){
         videoView.setPlayerFactory(ExoMediaPlayerFactory.create());
         videoView.setUrl(url); //设置视频地址
         StandardVideoController controller = new StandardVideoController(context);

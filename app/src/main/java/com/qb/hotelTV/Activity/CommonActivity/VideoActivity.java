@@ -20,10 +20,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class VideoActivity extends BaseActivity {
-    private boolean GEO=false,WEATHER=false,HOTEL_MESSAGE=false;
-    private String geo,weather,locationString;
     private String serverAddress,tenant,roomNumber,title;
-    private String strHotelLogo,strHotelBg, strHtml;
     private Long id;
     private LayoutHospitalVideoBinding layoutHospitalVideoBinding;
     private final String TAG = "VideoActivity";

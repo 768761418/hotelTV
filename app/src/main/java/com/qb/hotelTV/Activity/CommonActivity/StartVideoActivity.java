@@ -165,7 +165,7 @@ public class StartVideoActivity extends BaseActivity {
             webView.setVisibility(View.VISIBLE);
             webView.setBackgroundColor(0); // 背景透明
             webView.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // 软渲染确保透明效果
-            webView.loadData(startContent,"text/html","utf-8");
+            webView.loadDataWithBaseURL(null,startContent,"text/html","utf-8",null);
         }
 
         showNextBtn();

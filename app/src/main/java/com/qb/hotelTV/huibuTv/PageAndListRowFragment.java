@@ -135,10 +135,10 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 //                    vlcPlayerFragment.playVideo(channel.getStreamUrl(),(int) row.getHeaderItem().getId());
 //                }
                 Log.d(TAG, "直播路径: " + channel.getStreamUrl());
-//                VideoPlayerFragment videoPlayerFragment = VideoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                VideoIjkPlayerFragment videoIjkPlayerFragment = VideoIjkPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+                VideoPlayerFragment videoPlayerFragment = VideoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
+
 //                VLCPlayerFragment vlcPlayerFragment = VLCPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
-                return videoIjkPlayerFragment;
+                return videoPlayerFragment;
             }
             throw new IllegalArgumentException(String.format("Invalid row %s", rowObj));
         }

@@ -63,6 +63,7 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("com.squareup.retrofit2:retrofit:2.3.0")
+    implementation ("io.github.azhon:appupdate:4.3.2")
 //导入retrofit
     implementation ("com.google.code.gson:gson:2.6.2")
 //Gson 库
@@ -117,9 +118,9 @@ dependencies {
 
 
 //    # 必选，可兼容市面上绝大部分设备
-    implementation ("com.github.dueeeke.dkplayer:dkplayer-java:2.5.3")
-    implementation ("com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.3")
-//    # 可选，里面包含StandardVideoController的实现
-    implementation ("com.github.dueeeke.dkplayer:dkplayer-ui:2.5.3")
+//    implementation ("com.github.dueeeke.dkplayer:dkplayer-java:2.5.3")
+//    implementation ("com.github.dueeeke.dkplayer:dkplayer-armv7a:2.5.3")
+////    # 可选，里面包含StandardVideoController的实现
+//    implementation ("com.github.dueeeke.dkplayer:dkplayer-ui:2.5.3")
     implementation ("com.github.mafanwei:libvlc:0.0.5")
 }

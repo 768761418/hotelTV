@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
@@ -166,11 +168,9 @@ public class WebActivity extends BaseActivity {
 
 
         if (strHtml != null && !strHtml.equals("")){
-            layoutHospitalWebBinding.hospitalWebContact.loadData(strHtml,"text/html","utf-8");
-            layoutHospitalWebBinding.hospitalWebContact.requestFocus();
-            layoutHospitalWebBinding.hospitalWebContact.setNextFocusLeftId(layoutHospitalWebBinding.bottomBar.hospitalComebackId());
-            layoutHospitalWebBinding.hospitalWebContact.setNextFocusRightId(layoutHospitalWebBinding.bottomBar.hospitalIndexId());
-            layoutHospitalWebBinding.hospitalWebContact.setOnFocusChangeListener(focusScaleListener);
+
+            Log.d(TAG, "getData: " +strHtml);
+            webViewAction(strHtml);
         }else {
             BackstageHttp.getInstance().getCmsMessage(serverAddress, tenant, id, new BackstageHttp.CmsMessageCallBack() {
                 @Override
@@ -182,12 +182,8 @@ public class WebActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (strHtml != null && !strHtml.equals("")){
-//                            设置加载内容和焦点
-                                layoutHospitalWebBinding.hospitalWebContact.loadData(strHtml,"text/html","utf-8");
-                                layoutHospitalWebBinding.hospitalWebContact.requestFocus();
-                                layoutHospitalWebBinding.hospitalWebContact.setNextFocusLeftId(layoutHospitalWebBinding.bottomBar.hospitalComebackId());
-                                layoutHospitalWebBinding.hospitalWebContact.setNextFocusRightId(layoutHospitalWebBinding.bottomBar.hospitalIndexId());
-                                layoutHospitalWebBinding.hospitalWebContact.setOnFocusChangeListener(focusScaleListener);
+                                Log.d(TAG, "getData: " +strHtml);
+                                webViewAction(strHtml);
                             }else {
                                 layoutHospitalWebBinding.hospitalWebContact.setVisibility(View.GONE);
                             }
@@ -206,11 +202,31 @@ public class WebActivity extends BaseActivity {
 
     }
 
+    private void webViewAction(String html){
+        layoutHospitalWebBinding.hospitalWebContact.setBackgroundColor(0); // 背景透明
+        layoutHospitalWebBinding.hospitalWebContact.setLayerType(WebView.LAYER_TYPE_SOFTWARE, null); // 软渲染确保透明效果
+
+        layoutHospitalWebBinding.hospitalWebContact.loadDataWithBaseURL(null,html,"text/html","utf-8",null);
+        layoutHospitalWebBinding.hospitalWebContact.requestFocus();
+        layoutHospitalWebBinding.hospitalWebContact.setNextFocusLeftId(layoutHospitalWebBinding.bottomBar.hospitalComebackId());
+        layoutHospitalWebBinding.hospitalWebContact.setNextFocusRightId(layoutHospitalWebBinding.bottomBar.hospitalIndexId());
+        layoutHospitalWebBinding.hospitalWebContact.setOnFocusChangeListener(focusScaleListener);
+    }
+
     private void finishActivityFromChild(Activity activity) {
         if (activity == null || activity.isFinishing()) {
             return;
         }
         activity.finish();
+    }
+
+
+    private String getHtmlData(String bodyHTML) {
+        String head = "<head>" +
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=no\"> " +
+                "<style>img{max-width: 100%; width:auto; height:auto!important;}</style>" +
+                "</head>";
+        return "<html>" + head + "<body>" + bodyHTML + "</body></html>";
     }
 
 }

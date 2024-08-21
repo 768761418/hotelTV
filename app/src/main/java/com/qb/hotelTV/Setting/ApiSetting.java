@@ -42,4 +42,6 @@ public class ApiSetting {
 
 
     public static String URL_GET_CMS_MESSAGE = PREFIX + "/admin-api/cms/article/page";
+
+    public static String URL_GET_APP_VERSION = PREFIX + "";
 }
