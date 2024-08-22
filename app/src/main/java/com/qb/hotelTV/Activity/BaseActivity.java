@@ -223,4 +223,31 @@ public class BaseActivity extends Activity {
         return true;
     }
 
+    public boolean checkTheme(Context context,String themeType,int itemTV){
+        //           酒店1
+        if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
+            Intent intent = new Intent(context, HotelActivity.class);
+            intent.putExtra("itemTV",itemTV);
+            startActivity(intent);
+        }
+//           酒店2
+        else if (themeType.equals(ApplicationSetting.THEME_HOTEL_TWO)){
+            Intent intent = new Intent(context, HotelTwoActivity.class);
+            intent.putExtra("itemTV",itemTV);
+            startActivity(intent);
+        }
+//           医院1
+        else if (themeType.equals(ApplicationSetting.THEME_HOSPITAL_ONE)){
+            Intent intent = new Intent(context, HospitalActivity.class);
+            intent.putExtra("itemTV",itemTV);
+            startActivity(intent);
+        }
+        else {
+            Toast.makeText(context,"请联系管理员设置正确的主题",Toast.LENGTH_SHORT).show();
+//          获取配置信息
+            return  false;
+        }
+        return true;
+    }
+
 }

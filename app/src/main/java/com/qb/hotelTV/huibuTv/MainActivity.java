@@ -34,7 +34,7 @@ public class MainActivity extends FragmentActivity {
     private long intervalKeypadSaver = 1000;
     private Handler mHandler01 = new Handler();
     private Handler mHandler02 = new Handler();
-    PageAndListRowFragment pageAndListRowFragment;
+    private PageAndListRowFragment pageAndListRowFragment;
     private TextView channel;
 
 
@@ -60,21 +60,27 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         channel = findViewById(R.id.channel);
+        int itemTV = getIntent().getIntExtra("itemTV",-1);
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(), "PageAndListRowFragment")
+                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(itemTV), "PageAndListRowFragment")
                     .commitNow();
+            Log.d(TAG, "onCreate: PageAndListRowFragment");
         }
         /* 初始取得User可触碰屏幕的时间 */
         lastUpdateTime = new Date(System.currentTimeMillis());
         mHandler02.postDelayed(mTask02, intervalAuthorized);
         pageAndListRowFragment = (PageAndListRowFragment) getSupportFragmentManager().findFragmentByTag("PageAndListRowFragment");
+
+
+
+        Log.d(TAG, "itemTV: " + itemTV);
     }
     /**
      * 计时线程
      */
     private Runnable mTask01 = new Runnable() {
-
         @Override
         public void run() {
             Date timeNow = new Date(System.currentTimeMillis());

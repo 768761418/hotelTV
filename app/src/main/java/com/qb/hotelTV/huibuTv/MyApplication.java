@@ -66,7 +66,7 @@ public class MyApplication extends Application {
         String serverAddress = data[0];
         String tenant =data[1];
         String roomNumber = data[2];
-        Log.d(TAG, "initVideoList: " + serverAddress);
+        Log.d(TAG, "initVideoListServerAddress: " + serverAddress);
 
         if (!serverAddress.equals("")&&!tenant.equals("")){
             CountDownLatch latch = new CountDownLatch(1);
@@ -94,13 +94,12 @@ public class MyApplication extends Application {
 
 
     public static ArrayList<VideoModel> getVideoList(Context context) {
-//        while (!getModel){
-//            initVideoList(context);
-//        }
         Log.d(TAG, "getVideoList: 2222" + getModel);
         if (!getModel){
             initVideoList(context);
+            getModel = true;
         }
+        Log.d(TAG, "getVideoList: 2222 " + getModel);
         Log.d(TAG, "video: " +videoList.toString() );
         return videoList;
     }

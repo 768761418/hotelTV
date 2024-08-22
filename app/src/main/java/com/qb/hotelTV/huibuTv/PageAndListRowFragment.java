@@ -18,6 +18,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.leanback.app.BackgroundManager;
 import androidx.leanback.app.BrowseFragment;
@@ -47,6 +51,13 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
     static Context mContext;
     private ArrayList<VideoModel> channelsList;
+    private int channel;
+
+
+    public PageAndListRowFragment(int channel) {
+        this.channel = channel;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +76,13 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         mContext = getContext();
 //        getView().requestFocus();
 //        getView().setOnFocusChangeListener(focusScaleListener);
+
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        numberChangeChannel(channel);
     }
 
     private void setupUi() {
@@ -78,6 +96,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         prepareEntranceTransition();
     }
 
+
     private void loadData() {
 
         mRowsAdapter = new ArrayObjectAdapter(new ListRowPresenter());
@@ -87,6 +106,10 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
             public void run() {
 //                创建header列表数据
                 createRows();
+                if (channel != -1){
+                    numberChangeChannel(channel);
+                }
+
 //                过度动画
                 startEntranceTransition();
             }
@@ -169,6 +192,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     public void numberChangeChannel(int number){
         if (getAdapter().size() != 0 && getAdapter().size() >= number){
             setSelectedPosition(number-1);
+            Log.d(TAG, "换台到: " + number);
         }
         getView().requestFocus();
     }

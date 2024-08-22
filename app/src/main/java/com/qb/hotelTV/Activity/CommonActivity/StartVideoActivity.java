@@ -105,7 +105,6 @@ public class StartVideoActivity extends BaseActivity {
                 nextBtn.requestFocus();
                 isShow = true;
                 nextBtn.setOnFocusChangeListener(focusScaleListener);
-               Log.d(TAG, "run:111 ");
             }
         }, 10000); // 延迟10秒（10000毫秒）
     }
@@ -151,7 +150,13 @@ public class StartVideoActivity extends BaseActivity {
     }
 
     private void closeThisActivity(){
-        checkTheme(StartVideoActivity.this,theme);
+       int itemTV = getIntent().getIntExtra("itemTV",-1);
+        if ( itemTV != -1){
+            checkTheme(StartVideoActivity.this,theme,itemTV);
+        }else {
+            checkTheme(StartVideoActivity.this,theme);
+        }
+
         finish();
     }
 

@@ -129,25 +129,52 @@ public class StartupActivity extends HomeActivity {
            if (hotelMessageJson != null){
                JSONObject startData = hotelMessageJson.getJSONObject("startData");
                String themeType = hotelMessageJson.getString("themeType");
-                //判断是否需要开机动画
-               if (startData.getInt("open") == 1){
-                   Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);
-                   intent.putExtra("startType",startData.getInt("type"));
-                   intent.putExtra("startUrl",startData.getString("url"));
-                   intent.putExtra("startSecond",startData.getLong("second"));
-                   intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
-                   intent.putExtra("startContent",startData.getString("content"));
-                   intent.putExtra("theme",themeType);
-                   startActivity(intent);
-                   finish();
-               }else {
-//               判断是否切换主题
-                   if (checkTheme(StartupActivity.this,themeType)){
+               int itemTV = startData.getInt("itemTV");
+               Log.d(TAG, "itemTV: " + itemTV);
+
+               if (startData.getInt("openTV") == 1){
+                   //判断是否需要开机动画
+                   if (startData.getInt("open") == 1){
+                       Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);
+                       intent.putExtra("startType",startData.getInt("type"));
+                       intent.putExtra("startUrl",startData.getString("url"));
+                       intent.putExtra("startSecond",startData.getLong("second"));
+                       intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
+                       intent.putExtra("startContent",startData.getString("content"));
+                       intent.putExtra("theme",themeType);
+                       intent.putExtra("itemTV",itemTV);
+                       startActivity(intent);
                        finish();
                    }else {
-                       Toast.makeText(StartupActivity.this,"请联系管理员配置正确的主题",Toast.LENGTH_SHORT).show();
+//               判断是否切换主题
+                       if (checkTheme(StartupActivity.this,themeType,itemTV)){
+                           finish();
+                       }else {
+                           Toast.makeText(StartupActivity.this,"请联系管理员配置正确的主题",Toast.LENGTH_SHORT).show();
+                       }
+                   }
+               }else {
+                   //判断是否需要开机动画
+                   if (startData.getInt("open") == 1){
+                       Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);
+                       intent.putExtra("startType",startData.getInt("type"));
+                       intent.putExtra("startUrl",startData.getString("url"));
+                       intent.putExtra("startSecond",startData.getLong("second"));
+                       intent.putExtra("startIsOpenTxt",startData.getInt("openTxt"));
+                       intent.putExtra("startContent",startData.getString("content"));
+                       intent.putExtra("theme",themeType);
+                       startActivity(intent);
+                       finish();
+                   }else {
+//               判断是否切换主题
+                       if (checkTheme(StartupActivity.this,themeType)){
+                           finish();
+                       }else {
+                           Toast.makeText(StartupActivity.this,"请联系管理员配置正确的主题",Toast.LENGTH_SHORT).show();
+                       }
                    }
                }
+
            }else {
                showInputDialog(true);
                Toast.makeText(StartupActivity.this,hotelMessageJson.getString("msg"),Toast.LENGTH_SHORT).show();

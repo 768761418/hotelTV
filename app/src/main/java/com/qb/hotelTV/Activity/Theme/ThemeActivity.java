@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,17 @@ public class ThemeActivity extends HomeActivity {
         stopService(websocketService);
     }
 
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        int itemTV = getIntent().getIntExtra("itemTV",-1);
+        if (itemTV != -1){
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("itemTV",itemTV);
+            startActivity(intent);
+        }
+    }
 
     // 创建一个新的 Runnable 对象，用于更新日期和时间
     public void startUpdateTask(TextView date,TextView time) {
