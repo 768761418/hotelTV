@@ -35,7 +35,7 @@ public class WebActivity extends BaseActivity {
     private LayoutHospitalWebBinding layoutHospitalWebBinding;
     private String strHotelLogo,strHotelBg, strHtml;
 
-    private String serverAddress,tenant,roomNumber,title;
+    private String serverAddress,tenant,roomNumber,title,bg;
     private Long id;
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
     @Override
@@ -142,9 +142,21 @@ public class WebActivity extends BaseActivity {
                     cms.clear();
                     cms.addAll(cmsMessageModels);
                     strHtml = cms.get(0).getContent();
+                    bg = cms.get(0).getVar2();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+//                            如果有图片就加载背景图
+                            if (bg != null && !bg.equals("")){
+                                // 使用 Glide 加载图片
+                                Glide.with(WebActivity.this)
+                                        .load(bg)
+//                                        .placeholder(R.drawable.placeholder) // 加载中的占位符
+//                                        .error(R.drawable.error) // 加载失败时显示的图片
+                                        .into(layoutHospitalWebBinding.webViewBg);
+                            }
+
+//                            加载web的东西
                             if (strHtml != null && !strHtml.equals("")){
                                 Log.d(TAG, "getData: " +strHtml);
                                 webViewAction(strHtml);

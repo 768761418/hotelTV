@@ -129,10 +129,10 @@ public class StartupActivity extends HomeActivity {
            if (hotelMessageJson != null){
                JSONObject startData = hotelMessageJson.getJSONObject("startData");
                String themeType = hotelMessageJson.getString("themeType");
-               int itemTV = startData.getInt("itemTV");
-               Log.d(TAG, "itemTV: " + itemTV);
-
-               if (startData.getInt("openTV") == 1){
+               int itemTV = -1;
+               int openTV = startData.getInt("openTV");
+               if (openTV == 1){
+                   itemTV = startData.getInt("itemTV");
                    //判断是否需要开机动画
                    if (startData.getInt("open") == 1){
                        Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);

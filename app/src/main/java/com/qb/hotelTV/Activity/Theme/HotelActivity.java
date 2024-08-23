@@ -98,6 +98,7 @@ public class HotelActivity extends ThemeActivity {
                 layoutIndexBinding.indexLogo,
                 layoutIndexBinding.indexBackground,
                 layoutIndexBinding.indexTv
+
         );
 
         //      请求滚动栏公告

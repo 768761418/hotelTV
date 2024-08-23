@@ -18,18 +18,7 @@ import xyz.doikki.videoplayer.player.VideoView;
 //import xyz.doikki.videoplayer.player.VideoView;
 
 public class PlayerUtils {
-    public Player getStartPlayer(Context context, String url){
-      Player player = new ExoPlayer
-                .Builder(context,new FfmpegRenderersFactory(context))
-                .build();
-//                                设置循环播放
-        player.setRepeatMode(Player.REPEAT_MODE_ALL);
-        MediaItem mediaItem = MediaItem.fromUri(url);
-        player.setMediaItem(mediaItem);
-        player.prepare();
-        player.play();
-        return player;
-    }
+
 
     public static void startPlayer(Context context, VideoView videoView, String url, boolean isLive){
         videoView.setPlayerFactory(ExoMediaPlayerFactory.create());

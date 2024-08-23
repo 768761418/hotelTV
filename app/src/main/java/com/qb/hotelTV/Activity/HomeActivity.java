@@ -71,34 +71,34 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // 当 Activity 失去焦点时，暂停视频播放
-        if (player != null){
-            player.pause();
-        }
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (player != null){
-            // 当 Activity 重新获得焦点时，继续播放视频
-            player.play();
-        }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        销毁时释放资源
-        if (player != null){
-            player = null;
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        // 当 Activity 失去焦点时，暂停视频播放
+//        if (player != null){
+//            player.pause();
+//        }
+//
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        if (player != null){
+//            // 当 Activity 重新获得焦点时，继续播放视频
+//            player.play();
+//        }
+//
+//    }
+//
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+////        销毁时释放资源
+//        if (player != null){
+//            player = null;
+//        }
+//    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -153,7 +153,6 @@ public class HomeActivity extends BaseActivity {
                         }
                     });
                 } else if (code == 401) {
-
                     commonData.clearData();
                     runOnUiThread(new Runnable() {
                         @Override
@@ -185,60 +184,12 @@ public class HomeActivity extends BaseActivity {
 
 
 
-    //    初始化首页视频
-    public void initIndexVideo(Context context, PlayerView playerView, String url){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-                if (playerView == null || url.equals("")){
-                    if (playerView == null){
-                        playerView.setVisibility(View.GONE);
-                    }
-                }else {
-                    playerView.setVisibility(View.VISIBLE);
-                    // 隐藏控制面板
-                    playerView.setUseController(false);
-                    player = playerUtils.getStartPlayer(context,url);
-                    // 隐藏控制面板
-                    playerView.setUseController(false);
-                    playerView.setPlayer(player);
-                }
-
-            }
-        });
-    }
 
 
 
 
-    //    初始化开机图片或视频
-    public void initStartVideoOrImg(Context context,String serverAddress,String tenant,
-                                    ImageView logoView,ImageView bgView,PlayerView playerView){
-        try{
-            downLoadUtil = new DownLoadUtil(context);
-            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
-            if (hotelMessageJson != null){
-                String logoUrl = hotelMessageJson.getString("iconUrl");;
-                String bgUrl = hotelMessageJson.getString("homepageBackground");
-                String videoUrl = hotelMessageJson.getString("resourceUrl");
-                Log.d(TAG, "initStartVideoOrImg: " + videoUrl);
-//                初始化背景和logo
-                initLogoAndBackGround(context,logoView,logoUrl,bgView,bgUrl);
-                downLoadUtil.inspectOrDownloadFile(videoUrl, new DownLoadUtil.FileDownloadCallback() {
-                    @Override
-                    public void onFileReady(String filePath) {
-                        initIndexVideo(context,playerView,filePath);
-                    }
-                });
 
 
-            }
-
-        }catch (JSONException e){
-            Log.e(TAG, "initStartVideoOrImg: ", e);
-        }
-    }
 
 
 

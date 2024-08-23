@@ -23,6 +23,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.qb.hotelTV.Activity.CommonActivity.AppActivity;
 import com.qb.hotelTV.Activity.CommonActivity.ListActivity;
 import com.qb.hotelTV.Activity.CommonActivity.VideoActivity;
@@ -32,9 +35,14 @@ import com.qb.hotelTV.Data.ThemeType;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.HotelListModel;
 import com.qb.hotelTV.R;
+import com.qb.hotelTV.Utils.DownLoadUtil;
+import com.qb.hotelTV.Utils.PlayerUtils;
 import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 import com.qb.hotelTV.huibuTv.MainActivity;
 import com.qb.hotelTV.module.InputMessageDialog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,6 +54,9 @@ public class ThemeActivity extends HomeActivity {
     public InputMessageDialog inputMessageDialog;
     public Handler handler = new Handler();
     public Intent websocketService;
+    public Player player;
+
+
 
     private String TAG = "ThemeActivity";
 
@@ -55,6 +66,7 @@ public class ThemeActivity extends HomeActivity {
         super.onDestroy();
         stopService(websocketService);
     }
+
 
 
     @Override
@@ -269,26 +281,65 @@ public class ThemeActivity extends HomeActivity {
         intent.putExtra("id",id);
     }
 //
-//    private <T extends ViewGroup>  void startUpdateTvTextTask(Context context, MarqueeTextView marqueeTextView,T layout){
-//        Runnable startUpdateTvTextTask = new Runnable() {
-//            @Override
-//            public void run() {
-//                getAnnouncements(context,serverAddress, tenant,marqueeTextView);
-//                boolean isLogin = CommonData.getInstance().getIsLogin();
-//                if (!isLogin){
-//                    sharedPreferencesUtils.clearData();
-//                    showInputDialog(false);
-//                    Toast.makeText(context,"该房间已被删除，请重新配置",Toast.LENGTH_SHORT).show();
-//                    indexListUnableOnclick(layoutIndexBinding.apkLayout,4);
-//
-//                }else {
-////                    initUI();
-//                    handler.postDelayed(this, 30*1000);
-//                }
-//
-//            }
-//        };
-//        handler.post(startUpdateTvTextTask);
-//    }
+
+
+    //    初始化开机图片或视频
+    public void initStartVideoOrImg(Context context, String serverAddress, String tenant,
+                                    ImageView logoView, ImageView bgView, PlayerView playerView){
+        try{
+            downLoadUtil = new DownLoadUtil(context);
+            JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
+            if (hotelMessageJson != null){
+                String logoUrl = hotelMessageJson.getString("iconUrl");;
+                String bgUrl = hotelMessageJson.getString("homepageBackground");
+                String videoUrl = hotelMessageJson.getString("resourceUrl");
+                Log.d(TAG, "initStartVideoOrImg: " + videoUrl);
+//                初始化背景和logo
+                initLogoAndBackGround(context,logoView,logoUrl,bgView,bgUrl);
+                downLoadUtil.inspectOrDownloadFile(videoUrl, new DownLoadUtil.FileDownloadCallback() {
+                    @Override
+                    public void onFileReady(String filePath) {
+//                        标识下载完成
+                        Log.d(TAG, "onFileReady: 初始化了视频");
+                        initIndexVideo(playerView,filePath);
+
+                    }
+                });
+
+
+            }
+
+        }catch (JSONException e){
+            Log.e(TAG, "initStartVideoOrImg: ", e);
+        }
+    }
+
+    //    初始化首页视频
+    public void initIndexVideo(PlayerView playerView, String url){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (playerView == null || url.equals("")){
+                    if (playerView == null){
+                        playerView.setVisibility(View.GONE);
+                    }
+                }else {
+                    playerView.setVisibility(View.VISIBLE);
+                    // 隐藏控制面板
+                    playerView.setUseController(false);
+                    //                                设置循环播放
+                    player.setRepeatMode(Player.REPEAT_MODE_ALL);
+                    MediaItem mediaItem = MediaItem.fromUri(url);
+                    player.setMediaItem(mediaItem);
+                    player.prepare();
+                    player.play();
+                    // 隐藏控制面板
+                    playerView.setUseController(false);
+                    playerView.setPlayer(player);
+                }
+
+            }
+        });
+    }
 
 }
