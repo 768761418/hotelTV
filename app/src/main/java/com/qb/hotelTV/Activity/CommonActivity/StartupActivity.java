@@ -111,7 +111,16 @@ public class StartupActivity extends HomeActivity {
                 Log.d(TAG, "onSubmitCallBack: " + serverAddress);
                 Log.d(TAG, "onSubmitCallBack: " + roomNumber);
                 Log.d(TAG, "onSubmitCallBack: " + tenant);
-                checkConfig();
+                //将数据保存到内存共享，让其他Activity也可用
+                commonData.setData(serverAddress,tenant,roomNumber);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        checkConfig();
+                    }
+                },2000);
+
             }
         });
 
@@ -129,10 +138,9 @@ public class StartupActivity extends HomeActivity {
            if (hotelMessageJson != null){
                JSONObject startData = hotelMessageJson.getJSONObject("startData");
                String themeType = hotelMessageJson.getString("themeType");
-               int itemTV = -1;
                int openTV = startData.getInt("openTV");
                if (openTV == 1){
-                   itemTV = startData.getInt("itemTV");
+                   int itemTV = startData.getInt("itemTV");
                    //判断是否需要开机动画
                    if (startData.getInt("open") == 1){
                        Intent intent = new Intent(StartupActivity.this  , StartVideoActivity.class);
@@ -182,7 +190,7 @@ public class StartupActivity extends HomeActivity {
        }catch (JSONException e){
            showInputDialog(true);
            Toast.makeText(StartupActivity.this,"请联系管理员检查后台配置",Toast.LENGTH_SHORT).show();
-       }catch (NullPointerException e){
+       }catch (Exception e){
            showInputDialog(true);
            Toast.makeText(StartupActivity.this,"请联系管理员检查后台配置",Toast.LENGTH_SHORT).show();
        }

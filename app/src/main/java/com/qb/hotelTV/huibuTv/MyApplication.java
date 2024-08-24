@@ -31,12 +31,11 @@ public class MyApplication extends Application {
     private static String authorizationStatus;
     private static String updateData;
     private static final String  TAG = "MyApplication";
-    public static CommonData commonData = CommonData.getInstance();
     private static final String KEY_SERVER_ADDRESS = "server_address";
     private static final String KEY_ROOM_NUMBER = "room_number";
     private static final String KEY_TENANT = "tenant";
     private static final String PREFS_NAME = "Hospital";
-    private static boolean getModel = false;
+
 
     @Override
     public void onCreate() {
@@ -61,48 +60,14 @@ public class MyApplication extends Application {
         channelsList.add(new Channel("南宁影视娱乐频道", "http://play-flive.ifeng.com/live/06OLEEWQKN4.m3u8"));
     }
 
-    public static void initVideoList(Context context){
-        String[] data = commonData.getData();
-        String serverAddress = data[0];
-        String tenant =data[1];
-        String roomNumber = data[2];
-        Log.d(TAG, "initVideoListServerAddress: " + serverAddress);
-
-        if (!serverAddress.equals("")&&!tenant.equals("")){
-            CountDownLatch latch = new CountDownLatch(1);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                   videoList = BackstageHttp.getInstance().getTvChannel(serverAddress, tenant);
-                   getModel = true;
-//                   等待线程完成再继续
-                   latch.countDown();
-                }
-            }).start();
-//
-            try {
-                latch.await(); // 等待请求完成
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 
 
 
 
 
-    public static ArrayList<VideoModel> getVideoList(Context context) {
-        Log.d(TAG, "getVideoList: 2222" + getModel);
-        if (!getModel){
-            initVideoList(context);
-            getModel = true;
-        }
-        Log.d(TAG, "getVideoList: 2222 " + getModel);
-        Log.d(TAG, "video: " +videoList.toString() );
-        return videoList;
-    }
+
+
 
     public static void setVideoList(ArrayList<VideoModel> videoList) {
         MyApplication.videoList = videoList;

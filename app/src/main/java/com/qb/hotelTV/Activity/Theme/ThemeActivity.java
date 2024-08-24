@@ -25,6 +25,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.dreamgyf.android.ui.widget.textview.marquee.MarqueeTextView;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.qb.hotelTV.Activity.CommonActivity.AppActivity;
 import com.qb.hotelTV.Activity.CommonActivity.ListActivity;
@@ -65,9 +66,28 @@ public class ThemeActivity extends HomeActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopService(websocketService);
+        if (player != null){
+            player = null;
+        }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (player != null){
+            player.play();
+        }
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 当 Activity 失去焦点时，暂停视频播放
+        if (player != null){
+            player.pause();
+        }
+
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -301,21 +321,19 @@ public class ThemeActivity extends HomeActivity {
                     public void onFileReady(String filePath) {
 //                        标识下载完成
                         Log.d(TAG, "onFileReady: 初始化了视频");
-                        initIndexVideo(playerView,filePath);
+                        initIndexVideo(context,playerView,filePath);
 
                     }
                 });
-
-
             }
 
-        }catch (JSONException e){
+        }catch (Exception e){
             Log.e(TAG, "initStartVideoOrImg: ", e);
         }
     }
 
     //    初始化首页视频
-    public void initIndexVideo(PlayerView playerView, String url){
+    public void initIndexVideo(Context context,PlayerView playerView, String url){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -327,14 +345,23 @@ public class ThemeActivity extends HomeActivity {
                     playerView.setVisibility(View.VISIBLE);
                     // 隐藏控制面板
                     playerView.setUseController(false);
-                    //                                设置循环播放
-                    player.setRepeatMode(Player.REPEAT_MODE_ALL);
+
+                    // 确保在调用 setMediaItem 之前已经初始化 player
+                    player = new SimpleExoPlayer.Builder(context).build();
+//                    设置资源
                     MediaItem mediaItem = MediaItem.fromUri(url);
                     player.setMediaItem(mediaItem);
+                    // 设置循环播
+                    player.setRepeatMode(Player.REPEAT_MODE_ALL);
+//                    准备视频
                     player.prepare();
-                    player.play();
+//                    如果界面可见的话就播放，不可见就不播放等onResume
+                    Activity activity = (Activity) context;
+                    if( activity.getWindow().getDecorView().getVisibility() == View.VISIBLE){
+                        player.play();
+                    }
+
                     // 隐藏控制面板
-                    playerView.setUseController(false);
                     playerView.setPlayer(player);
                 }
 

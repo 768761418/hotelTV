@@ -31,6 +31,7 @@ public class StartVideoActivity extends BaseActivity {
     private Handler handler = new Handler();
     private  String TAG = "StartVideoActivity";
     private boolean isShow = false;
+    private int itemTV;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -38,11 +39,14 @@ public class StartVideoActivity extends BaseActivity {
         if (isShow){
             Log.d(TAG, "onKeyDown: ddd");
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE || keyCode == KeyEvent.KEYCODE_ENTER){
-                finish();
+                closeThisActivity();
+                return true;
             }
         }
-        return super.onKeyDown(keyCode, event);
+        return true;
     }
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +62,11 @@ public class StartVideoActivity extends BaseActivity {
         nextBtn = findViewById(R.id.hospital_next_btn);
         webView = findViewById(R.id.hospital_web);
         imageBg = findViewById(R.id.hospital_web_bg);
+
+
+
+
+        itemTV = getIntent().getIntExtra("itemTV",-1);
         onClickNextBtn();
 //        类型
         startType = getIntent().getIntExtra("startType",1);
@@ -150,13 +159,14 @@ public class StartVideoActivity extends BaseActivity {
     }
 
     private void closeThisActivity(){
-       int itemTV = getIntent().getIntExtra("itemTV",-1);
+       
         if ( itemTV != -1){
             checkTheme(StartVideoActivity.this,theme,itemTV);
+            Log.d(TAG, "closeThisActivity: 1");
         }else {
             checkTheme(StartVideoActivity.this,theme);
+            Log.d(TAG, "closeThisActivity: 2");
         }
-
         finish();
     }
 

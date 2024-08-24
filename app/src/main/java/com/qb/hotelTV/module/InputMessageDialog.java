@@ -77,9 +77,6 @@ public class InputMessageDialog extends Dialog {
                     serverAddress = serverAddress.substring(0, serverAddress.length() - 1);
                 }
 
-
-
-
                 CountDownLatch latch = new CountDownLatch(1);
                 new Thread(new Runnable() {
                     @Override
@@ -103,8 +100,6 @@ public class InputMessageDialog extends Dialog {
                         //保存下来方便后续使用
                         sharedPreferencesUtils.saveToken(result[1]);
                         Log.d(TAG, "daying: " + result[1]);
-                        //将数据保存到内存共享，让其他Activity也可用
-                        commonData.setData(serverAddress,tenant,roomNumber);
                         // 保存服务器地址和房间号到 SharedPreferences中
                         sharedPreferencesUtils.saveInitData(serverAddress,roomNumber,tenant);
                         if (submitCallback != null){

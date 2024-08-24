@@ -47,7 +47,6 @@ public class HomeActivity extends BaseActivity {
     private Handler handler = new Handler();
     private String TAG = "HomeActivity";
     private Player player;
-    private PlayerUtils playerUtils = new PlayerUtils();
     public SharedPreferencesUtils sharedPreferencesUtils;
     public DownLoadUtil downLoadUtil;
 

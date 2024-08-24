@@ -32,10 +32,14 @@ import androidx.leanback.widget.ListRow;
 import androidx.leanback.widget.ListRowPresenter;
 import androidx.leanback.widget.PageRow;
 import androidx.leanback.widget.Row;
+
+import com.qb.hotelTV.Data.CommonData;
+import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Sample {@link BrowseFragment} implementation showcasing the use of {@link PageRow} and
@@ -52,10 +56,14 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     static Context mContext;
     private ArrayList<VideoModel> channelsList;
     private int channel;
+    private static CommonData commonData;;
+    private static boolean getModel = false;
+    private static ArrayList<VideoModel> videoList = new ArrayList<>();
 
 
-    public PageAndListRowFragment(int channel) {
+    public PageAndListRowFragment(int channel,CommonData commonData) {
         this.channel = channel;
+        this.commonData = commonData;
     }
 
     @Override
@@ -122,7 +130,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     private void createRows() {
         Context context = getContext();
 //        网络请求获的数据
-        channelsList = MyApplication.getVideoList(context);
+        channelsList =getVideoList(context);
         for (int i = 0; i < channelsList.size(); i++) {
 //                        Channel channel = channelsList.get(i);
             VideoModel channel = channelsList.get(i);
@@ -146,9 +154,9 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
         public androidx.fragment.app.Fragment createFragment(Object rowObj) {
             Row row = (Row) rowObj;
             mBackgroundManager.setDrawable(null);
-            if (row.getHeaderItem().getId() < MyApplication.getVideoList(mContext).size()) {
+            if (row.getHeaderItem().getId() < getVideoList(mContext).size()) {
 //                根据ID获取对象
-                VideoModel channel = MyApplication.getVideoList(mContext).get((int) row.getHeaderItem().getId());
+                VideoModel channel = getVideoList(mContext).get((int) row.getHeaderItem().getId());
 //                return new WebViewFragment();
 //                IJKPlayerFragment exoPlayerFragment = IJKPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
 //                ExoPlayerFragment exoPlayerFragment = ExoPlayerFragment.newInstance(channel,(int) row.getHeaderItem().getId());
@@ -173,6 +181,45 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
     }
 
 
+    private static ArrayList<VideoModel> getVideoList(Context context) {
+        Log.d(TAG, "getVideoList: 2222" + getModel);
+        if (!getModel){
+            initVideoList(context);
+            getModel = true;
+        }
+        Log.d(TAG, "video: " +videoList.toString() );
+        return videoList;
+    }
+
+    private static void initVideoList(Context context){
+        String[] data = commonData.getData();
+        String serverAddress = data[0];
+        String tenant =data[1];
+        String roomNumber = data[2];
+        Log.d(TAG, "initVideoListServerAddress: " + serverAddress);
+
+        if (serverAddress!=null && tenant!= null &&!serverAddress.equals("")&&!tenant.equals("")){
+            CountDownLatch latch = new CountDownLatch(1);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    videoList = BackstageHttp.getInstance().getTvChannel(serverAddress, tenant);
+                    getModel = true;
+//                   等待线程完成再继续
+                    latch.countDown();
+                }
+            }).start();
+//
+            try {
+                latch.await(); // 等待请求完成
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+//    USE 开放切换的函数
 //    切换频道，true为下一个，false为上一个，循环
     public void toggleChannel(boolean next) {
         if (next) {

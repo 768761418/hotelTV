@@ -96,15 +96,7 @@ public class HospitalActivity extends ThemeActivity {
     //    从接口获取数据
     private void getDataFromHttp()  {
 
-        initStartVideoOrImg(HospitalActivity.this,
-                serverAddress,tenant,
-                layoutHospitalBinding.hospitalTop.logo(),
-                layoutHospitalBinding.hospitalBackground,
-                layoutHospitalBinding.hospitalTv);
-
-//      请求滚动栏公告
-        getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
-//        获取界面列表
+        //        获取界面列表
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -114,6 +106,17 @@ public class HospitalActivity extends ThemeActivity {
                 }
             }
         }).start();
+
+
+        initStartVideoOrImg(HospitalActivity.this,
+                serverAddress,tenant,
+                layoutHospitalBinding.hospitalTop.logo(),
+                layoutHospitalBinding.hospitalBackground,
+                layoutHospitalBinding.hospitalTv);
+
+//      请求滚动栏公告
+        getAnnouncements(HospitalActivity.this,serverAddress, tenant,layoutHospitalBinding.hospitalTvText);
+
     }
 
 

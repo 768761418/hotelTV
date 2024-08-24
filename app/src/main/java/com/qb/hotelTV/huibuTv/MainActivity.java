@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.R;
 
 import java.security.Key;
@@ -36,6 +37,7 @@ public class MainActivity extends FragmentActivity {
     private Handler mHandler02 = new Handler();
     private PageAndListRowFragment pageAndListRowFragment;
     private TextView channel;
+    private CommonData commonData;
 
 
     // 声明一个成员变量，用于保存用户输入的数字
@@ -60,11 +62,17 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         channel = findViewById(R.id.channel);
+        commonData = CommonData.getInstance();
+        String[] data = commonData.getData();
+        Log.d(TAG, "data12: " + data[0]);
+        Log.d(TAG, "data12: " + data[1]);
+        Log.d(TAG, "data12: " + data[2]);
+
         int itemTV = getIntent().getIntExtra("itemTV",-1);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(itemTV), "PageAndListRowFragment")
+                    .replace(R.id.main_browse_fragment, new PageAndListRowFragment(itemTV,commonData), "PageAndListRowFragment")
                     .commitNow();
             Log.d(TAG, "onCreate: PageAndListRowFragment");
         }

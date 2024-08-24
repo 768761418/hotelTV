@@ -1,5 +1,7 @@
 package com.qb.hotelTV.Data;
 
+import android.util.Log;
+
 public class CommonData {
     // 单例实例，延迟初始化
     private static CommonData instance;
@@ -19,19 +21,26 @@ public class CommonData {
     private String tenant;
     private String roomNumber;
     private boolean isLogin = false;
+    private String TAG = "CommonData";
 
     public void setData(String serverAddress,String tenant,String roomNumber){
         this.roomNumber = roomNumber;
         this.serverAddress = serverAddress;
         this.tenant = tenant;
         this.isLogin = true;
+        Log.d(TAG, "setDataServerAddress: " + this.serverAddress);
+        Log.d(TAG, "setDataTenant: " + this.tenant);
+        Log.d(TAG, "setDataRoomNumber: " + this.roomNumber);
     }
 
     public String[] getData(){
         String[] data = new String[3];
-        data[0] = serverAddress;
-        data[1] = tenant;
-        data[2] = roomNumber;
+        data[0] = this.serverAddress;
+        data[1] = this.tenant;
+        data[2] = this.roomNumber;
+        Log.d(TAG, "getDataServerAddress: " + this.serverAddress);
+        Log.d(TAG, "getDataTenant: " + this.tenant);
+        Log.d(TAG, "getDataRoomNumber: " + this.roomNumber);
         return data;
     }
 
