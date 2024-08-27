@@ -36,6 +36,7 @@ public class StartVideoActivity extends BaseActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d(TAG, "onKeyDown: " + isShow);
+        Log.d(TAG, "onKeyDown: " + keyCode);
         if (isShow){
             Log.d(TAG, "onKeyDown: ddd");
             if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER || keyCode == KeyEvent.KEYCODE_SPACE || keyCode == KeyEvent.KEYCODE_ENTER){

@@ -13,7 +13,7 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = 3
-        versionName = "1.3.0"
+        versionName = "1.3.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             // 限制APK中包含的ABI
