@@ -22,4 +22,5 @@
     <color name="setting_text">#636363</color>
     <color name="setting_hint">#8A8A8A</color>
 
+    <color name="video_list_text">#ff666C86</color>
 </resources>

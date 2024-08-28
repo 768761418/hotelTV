@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/item_all"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="60dp"
+    android:gravity="center">
+
+<LinearLayout
+    android:id="@+id/item_bg"
+    android:layout_width="100dp"
+    android:layout_height="60dp"
+    android:background="@drawable/bg_videolist_no_focu"
+    android:gravity="center">
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="86dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:fontFamily="Source Han Sans CN"
+        android:textColor="@color/video_list_text"/>
+</LinearLayout>
+
+
+</LinearLayout>

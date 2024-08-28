@@ -31,9 +31,8 @@ import java.util.TimerTask;
 public class WebActivity extends BaseActivity {
     private final String TAG = "WebActivity";
     private boolean GEO=false,WEATHER=false,HOTEL_MESSAGE=false,WEB= false;
-    private String geo,weather,locationString;
     private LayoutHospitalWebBinding layoutHospitalWebBinding;
-    private String strHotelLogo,strHotelBg, strHtml;
+    private String  strHtml;
 
     private String serverAddress,tenant,roomNumber,title,bg;
     private Long id;

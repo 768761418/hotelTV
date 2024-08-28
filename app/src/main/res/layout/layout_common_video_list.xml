@@ -20,6 +20,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="27dp"
             android:layout_marginTop="36dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:gravity="center">
             <LinearLayout
                 android:layout_width="78dp"
@@ -46,15 +48,72 @@
 
 
 
-        <xyz.doikki.videoplayer.player.VideoView
-            android:id="@+id/player_view"
+        <ImageView
+            android:id="@+id/cover"
             android:layout_width="464dp"
             android:layout_height="261dp"
             android:layout_marginTop="23dp"
+            android:focusable="false"
             app:layout_constraintTop_toBottomOf="@id/video_list_comeback"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginLeft="27dp"/>
+        
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffFFFFFF"
+            android:textSize="27sp"
+            android:fontFamily="Source Han Sans CN"
+            android:alpha="1"
+            android:focusable="false"
+            android:layout_marginTop="23dp"
+            app:layout_constraintTop_toBottomOf="@id/video_list_comeback"
+            android:layout_marginLeft="18dp"
+            app:layout_constraintLeft_toRightOf="@id/cover"/>
 
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffFFFFFF"
+            android:textSize="14sp"
+            android:focusable="false"
+            android:fontFamily="Source Han Sans CN"
+            android:layout_marginLeft="18dp"
+            app:layout_constraintLeft_toRightOf="@id/cover"
+            android:layout_marginTop="12dp"
+
+            app:layout_constraintTop_toBottomOf="@id/title"
+            />
+
+        <TextView
+            android:id="@+id/introduction_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffFFFFFF"
+            android:textSize="14sp"
+            android:text="简介："
+            android:focusable="false"
+            android:layout_marginLeft="18dp"
+            app:layout_constraintLeft_toRightOf="@id/cover"
+            android:layout_marginTop="2dp"
+            android:fontFamily="Source Han Sans CN"
+            app:layout_constraintTop_toBottomOf="@id/author"
+            />
+        <TextView
+            android:id="@+id/introduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ffFFFFFF"
+            android:textSize="14sp"
+            android:focusable="false"
+            android:fontFamily="Source Han Sans CN"
+            app:layout_constraintLeft_toRightOf="@id/introduction_title"
+            android:textFontWeight="400"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/author"
+            />
 
         <TextView
             android:id="@+id/choose"
@@ -69,6 +128,7 @@
             android:textColor="#ffFFFFFF"
             android:textSize="18sp"
             android:text="选集"
+            android:focusable="false"
             android:textFontWeight="700"
             android:fontFamily="Source Han Sans CN"
             android:gravity="right|top"
@@ -83,17 +143,20 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/choose"
             android:layout_marginTop="12dp"
+            android:focusable="false"
            />
 
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
             android:layout_width="900dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/line"
             android:layout_marginTop="15dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             android:orientation="vertical"
+            android:focusable="false"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="9"/>
 

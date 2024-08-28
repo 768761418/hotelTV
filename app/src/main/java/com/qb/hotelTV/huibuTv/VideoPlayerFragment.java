@@ -55,7 +55,6 @@ public class VideoPlayerFragment extends androidx.fragment.app.Fragment implemen
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         videoView = view.findViewById(R.id.player_view);
-        videoView.setPlayerFactory(IjkPlayerFactory.create());
 //        videoView.setEnableMediaCodec()
         playVideo(videoModel.getStreamUrl());
         getMainFragmentAdapter().getFragmentHost().notifyViewCreated(mMainFragmentAdapter);

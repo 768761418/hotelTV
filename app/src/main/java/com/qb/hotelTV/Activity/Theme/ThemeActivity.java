@@ -215,6 +215,7 @@ public class ThemeActivity extends HomeActivity {
                                         Intent intent = new Intent(context, ListActivity.class);
                                         String title = hotelListModels.get(finalI).getName();
                                         Long id = hotelListModels.get(finalI).getId();
+                                        intent.putExtra("type",ThemeType.WEB_LIST);
                                         defaultPutIntent(intent,title,id);
 
                                         Log.d(TAG, "onClick: " + title);
@@ -240,6 +241,18 @@ public class ThemeActivity extends HomeActivity {
                                     @Override
                                     public void onClick(View view) {
                                         // TODO 视频列表
+                                        item.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Intent intent = new Intent(context, ListActivity.class);
+                                                String title = hotelListModels.get(finalI).getName();
+                                                Long id = hotelListModels.get(finalI).getId();
+                                                intent.putExtra("type",ThemeType.VIDEO_LIST);
+                                                defaultPutIntent(intent,title,id);
+                                                Log.d(TAG, "onClick: " + title);
+                                                startActivity(intent);
+                                            }
+                                        });
                                     }
                                 });
                                 break;

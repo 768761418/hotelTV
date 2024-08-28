@@ -3,14 +3,44 @@ package com.qb.hotelTV.Model;
 public class CmsMessageModel {
 
     private  Long id;
+    /**
+     * 标题
+     * **/
     private String title;
+    /**
+     * 内容
+     * **/
     private String content;
     private Long  categoryId;
-
+    /**
+     * 作者
+     * **/
+    private String author;
+    /**
+     * 简介
+     * **/
+    private String introduction;
     private String picUrl;
     private String var1;
 
     private String var2;
+
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getIntroduction() {
+        return introduction;
+    }
+
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
 
     public String getVar2() {
         return var2;

@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Activity.BaseActivity;
+import com.qb.hotelTV.Data.ThemeType;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Model.CmsMessageModel;
 import com.qb.hotelTV.R;
@@ -30,6 +31,7 @@ public class ListActivity extends BaseActivity {
     private final String TAG = "ListActivity";
     private ArrayList<CmsMessageModel> cms = new ArrayList<>();
     private int currentPageNo = 1 ;
+    private int type;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +48,7 @@ public class ListActivity extends BaseActivity {
 
         id = getIntent().getLongExtra("id",-1);
         title = getIntent().getStringExtra("title");
-
+        type = getIntent().getIntExtra("type",0);
         layoutHospitalListBinding.hospitalTop.setRoomNumber(roomNumber);
         //      获取天气和地址
         getGeoAndWeather(null,layoutHospitalListBinding.hospitalTop.weather());
@@ -147,21 +149,42 @@ public class ListActivity extends BaseActivity {
 
 
                             int finalI = i;
-                            imageView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Intent intent = new Intent(ListActivity.this, WebActivity.class);
-                                    String content = cms.get(finalI).getContent();
-                                    Long imgId = cms.get(finalI).getCategoryId();
-                                    intent.putExtra("serverAddress",serverAddress);
-                                    intent.putExtra("tenant",tenant);
-                                    intent.putExtra("roomNumber",roomNumber);
-                                    intent.putExtra("title",title);
-                                    intent.putExtra("id",imgId);
-                                    intent.putExtra("content",content);
-                                    startActivityForResult(intent,1);
-                                }
-                            });
+                            if (type == ThemeType.WEB_LIST){
+                                imageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(ListActivity.this, WebActivity.class);
+                                        String content = cms.get(finalI).getContent();
+                                        Long imgId = cms.get(finalI).getCategoryId();
+                                        intent.putExtra("serverAddress",serverAddress);
+                                        intent.putExtra("tenant",tenant);
+                                        intent.putExtra("roomNumber",roomNumber);
+                                        intent.putExtra("title",title);
+                                        intent.putExtra("id",imgId);
+                                        intent.putExtra("content",content);
+
+                                        startActivityForResult(intent,1);
+                                    }
+                                });
+                            }else if (type == ThemeType.VIDEO_LIST){
+                                imageView.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Intent intent = new Intent(ListActivity.this, VideoListActivity.class);
+                                        String content = cms.get(finalI).getContent();
+                                        Long imgId = cms.get(finalI).getCategoryId();
+                                        intent.putExtra("serverAddress",serverAddress);
+                                        intent.putExtra("tenant",tenant);
+                                        intent.putExtra("roomNumber",roomNumber);
+                                        intent.putExtra("title",title);
+                                        intent.putExtra("id",imgId);
+                                        intent.putExtra("content",content);
+                                        intent.putExtra("cover",cms.get(finalI).getPicUrl());
+                                        startActivityForResult(intent,1);
+                                    }
+                                });
+                            }
+
 
 
                         }
