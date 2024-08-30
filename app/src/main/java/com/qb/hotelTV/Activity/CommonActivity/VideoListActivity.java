@@ -109,45 +109,50 @@ public class VideoListActivity extends BaseActivity {
                                 .load(cms.get(0).getPicUrl())
                                 .error(R.color.white)
                                 .into((layoutCommonVideoListBinding.cover));
+
+                        //                strHtml = cms.get(0).getContent();
+                        commonAdapter = new CommonAdapter<CmsMessageModel>(VideoListActivity.this,cms,R.layout.item_video_list) {
+                            @Override
+                            public void bindData(CommonViewHolder holder, CmsMessageModel data, int position) {
+//                        允许焦点
+                                holder.getView(R.id.item_all).setFocusable(true);
+                                holder.getView(R.id.item_all).setOnFocusChangeListener(holderScaleListener);
+
+                                String item;
+                                if (position < 10){
+                                    item = "0" + String.valueOf(position + 1);
+                                }else {
+                                    item = String.valueOf(position + 1);
+                                }
+                                holder.setText(R.id.item_name,item);
+
+                                holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
+                                    @Override
+                                    public void onItemClick(View view, int position) {
+                                        Intent intent = new Intent(VideoListActivity.this, VideoPlayerActivity.class);
+                                        intent.putExtra("url",cms.get(position).getContent());
+                                        startActivity(intent);
+                                    }
+
+                                    @Override
+                                    public void onItemLongClick(int viewId, int position) {
+
+                                    }
+                                });
+
+                            }
+                        };
+                        layoutCommonVideoListBinding.list.setAdapter(commonAdapter);
+                        commonAdapter.notifyDataSetChanged();
+
+
+
                     }
                 });
 
 
 
-//                strHtml = cms.get(0).getContent();
-                commonAdapter = new CommonAdapter<CmsMessageModel>(VideoListActivity.this,cms,R.layout.item_video_list) {
-                    @Override
-                    public void bindData(CommonViewHolder holder, CmsMessageModel data, int position) {
-//                        允许焦点
-                        holder.getView(R.id.item_all).setFocusable(true);
-                        holder.getView(R.id.item_all).setOnFocusChangeListener(holderScaleListener);
 
-                        if (position < 10){
-                            String item ="0" + String.valueOf(position+1);
-                            holder.setText(R.id.item_name,item);
-                        }else {
-                            String item = String.valueOf(position+1);
-                            holder.setText(R.id.item_name,item);
-                        }
-
-                        holder.setCommonClickListener(new CommonViewHolder.OnCommonItemEventListener() {
-                            @Override
-                            public void onItemClick(View view, int position) {
-                                Intent intent = new Intent(VideoListActivity.this, VideoPlayerActivity.class);
-                                intent.putExtra("url",cms.get(position).getContent());
-                                startActivity(intent);
-                            }
-
-                            @Override
-                            public void onItemLongClick(int viewId, int position) {
-
-                            }
-                        });
-
-                    }
-                };
-                layoutCommonVideoListBinding.list.setAdapter(commonAdapter);
-                commonAdapter.notifyDataSetChanged();
 
             }
 

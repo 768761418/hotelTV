@@ -13,7 +13,7 @@ android {
         minSdk = 21
         targetSdk = 33
         versionCode = 3
-        versionName = "1.3.2"
+        versionName = "1.3.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             // 限制APK中包含的ABI
@@ -63,7 +63,7 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation ("com.squareup.retrofit2:retrofit:2.3.0")
-    implementation ("io.github.azhon:appupdate:4.3.2")
+    implementation ("io.github.azhon:appupdate:4.3.4")
 //导入retrofit
     implementation ("com.google.code.gson:gson:2.6.2")
 //Gson 库

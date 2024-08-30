@@ -580,10 +580,18 @@ public class BackstageHttp {
     }
 
     //    检查版本
-    public Call getAppVersion(String serverAddress){
-        String url = serverAddress + ApiSetting.URL_GET_CMS_MESSAGE;;
+    public Call getAppVersion(String serverAddress,String tenant){
+        String url = serverAddress + ApiSetting.URL_GET_APP_VERSION;
+
+        HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
+        queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
+        queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
+
+//        构建请求体
         Request request = new Request.Builder()
-                .url(url)
+                .url(queryUrlBuilder.build())
+                .addHeader("tenant-id", tenant) // 添加请求头
+                .addHeader("Authorization", Authorization) // 添加请求头
                 .build();
         Call call = client.newCall(request);
         return call;
