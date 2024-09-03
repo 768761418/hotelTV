@@ -257,13 +257,18 @@ public class StartupActivity extends HomeActivity {
                                .apkName("huibuTV.apk")
                                .smallIcon(R.mipmap.ic_launcher)
                                //设置了此参数，那么内部会自动判断是否需要显示更新对话框，否则需要自己判断是否需要更新
-                               .apkVersionCode(firstItem.getInt("apkCode"))
+                               .apkVersionCode(2999)
+//                               .apkVersionCode(firstItem.getInt("apkCode"))
                                //同时下面三个参数也必须要设置
                                .apkVersionName(firstItem.getString("apkName"))
-                               .apkDescription("更新描述信息")
+                               .forcedUpgrade(true)
+//                               .dialogImage(R.drawable.app_bg)
+//                               .apkDescription("更新描述信息")
                                //省略一些非必须参数...
                                .build();
+
                        manager.download();
+                       manager.getDialogImage$appupdate_release();
                        Log.d(TAG, "onResponse: 2222" + firstItem.getString("apkUrl"));
                    }
                } catch (JSONException e) {
