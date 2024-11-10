@@ -43,6 +43,7 @@ public class ListActivity extends BaseActivity {
         layoutHospitalListBinding = DataBindingUtil.setContentView(this, R.layout.layout_hospital_list);
         String[] data = commonData.getData();
         serverAddress = data[0];
+
         tenant =data[1];
         roomNumber = data[2];
 

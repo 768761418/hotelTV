@@ -25,7 +25,7 @@ public class VideoPlayerActivity extends AppActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        layoutVideoPlayerBinding.xyzPlayer.resume();
+        layoutVideoPlayerBinding.xyzPlayer.start();
     }
 
     @Override
@@ -37,9 +37,9 @@ public class VideoPlayerActivity extends AppActivity{
 
     @Override
     public void onBackPressed() {
-        if (!layoutVideoPlayerBinding.xyzPlayer.onBackPressed()) {
-            super.onBackPressed();
-        }
+//        if (!layoutVideoPlayerBinding.xyzPlayer.onBackPressed()) {
+//            super.onBackPressed();
+//        }
     }
 
 

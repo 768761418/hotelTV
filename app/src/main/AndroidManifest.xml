@@ -56,7 +56,9 @@
             android:value="540"/>
 
         <service android:name=".Service.WebSocketService"/>
+        <activity android:name=".Activity.Theme.ImageActivity" android:screenOrientation="landscape">
 
+        </activity>
         <activity android:name=".Activity.CommonActivity.StartupActivity"
             android:exported="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -67,6 +69,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Activity.TestM3u8Activity"
+            android:exported="true">
+
         </activity>
 
 

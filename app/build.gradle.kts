@@ -11,13 +11,13 @@ android {
     defaultConfig {
         applicationId = "com.qb.hotelTV"
         minSdk = 21
-        targetSdk = 33
-        versionCode = 3
-        versionName = "1.3.2"
+        targetSdk =33
+        versionCode = 5
+        versionName = "1.4.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             // 限制APK中包含的ABI
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            abiFilters += listOf("armeabi-v7a","x86_64")
         }
     }
 
@@ -56,6 +56,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+//    implementation("androidx.media3:media3-ui:1.4.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -67,6 +68,8 @@ dependencies {
     implementation("io.github.azhon:appupdate:4.3.2")
 //导入retrofit
     implementation ("com.google.code.gson:gson:2.6.2")
+    implementation ("com.facebook.stetho:stetho-okhttp3:1.3.1")
+    implementation ("com.facebook.stetho:stetho:1.3.1")
 //Gson 库
 //下面两个是RxJava 和 RxAndroid
     implementation ("io.reactivex.rxjava2:rxandroid:2.0.2")
@@ -108,15 +111,14 @@ dependencies {
 
 //    implementation ("org.videolan.android:libvlc-all:3.1.12")
 
-    implementation ("xyz.doikki.android.dkplayer:dkplayer-java:3.3.7")
-//    # 可选，使用exoplayer进行解码
-    implementation ("xyz.doikki.android.dkplayer:player-exo:3.3.7")
-
-    implementation ("xyz.doikki.android.dkplayer:dkplayer-ui:3.3.7")
-//    # 可选，使用ijkplayer进行解码
-    implementation ("xyz.doikki.android.dkplayer:player-ijk:3.3.7")
-
-
+//    implementation ("xyz.doikki.android.dkplayer:dkplayer-java:3.3.7")
+////    # 可选，使用exoplayer进行解码
+//    implementation ("xyz.doikki.android.dkplayer:player-exo:3.3.7")
+//
+//    implementation ("xyz.doikki.android.dkplayer:dkplayer-ui:3.3.7")
+////    # 可选，使用ijkplayer进行解码
+//    implementation ("xyz.doikki.android.dkplayer:player-ijk:3.3.7")
+    api("tv.danmaku.ijk.media:ijkplayer-java:0.8.8")
 
 //    # 必选，可兼容市面上绝大部分设备
 //    implementation ("com.github.dueeeke.dkplayer:dkplayer-java:2.5.3")

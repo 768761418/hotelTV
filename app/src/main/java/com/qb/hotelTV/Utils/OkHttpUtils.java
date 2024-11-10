@@ -3,6 +3,8 @@ package com.qb.hotelTV.Utils;
 
 import android.util.Log;
 
+import com.qb.hotelTV.api.CommonRequestInterceptor;
+
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.util.Collections;
@@ -27,24 +29,7 @@ public class OkHttpUtils {
     public final static int CONNECT_TIMEOUT = 300;
     public final static int READ_TIMEOUT = 300;
     public final static int WRITE_TIMEOUT = 300;
-    public static int HTTP_TIMEOUT = 5;
-    //MMA证书密码
-//    public static final String CLIENT_WP_SERVER = "Wynn20210511";
-    public static final String CLIENT_WP_SERVER = "Cert@20221021"; //old:Wynn20210511
-    public static final String CLIENT_WM_SERVER = "P@ssw0rd!!!!";//old:Abcdef123456!
-    //GCM证书密码
-    public static final String CLIENT_GCM_PASSWORD = "Cert@20221021";//old:Wynn20210511
-    //sso服务器证书密码
-    public static final String CLIENT_WP_SSO_SERVER_PASSWORD = "Wynn04082020";
-    public static final String CLIENT_WM_SSO_SERVER_PASSWORD = "P@ssw0rd20200804";
-    //    public static final String CLIENT_INBOX_SERVER_PASSWORD = "Wynn05082020";
-    public static final String CLIENT_INBOX_SERVER_PASSWORD = "Wynnwnh20220808!";
-    public static final String CLIENT_WP_IDP_SERVER_PASSWORD = "Cert@20230811";
-    public static final String CLIENT_WM_IDP_SERVER_PASSWORD = "Gamingbig@wynn!1";
-    public static final String CLIENT_WP_WYNNCOIN_SERVER_PASSWORD = "Cert@20221020";
-    public static final String CLIENT_MASK_WP_PASSWORD = "Cert@20220825";//old:Cert@20220825
-    public static final String CLIENT_MASK_WM_PASSWORD = "Gamingbig@wynn!1";
-    public static final String CLIENT_RED_CARD_PASSWORD = "Cert@20221021";
+
     private static OkHttpClient client = null;
     private static HttpLoggingInterceptor httpLoggingInterceptor;
 
@@ -69,15 +54,6 @@ public class OkHttpUtils {
                 @Override
                 public void log(String message) {
                     Log.d("OkHttp3", "url = " + message);
-                    //对密码进行过滤
-                    if (message.contains("password=")) {
-                        String[] mes = message.split("&");
-                        for (String tmp : mes) {
-                            if (tmp.contains("password=")) {
-                                message = message.replace(tmp, "password=******");
-                            }
-                        }
-                    }
                 }
             });
         }
@@ -100,8 +76,8 @@ public class OkHttpUtils {
         builder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS); //写操作超时时间
         builder.readTimeout(READ_TIMEOUT, TimeUnit.SECONDS); //读操作超时时间
         builder.retryOnConnectionFailure(true); //错误重连
-        builder.sslSocketFactory(sslSocketFactory, trustAllManager); //QA测试的时候用这个，全信任模式
         builder.hostnameVerifier((hostname, session) -> true);
+        builder.addInterceptor(new CommonRequestInterceptor());
         builder.addInterceptor(getHttpLoggingInterceptor()); //请求日志拦截
         builder.protocols(Collections.singletonList(Protocol.HTTP_1_1));
         return builder;

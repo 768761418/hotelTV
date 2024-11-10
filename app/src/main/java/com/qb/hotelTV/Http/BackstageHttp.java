@@ -18,6 +18,8 @@ import com.qb.hotelTV.Model.StartData;
 import com.qb.hotelTV.Model.TvTextModel;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.Setting.ApiSetting;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
+import com.qb.hotelTV.huibuTv.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -60,6 +62,9 @@ public class BackstageHttp {
     Gson gson = new Gson();
     private String Authorization;
     private String token = null;
+    public static  Integer userId = 0;
+
+    public static Integer tenant = 0;
 
 
     public interface TvTextCallback{
@@ -128,6 +133,8 @@ public class BackstageHttp {
                     if (code == 0L){
                         result[0] = String.valueOf(code);
                         result[1] = jsonObject.getJSONObject("data").getString("accessToken");
+                        userId = jsonObject.getJSONObject("data").getInt("userId");
+                        SharedPreferencesUtils.getInstance(MyApplication.getContext()).saveUserId(String.valueOf(userId));
                         token = result[1];
                     }else {
                         result[0] = String.valueOf(code);
@@ -193,7 +200,6 @@ public class BackstageHttp {
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
         queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
-
 //        构建请求体
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
@@ -227,7 +233,6 @@ public class BackstageHttp {
         Log.d(TAG, "请求路径: " + url);
 //        添加参数
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
-
 //        构建请求体
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
@@ -269,7 +274,6 @@ public class BackstageHttp {
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
         queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
-
 //        构建请求体
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())
@@ -586,7 +590,7 @@ public class BackstageHttp {
         HttpUrl.Builder queryUrlBuilder = HttpUrl.get(url).newBuilder();
         queryUrlBuilder.addQueryParameter("pageNo", ApiSetting.PAGE_NO);
         queryUrlBuilder.addQueryParameter("pageSize", ApiSetting.PAGE_SIZE);
-
+        Log.d(TAG, "getAppVersion: "+url);
 //        构建请求体
         Request request = new Request.Builder()
                 .url(queryUrlBuilder.build())

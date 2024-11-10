@@ -44,8 +44,8 @@ public class StartupActivity extends HomeActivity {
     private LayoutStartupBinding layoutStartupBinding;
     private SharedPreferencesUtils sharedPreferencesUtils;
     private InputMessageDialog inputMessageDialog;
-    private String serverAddress,roomNumber,tenant;
-    private String TAG = "StartupActivity";
+    public static String serverAddress,roomNumber,tenant;
+    public static String TAG = "StartupActivity";
     private boolean isNeedUpdate;
 
     @Override
@@ -156,6 +156,7 @@ public class StartupActivity extends HomeActivity {
         if (isNeedUpdate){
             layoutStartupBinding.text.setText("请等待更新完成");
         }else {
+            Log.d(TAG, "checkConfigzz: "+serverAddress);
             JSONObject hotelMessageJson = getHotelMessageFromHttp(serverAddress, tenant);
             try{
                 if (hotelMessageJson != null){
@@ -224,6 +225,7 @@ public class StartupActivity extends HomeActivity {
    }
 
    private boolean checkVersion(){
+
        Call call = BackstageHttp.getInstance().getAppVersion(serverAddress,tenant);
        boolean needUpdate = false;
        try {

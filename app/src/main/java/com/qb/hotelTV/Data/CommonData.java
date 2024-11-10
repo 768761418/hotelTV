@@ -2,6 +2,9 @@ package com.qb.hotelTV.Data;
 
 import android.util.Log;
 
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
+import com.qb.hotelTV.huibuTv.MyApplication;
+
 public class CommonData {
     // 单例实例，延迟初始化
     private static CommonData instance;
@@ -38,6 +41,7 @@ public class CommonData {
         data[0] = this.serverAddress;
         data[1] = this.tenant;
         data[2] = this.roomNumber;
+
         Log.d(TAG, "getDataServerAddress: " + this.serverAddress);
         Log.d(TAG, "getDataTenant: " + this.tenant);
         Log.d(TAG, "getDataRoomNumber: " + this.roomNumber);

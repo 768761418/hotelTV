@@ -24,6 +24,9 @@ import java.util.concurrent.CountDownLatch;
 
 
 public class MyApplication extends Application {
+    static Context context;
+
+
     private static ArrayList<Channel> channelsList = new ArrayList<Channel>();
     static ArrayList<VideoModel> videoList = new ArrayList<>();
     private static int channelIndex = 0;
@@ -42,6 +45,7 @@ public class MyApplication extends Application {
         super.onCreate();
         Log.d(TAG, "onCreate1: ");
 //        获取strings.xml中的字符串
+        context = getApplicationContext();
         hostIP = getString(R.string.hostAddress);
         P2pConfig config = new P2pConfig.Builder()
                 .announceLocation(AnnounceLocation.China)    // Set HongKong or USA if you changed zone
@@ -50,6 +54,10 @@ public class MyApplication extends Application {
         initChannels();
 //        initUpdate();
 
+    }
+
+    public static Context getContext(){
+        return context;
     }
     public static void initChannels() {
 //        channelsList.add(new Channel("CCTV-1", "http://183.63.15.42:9901/tsfile/live/0001_1.m3u8"));

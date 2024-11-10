@@ -95,7 +95,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
 
     private void setupUi() {
 //        启用header
-        setHeadersState(HEADERS_ENABLED);
+        setHeadersState(HEADERS_HIDDEN);
 //        设置动画效果
         setHeadersTransitionOnBackEnabled(true);
 //        设置header背景
@@ -114,6 +114,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
             public void run() {
 //                创建header列表数据
                 createRows();
+                Log.d(TAG, "run: channel"+channel);
                 if (channel != -1){
                     numberChangeChannel(channel);
                 }
@@ -136,6 +137,7 @@ public class PageAndListRowFragment extends BrowseSupportFragment {
             VideoModel channel = channelsList.get(i);
             mRowsAdapter.add(new PageRow(new HeaderItem(i, (i+1)+" "+channel.getStreamName())));
         }
+        mRowsAdapter.notifyArrayItemRangeChanged(0,channelsList.size());
 //                    授权
         authorized = true;
     }

@@ -14,6 +14,8 @@ import com.qb.hotelTV.Activity.CommonActivity.SocketNoticeActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Http.BackstageHttp;
 import com.qb.hotelTV.Listener.WebSocketClient;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
+import com.qb.hotelTV.huibuTv.MyApplication;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,8 +43,8 @@ public class WebSocketService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        拿数据用来用
-        serverAddress = CommonData.getInstance().getServerAddress();
-        token = BackstageHttp.getInstance().getToken();
+        serverAddress = SharedPreferencesUtils.getInstance(MyApplication.getContext()).loadServerAddress();
+        token = SharedPreferencesUtils.getInstance(MyApplication.getContext()).loadToken();
 //        初始化websocket链接
         String webSocketUrl = getWebSocketUrl(serverAddress);
 //        初始化websocket

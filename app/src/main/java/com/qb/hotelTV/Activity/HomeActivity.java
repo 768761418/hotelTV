@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -117,6 +118,7 @@ public class HomeActivity extends BaseActivity {
         }
 //            设置请求头
         String authorization = "Bearer " + token;
+        Log.d(TAG, "getLoginToken: "+authorization);
         BackstageHttp.getInstance().setToken(token);
         BackstageHttp.getInstance().setAuthorization(authorization);
         Log.d(TAG, "daying1: " + token);
@@ -129,6 +131,8 @@ public class HomeActivity extends BaseActivity {
 
     //    获取公告并修改组件
     public void getAnnouncements(Context context, String serverAddress, String tenant, MarqueeTextView view){
+        Log.d(TAG, "getAnnouncements: "+serverAddress);
+
         BackstageHttp.getInstance().getTvText(serverAddress, tenant, new BackstageHttp.TvTextCallback() {
             @Override
             public void onTvTextResponse(String tvText, String tvTextColor,int code) {

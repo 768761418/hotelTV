@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide;
 import com.qb.hotelTV.Activity.Theme.HospitalActivity;
 import com.qb.hotelTV.Activity.Theme.HotelActivity;
 import com.qb.hotelTV.Activity.Theme.HotelTwoActivity;
+import com.qb.hotelTV.Activity.Theme.ImageActivity;
 import com.qb.hotelTV.Data.CommonData;
 import com.qb.hotelTV.Handler.CrashHandler;
 import com.qb.hotelTV.Http.BackstageHttp;
@@ -26,6 +27,7 @@ import com.qb.hotelTV.Http.LocationHttp;
 import com.qb.hotelTV.Listener.FocusScaleListener;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Setting.ApplicationSetting;
+import com.qb.hotelTV.Utils.SharedPreferencesUtils;
 
 import org.json.JSONObject;
 
@@ -200,6 +202,7 @@ public class BaseActivity extends Activity {
 
 //    判断酒店主题
     public boolean checkTheme(Context context,String themeType){
+        Log.d(TAG, "checkTheme: "+themeType);
         //           酒店1
         if (themeType.equals(ApplicationSetting.THEME_HOTEL_ONE)){
             Intent intent = new Intent(context, HotelActivity.class);
@@ -208,6 +211,10 @@ public class BaseActivity extends Activity {
 //           酒店2
         else if (themeType.equals(ApplicationSetting.THEME_HOTEL_TWO)){
             Intent intent = new Intent(context, HotelTwoActivity.class);
+            startActivity(intent);
+        }
+        else if(themeType.equals(ApplicationSetting.THEME_BUSINESS_ONE)){
+            Intent intent = new Intent(context, ImageActivity.class);
             startActivity(intent);
         }
 //           医院1

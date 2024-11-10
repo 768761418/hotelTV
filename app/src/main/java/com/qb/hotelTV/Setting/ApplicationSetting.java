@@ -8,4 +8,5 @@ public class ApplicationSetting {
     public static String THEME_HOTEL_TWO = "hotel2";
 
     public static String THEME_HOSPITAL_ONE = "hospital1";
+    public static String THEME_BUSINESS_ONE = "business1";
 }

@@ -15,9 +15,7 @@ import androidx.leanback.app.BrowseSupportFragment;
 import com.qb.hotelTV.Model.VideoModel;
 import com.qb.hotelTV.R;
 import com.qb.hotelTV.Utils.PlayerUtils;
-
-import xyz.doikki.videoplayer.ijk.IjkPlayerFactory;
-import xyz.doikki.videoplayer.player.VideoView;
+import com.qb.hotelTV.view.MyIjkVideoView;
 
 
 public class VideoPlayerFragment extends androidx.fragment.app.Fragment implements BrowseSupportFragment.MainFragmentAdapterProvider{
@@ -26,7 +24,7 @@ public class VideoPlayerFragment extends androidx.fragment.app.Fragment implemen
     private BrowseSupportFragment.MainFragmentAdapter mMainFragmentAdapter = new BrowseSupportFragment.MainFragmentAdapter(this);
     private int channelIndex;
     private VideoModel videoModel;
-    private VideoView videoView;
+    private MyIjkVideoView videoView;
 
 
     public static VideoPlayerFragment newInstance(VideoModel videoModel,int channelIndex){
@@ -89,7 +87,7 @@ public class VideoPlayerFragment extends androidx.fragment.app.Fragment implemen
     @Override
     public void onResume() {
         super.onResume();
-        videoView.resume();
+        videoView.start();
     }
 
     @Override

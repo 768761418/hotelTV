@@ -10,7 +10,7 @@
 
         android:focusable="true"
         android:gravity="center_horizontal" />
-    <xyz.doikki.videoplayer.player.VideoView
+    <com.qb.hotelTV.view.MyIjkVideoView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
